@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:ticket_app/components/app_colors.dart';
 import 'package:ticket_app/components/app_styles.dart';
 
-class ButtonWidget extends StatelessWidget {
-  const ButtonWidget({super.key, required this.title, required this.height, required this.width, required this.onPressed});
+class ButtonNegativeWidget extends StatelessWidget {
+  const ButtonNegativeWidget({super.key, required this.title, required this.height, required this.width, required this.onPressed});
 
   final String title;
-  final Function() onPressed;
   final double height;
   final double width;
+  final Function() onPressed;
+
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class ButtonWidget extends StatelessWidget {
       onPressed: onPressed, 
       style: ButtonStyle(
         fixedSize: MaterialStateProperty.all<Size>(Size(width, height)),
-        backgroundColor: MaterialStateProperty.all<Color>(AppColors.buttonColor),
+        backgroundColor: MaterialStateProperty.all<Color>(AppColors.textColor),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))
         ),

@@ -1,17 +1,20 @@
-import 'package:auto_route/auto_route.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ticket_app/components/app_assets.dart';
-import 'package:ticket_app/components/routes/app_router.gr.dart';
+import 'package:ticket_app/components/routes/route_name.dart';
 
-@RoutePage()
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { 
 
-      context.replaceRoute(const OnBoardingRoute());
+      
+    Timer.periodic(const Duration(seconds: 3), (timer) { 
+      timer.cancel();
+      Navigator.pushNamedAndRemoveUntil(context, RouteName.onBoardingScreen, (route) => false);
+    });
 
     return Scaffold(
       body: Center(

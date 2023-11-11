@@ -7,7 +7,7 @@ class AppStyle {
     return TextStyle(
       color: Colors.white,
       fontWeight: FontWeight.bold,
-      fontSize: 24.sp
+      fontSize: 20.sp
     );
   }
 
@@ -15,7 +15,7 @@ class AppStyle {
     return TextStyle(
       color: AppColors.textColor,
       fontWeight: FontWeight.w300,
-      fontSize: 18.sp
+      fontSize: 16.sp
     );
   }
 
@@ -23,7 +23,7 @@ class AppStyle {
     return TextStyle(
       color: Colors.white,
       fontWeight: FontWeight.w500,
-      fontSize: 18.sp
+      fontSize: 16.sp
     );
   }
 }

@@ -1,12 +1,11 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ticket_app/components/app_assets.dart';
 import 'package:ticket_app/components/app_styles.dart';
-import 'package:ticket_app/components/routes/app_router.gr.dart';
+import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/widgets/button_widget.dart';
 
-@RoutePage()
+
 class OnBoardingScreen extends StatelessWidget {
   const OnBoardingScreen({super.key});
 
@@ -41,7 +40,7 @@ class OnBoardingScreen extends StatelessWidget {
               height: 60.h, 
               width: 250.w,
               onPressed: () {
-                context.replaceRoute(const SignInRoute());
+                Navigator.pushNamedAndRemoveUntil(context, RouteName.signInScreen, (route) => false);
               }, 
             )
           ],
