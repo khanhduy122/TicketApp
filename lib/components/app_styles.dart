@@ -7,7 +7,15 @@ class AppStyle {
     return TextStyle(
       color: Colors.white,
       fontWeight: FontWeight.bold,
-      fontSize: 20.sp
+      fontSize: 16.sp
+    );
+  }
+
+  static TextStyle get subTitleStyle {
+    return TextStyle(
+      color: Colors.white,
+      fontWeight: FontWeight.w600,
+      fontSize: 14.sp
     );
   }
 
@@ -15,7 +23,7 @@ class AppStyle {
     return TextStyle(
       color: AppColors.textColor,
       fontWeight: FontWeight.w300,
-      fontSize: 16.sp
+      fontSize: 14.sp
     );
   }
 
@@ -23,7 +31,7 @@ class AppStyle {
     return TextStyle(
       color: Colors.white,
       fontWeight: FontWeight.w500,
-      fontSize: 16.sp
+      fontSize: 14.sp
     );
   }
 }

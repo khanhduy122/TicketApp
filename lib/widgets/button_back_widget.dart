@@ -7,10 +7,15 @@ class ButtonBackWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 24.h,
-      width: 24.w,
-      child: Image.asset(AppAssets.icBack, fit: BoxFit.contain,),
+    return GestureDetector(
+      onTap: () {
+        Navigator.pop(context);
+      },
+      child: SizedBox(
+        height: 24.h,
+        width: 24.w,
+        child: Image.asset(AppAssets.icBack, fit: BoxFit.scaleDown,),
+      ),
     );
   }
 }

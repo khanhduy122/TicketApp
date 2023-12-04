@@ -1,12 +1,19 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
+import 'package:ticket_app/components/app_colors.dart';
 import 'package:ticket_app/components/routes/router.dart';
 import 'package:ticket_app/firebase_options.dart';
-import 'package:ticket_app/screen/auth/blocs/auth_bloc.dart';
-import 'package:ticket_app/screen/main/main_screen.dart';
-import 'package:ticket_app/screen/splash/splash_screen.dart';
+import 'package:ticket_app/models/data_app_provider.dart';
+import 'package:ticket_app/screen/auth_screen/blocs/auth_bloc.dart';
+import 'package:ticket_app/screen/auth_screen/screens/signin_screen.dart';
+import 'package:ticket_app/screen/splash_screen/on_boarding.screen.dart';
+import 'package:ticket_app/screen/splash_screen/splash_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,13 +39,16 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           title: 'Flutter Demo',
           theme: ThemeData(
-            scaffoldBackgroundColor: const Color(0xFF0B0F2F)
+            scaffoldBackgroundColor: AppColors.background,
           ),
           routes: routes,
           builder: (_, child) {
-            return BlocProvider(
-              create: (context) => AuthBloc(),
-              child: child,
+            return ChangeNotifierProvider(
+              create: (context) => DataAppProvider(),
+              child: BlocProvider(
+                create: (context) => AuthBloc(),
+                child: child,
+              ),
             );
           },
           home: const SplashScreen(),

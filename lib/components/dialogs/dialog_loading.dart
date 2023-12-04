@@ -8,6 +8,7 @@ class DialogLoading {
 
   static void show(BuildContext context){
     showDialog(
+      barrierDismissible: false,
       context: context, 
       builder: (context) {
         return Center(

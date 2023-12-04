@@ -6,4 +6,8 @@ class RouteName{
   static const String signUpScreen = "signUpScreen";
   static const String verifyScreen = "verifyScreen";
   static const String mainScreen = "mainScreen";
+  static const String editProfileScreen = "editProfileScreen";
+  static const String detailMovieScreen = "detailMovieScreen";
+  static const String playVideoTrailerScreen = "playVideoTrailerScreen";
+  static const String allReviewScreen= "allReviewScreen";
 }

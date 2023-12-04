@@ -43,6 +43,21 @@ dependencies:
   provider: ^6.1.1
   lottie: ^2.7.0
   google_sign_in: ^6.1.6
+  smooth_page_indicator: ^1.1.0
+  carousel_slider: ^4.2.1
+  cloud_firestore: ^4.13.0
+  json_serializable: ^6.7.1
+  json_annotation: ^4.8.1
+  shared_preferences: ^2.2.2
+  cached_network_image: ^3.3.0
+  flutter_rating_bar: ^4.0.1
+  geolocator: ^10.1.0
+  http: ^1.1.0
+  dropdown_button2: ^2.3.9
+  dio: ^5.3.3
+  geocoding: ^2.1.1
+  chewie: ^1.7.4
+  video_player: ^2.8.1
 
 dev_dependencies:
   flutter_test:

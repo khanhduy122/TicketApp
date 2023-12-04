@@ -5,11 +5,12 @@ import 'package:ticket_app/components/app_colors.dart';
 import 'package:ticket_app/components/app_styles.dart';
 
 class TextFormFieldWidget extends StatefulWidget {
-  const TextFormFieldWidget({super.key,  required this.label, this.obscureText , this.textInputAction , this.controller, this.onChanged, this.validator});
+  const TextFormFieldWidget({super.key,  required this.label, this.obscureText , this.textInputAction, this.initValue , this.controller, this.onChanged, this.validator});
 
   final String label;
   final TextInputAction? textInputAction;
   final bool? obscureText;
+  final String? initValue;
   final TextEditingController? controller;
   final Function(String value)? onChanged;
   final String? Function(String? value)? validator;
@@ -25,12 +26,16 @@ class _TextFormFieldWidgetState extends State<TextFormFieldWidget> {
   void initState() {
     super.initState();
     isShowHidePasseword = widget.obscureText ?? false;
+    if(widget.controller != null && widget.initValue != null){
+      widget.controller!.text = widget.initValue!;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: widget.controller,
+      initialValue: (widget.initValue != null && widget.controller == null) ? widget.initValue : null,
       style: AppStyle.defaultStyle,
       obscureText: isShowHidePasseword,
       textInputAction: widget.textInputAction,
@@ -76,7 +81,7 @@ class _TextFormFieldWidgetState extends State<TextFormFieldWidget> {
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: const BorderSide(
-            color: AppColors.error
+            color: AppColors.red
           )
         ),
 

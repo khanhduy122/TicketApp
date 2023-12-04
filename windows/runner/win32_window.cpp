@@ -32,9 +32,9 @@ static int g_active_window_count = 0;
 using EnableNonClientDpiScaling = BOOL __stdcall(HWND hwnd);
 
 // Scale helper to convert logical scaler values to physical using passed in
-// scale factor
-int Scale(int source, double scale_factor) {
-  return static_cast<int>(source * scale_factor);
+// scale factors
+int Scale(int source, double scale_factors) {
+  return static_cast<int>(source * scale_factors);
 }
 
 // Dynamically loads the |EnableNonClientDpiScaling| from the User32 module.
@@ -132,12 +132,12 @@ bool Win32Window::Create(const std::wstring& title,
                               static_cast<LONG>(origin.y)};
   HMONITOR monitor = MonitorFromPoint(target_point, MONITOR_DEFAULTTONEAREST);
   UINT dpi = FlutterDesktopGetDpiForMonitor(monitor);
-  double scale_factor = dpi / 96.0;
+  double scale_factors = dpi / 96.0;
 
   HWND window = CreateWindow(
       window_class, title.c_str(), WS_OVERLAPPEDWINDOW,
-      Scale(origin.x, scale_factor), Scale(origin.y, scale_factor),
-      Scale(size.width, scale_factor), Scale(size.height, scale_factor),
+      Scale(origin.x, scale_factors), Scale(origin.y, scale_factors),
+      Scale(size.width, scale_factors), Scale(size.height, scale_factors),
       nullptr, nullptr, GetModuleHandle(nullptr), this);
 
   if (!window) {
