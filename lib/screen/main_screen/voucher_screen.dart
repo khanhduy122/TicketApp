@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class VoucherScreen extends StatefulWidget {
   const VoucherScreen({super.key});
@@ -11,7 +10,7 @@ class VoucherScreen extends StatefulWidget {
 class _VoucherScreenState extends State<VoucherScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Column(
         
       ),

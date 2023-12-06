@@ -1,11 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ticket_app/components/app_assets.dart';
-import 'package:ticket_app/components/app_colors.dart';
 import 'package:ticket_app/components/app_styles.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/models/data_app_provider.dart';

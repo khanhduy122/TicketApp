@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/models/movie.dart';
-import 'package:ticket_app/models/review.dart';
 import 'package:ticket_app/screen/auth_screen/screens/signin_screen.dart';
 import 'package:ticket_app/screen/auth_screen/screens/signup_screen.dart';
 import 'package:ticket_app/screen/auth_screen/screens/verify_screen.dart';

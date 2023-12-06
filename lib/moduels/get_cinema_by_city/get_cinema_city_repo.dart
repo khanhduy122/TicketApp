@@ -1,7 +1,5 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dio/dio.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:ticket_app/models/cinema_city.dart';
 import 'package:ticket_app/moduels/get_cinema_by_city/get_cinema_by_city_exception.dart';
@@ -121,7 +119,7 @@ class GetCinemasRepo {
 
       return await Geolocator.getCurrentPosition();
     } catch (e) {
-      print("_determinePosition:" + e.toString());
+      print("_determinePosition:$e");
       rethrow;
     }
   }

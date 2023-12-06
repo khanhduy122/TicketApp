@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
@@ -11,8 +11,6 @@ import 'package:ticket_app/components/routes/router.dart';
 import 'package:ticket_app/firebase_options.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/screen/auth_screen/blocs/auth_bloc.dart';
-import 'package:ticket_app/screen/auth_screen/screens/signin_screen.dart';
-import 'package:ticket_app/screen/splash_screen/on_boarding.screen.dart';
 import 'package:ticket_app/screen/splash_screen/splash_screen.dart';
 
 Future<void> main() async {
@@ -28,13 +26,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     Size size = MediaQuery.of(context).size;
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.portraitUp,
+    ]);
 
     return ScreenUtilInit(
       designSize: size,
       minTextAdapt: true,
-      builder: ( _, child) {
+      builder: (_, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Flutter Demo',

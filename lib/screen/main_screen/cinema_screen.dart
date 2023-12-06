@@ -10,7 +10,6 @@ import 'package:ticket_app/models/cinema_city.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/models/cinema.dart';
 import 'package:ticket_app/models/cities.dart';
-import 'package:ticket_app/models/enum_model.dart';
 import 'package:ticket_app/moduels/get_cinema_by_city/get_cinema_by_city_event.dart';
 import 'package:ticket_app/moduels/get_cinema_by_city/get_cinema_city_bloc.dart';
 import 'package:ticket_app/widgets/image_network_widget.dart';
@@ -105,7 +104,7 @@ class _CinemaScreenState extends State<CinemaScreen> {
           }).toList(),
           onChanged: (value) {
             _selectCity = value!;
-            _getCinemasBloc.add(GetCinemasByCityEvent(cityName: value!));
+            _getCinemasBloc.add(GetCinemasByCityEvent(cityName: value));
           },
           buttonStyleData: const ButtonStyleData(
             height: 40,

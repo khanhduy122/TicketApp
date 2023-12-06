@@ -50,7 +50,7 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-  void _listenerSplash(Object? state, BuildContext context, Future<void> checkIsFirst(BuildContext context)) {
+  void _listenerSplash(Object? state, BuildContext context, Future<void> Function(BuildContext context) checkIsFirst) {
     if(state is GetDataAppState){
       if(state.homeData != null && state.cinemasRecommended != null){
         context.read<DataAppProvider>().setData(homeData: state.homeData, reconmmedCinemas:state.cinemasRecommended);

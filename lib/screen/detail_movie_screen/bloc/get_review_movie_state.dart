@@ -1,10 +1,19 @@
-
 import 'package:ticket_app/models/review.dart';
 
-class GetReviewMovieState {
+class GetReviewMovieState {}
+
+class GetInitReviewMovieState extends GetReviewMovieState {
   bool? isLoading;
   Object? error;
   List<Review>? reviews;
 
-  GetReviewMovieState({this.error, this.isLoading , this.reviews});
+  GetInitReviewMovieState({this.error, this.isLoading, this.reviews});
+}
+
+class LoadMoreReviewMovieState extends GetReviewMovieState {
+  bool? isLoading;
+  Object? error;
+  List<Review>? reviews;
+
+  LoadMoreReviewMovieState({this.error, this.isLoading, this.reviews});
 }

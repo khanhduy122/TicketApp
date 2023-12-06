@@ -5,13 +5,15 @@ import 'package:ticket_app/components/app_assets.dart';
 import 'package:ticket_app/components/app_colors.dart';
 import 'package:ticket_app/components/app_styles.dart';
 import 'package:ticket_app/components/dialogs/dialog_loading.dart';
+import 'package:ticket_app/components/logger.dart';
 import 'package:ticket_app/models/movie.dart';
 import 'package:ticket_app/models/review.dart';
 import 'package:ticket_app/screen/detail_movie_screen/bloc/get_review_movie_bloc.dart';
 import 'package:ticket_app/screen/detail_movie_screen/bloc/get_review_movie_event.dart';
 import 'package:ticket_app/screen/detail_movie_screen/bloc/get_review_movie_state.dart';
 import 'package:ticket_app/widgets/appbar_widget.dart';
-import 'package:ticket_app/widgets/button_back_widget.dart';
+import 'package:ticket_app/widgets/button_outline_widget.dart';
+import 'package:ticket_app/widgets/button_widget.dart';
 import 'package:ticket_app/widgets/image_network_widget.dart';
 import 'package:ticket_app/widgets/rating_widget.dart';
 
@@ -24,16 +26,26 @@ class AllReviewScreen extends StatefulWidget {
   State<AllReviewScreen> createState() => _AllReviewScreenState();
 }
 
-class _AllReviewScreenState extends State<AllReviewScreen> with TickerProviderStateMixin {
-
+class _AllReviewScreenState extends State<AllReviewScreen>
+    with TickerProviderStateMixin {
   final GetReviewMovieBloc getReviewMovieBloc = GetReviewMovieBloc();
+  final ScrollController listReviewScrollController = ScrollController();
   List<Review> reviewsDisplay = [];
+  List<Review> allReviewsLoaded = [];
   int currentIndex = 0;
+  int currentIndexIndicator = 0;
 
   @override
   void initState() {
     super.initState();
-    reviewsDisplay = widget.movie.reviews != null ? widget.movie.reviews!.sublist(0) : [];
+    getReviewMovieBloc.add(
+        GetInitReviewMovieEvent(id: widget.movie.id, rating: currentIndex));
+  }
+
+  @override
+  void dispose() {
+    listReviewScrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -41,174 +53,190 @@ class _AllReviewScreenState extends State<AllReviewScreen> with TickerProviderSt
     return BlocListener(
       bloc: getReviewMovieBloc,
       listener: (context, state) {
-        if(state is GetReviewMovieState){
-          if(state.isLoading == true){
-            DialogLoading.show(context);
-          }
-          if(state.reviews != null){
-            Navigator.pop(context);
-            setState(() {
-              reviewsDisplay = state.reviews!.sublist(0);
-            });
-          }
-        }
+        _onListener(state!);
       },
       child: Scaffold(
         appBar: appBarWidget(title: "Đánh Giá"),
         body: SafeArea(
-          child: SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-    
-                   SizedBox(height: 20.h,),
-    
-                  _buildTabBar(),
-    
-                  SizedBox(height: 20.h,),
-    
-                  const Divider(color: AppColors.grey,),
-    
-                  SizedBox(height: 20.h,),
-    
-                  _buildTabView()
-    
-                ],
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 20.h,
               ),
-            ),
-          )
-        ),
+              _buildTabBar(),
+              SizedBox(
+                height: 20.h,
+              ),
+              const Divider(
+                color: AppColors.grey,
+              ),
+              SizedBox(
+                height: 20.h,
+              ),
+              _buildTabView(),
+              SizedBox(
+                height: 20.h,
+              ),
+            ],
+          ),
+        )),
       ),
     );
   }
 
-  Widget _buildTabBar(){
+  Widget _buildTabBar() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
           GestureDetector(
             onTap: () {
-              if(currentIndex != 0){
-                getReviewMovieBloc.add(GetReviewMovieEvent(id: widget.movie.id, currentIndex: 0, rating: 0));
-                setState(() {
-                  currentIndex = 0;
-                });
+              if (currentIndex != 0) {
+                currentIndex = 0;
+                currentIndexIndicator = 0;
+                getReviewMovieBloc.add(GetInitReviewMovieEvent(
+                    id: widget.movie.id, rating: currentIndex));
+                setState(() {});
               }
             },
-            child: Row(
-            children: [
+            child: Row(children: [
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
                 decoration: BoxDecoration(
-                  color: currentIndex == 0 ? AppColors.buttonColor : AppColors.darkBackground,
-                  borderRadius: BorderRadius.circular(10.r)
-                ),
+                    color: currentIndex == 0
+                        ? AppColors.buttonColor
+                        : AppColors.darkBackground,
+                    borderRadius: BorderRadius.circular(10.r)),
                 child: Row(
                   children: [
-                    Text("Tất cả", style: AppStyle.subTitleStyle,),
-                    SizedBox(width: 5.w,),
-                    Text("(${widget.movie.totalReview})", style: AppStyle.defaultStyle,),
+                    Text(
+                      "Tất cả",
+                      style: AppStyle.subTitleStyle,
+                    ),
+                    SizedBox(
+                      width: 5.w,
+                    ),
+                    Text(
+                      "(${widget.movie.totalReview})",
+                      style: AppStyle.defaultStyle,
+                    ),
                   ],
                 ),
               ),
-              SizedBox(width: 12.w,)
-            ]
-            ),
+              SizedBox(
+                width: 12.w,
+              )
+            ]),
           ),
           GestureDetector(
             onTap: () {
-              if(currentIndex != 1){
-                getReviewMovieBloc.add(GetReviewMovieEvent(id: widget.movie.id, currentIndex: 0, rating: -1));
-                setState(() {
-                  currentIndex = 1;
-                });
+              if (currentIndex != 1) {
+                currentIndex = 1;
+                currentIndexIndicator = 0;
+                getReviewMovieBloc.add(GetInitReviewMovieEvent(
+                    id: widget.movie.id, rating: currentIndex));
+                setState(() {});
               }
             },
-            child: Row(
-            children: [
+            child: Row(children: [
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
                 decoration: BoxDecoration(
-                  color: currentIndex == 1 ? AppColors.buttonColor : AppColors.darkBackground,
-                  borderRadius: BorderRadius.circular(10.r)
-                ),
+                    color: currentIndex == 1
+                        ? AppColors.buttonColor
+                        : AppColors.darkBackground,
+                    borderRadius: BorderRadius.circular(10.r)),
                 child: Row(
                   children: [
-                    Text("Có Hình Ảnh", style: AppStyle.subTitleStyle,),
-                    SizedBox(width: 5.w,),
-                    Text("(${widget.movie.totalRatingWithPicture})", style: AppStyle.defaultStyle,),
+                    Text(
+                      "Có Hình Ảnh",
+                      style: AppStyle.subTitleStyle,
+                    ),
+                    SizedBox(
+                      width: 5.w,
+                    ),
+                    Text(
+                      "(${widget.movie.totalRatingWithPicture})",
+                      style: AppStyle.defaultStyle,
+                    ),
                   ],
                 ),
               ),
-              SizedBox(width: 12.w,)
-            ]
-            ),
+              SizedBox(
+                width: 12.w,
+              )
+            ]),
           ),
           _itemTabBar(
-            title: "5", 
-            isSelected: currentIndex == 2, 
+            title: "5",
+            isSelected: currentIndex == 2,
             total: widget.movie.totalFiveRating ?? 0,
             onTap: () {
-              if(currentIndex != 2){
-                getReviewMovieBloc.add(GetReviewMovieEvent(id: widget.movie.id, currentIndex: 0, rating: 5));
-                setState(() {
-                  currentIndex = 2;
-                });
+              if (currentIndex != 2) {
+                currentIndex = 2;
+                currentIndexIndicator = 0;
+                getReviewMovieBloc.add(GetInitReviewMovieEvent(
+                    id: widget.movie.id, rating: currentIndex));
+                setState(() {});
               }
             },
           ),
           _itemTabBar(
-            title: "4", 
-            isSelected: currentIndex == 3, 
+            title: "4",
+            isSelected: currentIndex == 3,
             total: widget.movie.totalFourRating ?? 0,
             onTap: () {
-              if(currentIndex != 3){
-                getReviewMovieBloc.add(GetReviewMovieEvent(id: widget.movie.id, currentIndex: 0, rating: 4));
-                setState(() {
-                  currentIndex = 3;
-                });
+              if (currentIndex != 3) {
+                currentIndex = 3;
+                currentIndexIndicator = 0;
+                getReviewMovieBloc.add(GetInitReviewMovieEvent(
+                    id: widget.movie.id, rating: currentIndex));
+                setState(() {});
               }
             },
           ),
           _itemTabBar(
-            title: "3", 
-            isSelected: currentIndex == 4, 
+            title: "3",
+            isSelected: currentIndex == 4,
             total: widget.movie.totalThreeRating ?? 0,
             onTap: () {
-              if(currentIndex != 4){
-                getReviewMovieBloc.add(GetReviewMovieEvent(id: widget.movie.id, currentIndex: 0, rating: 3));
-                setState(() {
-                  currentIndex = 4;
-                });
+              if (currentIndex != 4) {
+                currentIndex = 4;
+                currentIndexIndicator = 0;
+                getReviewMovieBloc.add(GetInitReviewMovieEvent(
+                    id: widget.movie.id, rating: currentIndex));
+                setState(() {});
               }
             },
           ),
           _itemTabBar(
-            title: "2", 
+            title: "2",
             isSelected: currentIndex == 5,
-            total: widget.movie.totalTwoRating ?? 0, 
+            total: widget.movie.totalTwoRating ?? 0,
             onTap: () {
-              if(currentIndex != 5){
-                getReviewMovieBloc.add(GetReviewMovieEvent(id: widget.movie.id, currentIndex: 0, rating: 2));
-                setState(() {
-                  currentIndex = 5;
-                });
+              if (currentIndex != 5) {
+                currentIndex = 5;
+                currentIndexIndicator = 0;
+                getReviewMovieBloc.add(GetInitReviewMovieEvent(
+                    id: widget.movie.id, rating: currentIndex));
+                setState(() {});
               }
             },
           ),
           _itemTabBar(
-            title: "1", 
+            title: "1",
             isSelected: currentIndex == 6,
-            total: widget.movie.totalOneRating ?? 0, 
+            total: widget.movie.totalOneRating ?? 0,
             onTap: () {
-              if(currentIndex != 6){
-                getReviewMovieBloc.add(GetReviewMovieEvent(id: widget.movie.id, currentIndex: 0, rating: 1));
-                setState(() {
-                  currentIndex = 6;
-                });
+              if (currentIndex != 6) {
+                currentIndex = 6;
+                currentIndexIndicator = 0;
+                getReviewMovieBloc.add(GetInitReviewMovieEvent(
+                    id: widget.movie.id, rating: currentIndex));
+                setState(() {});
               }
             },
           )
@@ -217,7 +245,11 @@ class _AllReviewScreenState extends State<AllReviewScreen> with TickerProviderSt
     );
   }
 
-  Widget _itemTabBar({required String title, required bool isSelected, required int total ,required Function() onTap}){
+  Widget _itemTabBar(
+      {required String title,
+      required bool isSelected,
+      required int total,
+      required Function() onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Row(
@@ -225,53 +257,83 @@ class _AllReviewScreenState extends State<AllReviewScreen> with TickerProviderSt
           Container(
             padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
             decoration: BoxDecoration(
-              color: isSelected ? AppColors.buttonColor : AppColors.darkBackground,
-              borderRadius: BorderRadius.circular(10.r)
-            ),
+                color: isSelected
+                    ? AppColors.buttonColor
+                    : AppColors.darkBackground,
+                borderRadius: BorderRadius.circular(10.r)),
             child: Row(
               children: [
-                Text(title, style: AppStyle.subTitleStyle,),
-                Icon(Icons.star, color: AppColors.rating, size: 15.h,),
-                SizedBox(width: 5.w,),
-                Text("($total)", style: AppStyle.defaultStyle,),
+                Text(
+                  title,
+                  style: AppStyle.subTitleStyle,
+                ),
+                Icon(
+                  Icons.star,
+                  color: AppColors.rating,
+                  size: 15.h,
+                ),
+                SizedBox(
+                  width: 5.w,
+                ),
+                Text(
+                  "($total)",
+                  style: AppStyle.defaultStyle,
+                ),
               ],
             ),
           ),
-          SizedBox(width: 12.w,)
+          SizedBox(
+            width: 12.w,
+          )
         ],
       ),
     );
   }
 
-  Widget _buildTabView(){
-    return ListView.builder(
-      itemCount: widget.movie.reviews!.length,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemBuilder: (context, index) {
-        return _buildItemReview(review: reviewsDisplay[index]);
-      },
+  Widget _buildTabView() {
+    return Expanded(
+      child: ListView.builder(
+        controller: listReviewScrollController,
+        itemCount: reviewsDisplay.length,
+        itemBuilder: (context, index) {
+          return Column(
+            children: [
+              _buildItemReview(review: reviewsDisplay[index]),
+              index == reviewsDisplay.length - 1
+                  ? SizedBox(
+                      height: 20.h,
+                    )
+                  : Container(),
+              index == reviewsDisplay.length - 1
+                  ? _buildIndicator()
+                  : Container(),
+            ],
+          );
+        },
+      ),
     );
   }
 
-  Widget _buildItemReview({required Review review}){
+  Widget _buildItemReview({required Review review}) {
     return Column(
       children: [
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            review.userPhoto == null ? SizedBox(
-              height: 40.h,
-              width: 40.w,
-              child: Image.asset(AppAssets.imgAvatarDefault)
-            )
-            : ImageNetworkWidget(
-              url: review.userPhoto!, 
-              height: 40.h, 
-              width: 40.w,
-              borderRadius: 30.r,
+            review.userPhoto == null
+                ? SizedBox(
+                    height: 40.h,
+                    width: 40.w,
+                    child: Image.asset(AppAssets.imgAvatarDefault))
+                : ImageNetworkWidget(
+                    url: review.userPhoto!,
+                    height: 40.h,
+                    width: 40.w,
+                    borderRadius: 30.r,
+                  ),
+            SizedBox(
+              width: 10.w,
             ),
-            SizedBox(width: 10.w,),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -279,27 +341,211 @@ class _AllReviewScreenState extends State<AllReviewScreen> with TickerProviderSt
                   review.userName,
                   style: AppStyle.subTitleStyle,
                 ),
-                SizedBox(height: 5.h,),
+                SizedBox(
+                  height: 5.h,
+                ),
                 RatingWidget(rating: review.rating),
-                SizedBox(height: 10.h,),
+                SizedBox(
+                  height: 10.h,
+                ),
                 Text(
                   review.content,
                   style: AppStyle.defaultStyle,
                 ),
-                review.photoReview != null ? ImageNetworkWidget(
-                  url: review.photoReview!, 
-                  height: 100.h, 
-                  width: 70.w
-                ) : Container()
+                SizedBox(
+                  height: 10.h,
+                ),
+                review.photoReview != null
+                    ? ImageNetworkWidget(
+                        url: review.photoReview!, height: 150.h, width: 100.w)
+                    : Container()
               ],
             )
           ],
         ),
-        SizedBox(height: 10.h,),
-        const Divider(color: AppColors.grey,),
-        SizedBox(height: 10.h,),
-
+        SizedBox(
+          height: 10.h,
+        ),
+        const Divider(
+          color: AppColors.grey,
+        ),
+        SizedBox(
+          height: 10.h,
+        ),
       ],
     );
+  }
+
+  Widget _buildIndicator() {
+    int totaIndex = 0;
+
+    switch (currentIndex) {
+      case 0:
+        if (widget.movie.totalReview! ~/ 10 == 0 &&
+            widget.movie.totalReview! > 0) {
+          totaIndex = 1;
+          break;
+        }
+        totaIndex = widget.movie.totalReview! ~/ 10;
+        if (widget.movie.totalReview! % 10 != 0) {
+          totaIndex + 1;
+        }
+        break;
+      case 1:
+        if (widget.movie.totalRatingWithPicture! ~/ 10 == 0 &&
+            widget.movie.totalRatingWithPicture! > 0) {
+          totaIndex = 1;
+          break;
+        }
+        totaIndex = widget.movie.totalRatingWithPicture! ~/ 10;
+        if (widget.movie.totalRatingWithPicture! % 10 != 0) {
+          totaIndex += 1;
+        }
+        break;
+      case 2:
+        if (widget.movie.totalFiveRating! ~/ 10 == 0 &&
+            widget.movie.totalFiveRating! > 0) {
+          totaIndex = 1;
+          break;
+        }
+        totaIndex = widget.movie.totalFiveRating! ~/ 10;
+        if (widget.movie.totalFiveRating! % 10 != 0) {
+          totaIndex += 1;
+        }
+        break;
+      case 3:
+        if (widget.movie.totalFourRating! ~/ 10 == 0 &&
+            widget.movie.totalFourRating! > 0) {
+          totaIndex = 1;
+          break;
+        }
+        totaIndex = widget.movie.totalFourRating! ~/ 10;
+        if (widget.movie.totalFourRating! % 10 != 0) {
+          totaIndex += 1;
+        }
+        break;
+      case 4:
+        if (widget.movie.totalThreeRating! ~/ 10 == 0 &&
+            widget.movie.totalThreeRating! > 0) {
+          totaIndex = 1;
+          break;
+        }
+        totaIndex = widget.movie.totalThreeRating! ~/ 10;
+
+        if (widget.movie.totalThreeRating! % 10 != 0) {
+          totaIndex += 1;
+        }
+        break;
+      case 5:
+        if (widget.movie.totalTwoRating! ~/ 10 == 0 &&
+            widget.movie.totalTwoRating! > 0) {
+          totaIndex = 1;
+          break;
+        }
+        totaIndex = widget.movie.totalTwoRating! ~/ 10;
+        if (widget.movie.totalTwoRating! % 10 != 0) {
+          totaIndex += 1;
+        }
+        break;
+      case 6:
+        if (widget.movie.totalOneRating! ~/ 10 == 0 &&
+            widget.movie.totalOneRating! > 0) {
+          totaIndex = 1;
+          break;
+        }
+        totaIndex = widget.movie.totalOneRating! ~/ 10;
+        if (widget.movie.totalOneRating! % 10 != 0) {
+          totaIndex += 1;
+        }
+        break;
+    }
+
+    return Row(
+      mainAxisAlignment:
+          currentIndexIndicator == 0 || currentIndexIndicator + 1 == totaIndex
+              ? MainAxisAlignment.center
+              : MainAxisAlignment.spaceAround,
+      children: [
+        currentIndexIndicator != 0
+            ? ButtonOutlineWidget(
+                title: "Trước",
+                height: 50.h,
+                width: 100.w,
+                onPressed: _onTapPreviousPage,
+              )
+            : Container(),
+        currentIndexIndicator + 1 != totaIndex
+            ? ButtonWidget(
+                title: "Tiếp Theo",
+                height: 50.h,
+                width: 100.w,
+                onPressed: _onTapNextPage,
+              )
+            : Container()
+      ],
+    );
+  }
+
+  void _onListener(Object state) {
+    if (state is GetInitReviewMovieState) {
+      if (state.isLoading == true) {
+        DialogLoading.show(context);
+      }
+      if (state.reviews != null) {
+        Navigator.pop(context);
+        listReviewScrollController.animateTo(0.0,
+            duration: const Duration(seconds: 1), curve: Curves.easeInOut);
+        setState(() {
+          debugLog(allReviewsLoaded.length.toString());
+          allReviewsLoaded = state.reviews!.sublist(0);
+          reviewsDisplay = state.reviews!.sublist(0);
+        });
+      }
+    }
+
+    if (state is LoadMoreReviewMovieState) {
+      if (state.isLoading == true) {
+        DialogLoading.show(context);
+      }
+      if (state.reviews != null) {
+        Navigator.pop(context);
+        listReviewScrollController.animateTo(0.0,
+            duration: const Duration(milliseconds: 100),
+            curve: Curves.easeInOut);
+        setState(() {
+          allReviewsLoaded.insertAll(allReviewsLoaded.length, state.reviews!);
+          reviewsDisplay = state.reviews!.sublist(0);
+        });
+      }
+    }
+  }
+
+  void _onTapNextPage() {
+    currentIndexIndicator++;
+    listReviewScrollController.animateTo(0.0,
+        duration: const Duration(microseconds: 100), curve: Curves.easeInOut);
+    if (allReviewsLoaded.length > (currentIndexIndicator * 10)) {
+      setState(() {
+        if ((currentIndexIndicator * 10) + 10 < allReviewsLoaded.length) {
+          reviewsDisplay = allReviewsLoaded.sublist(
+              currentIndexIndicator * 10, (currentIndexIndicator * 10) + 10);
+        } else {
+          reviewsDisplay = allReviewsLoaded.sublist(currentIndexIndicator * 10);
+        }
+      });
+    } else {
+      getReviewMovieBloc.add(
+          LoadMoreReviewMovieEvent(id: widget.movie.id, rating: currentIndex));
+    }
+  }
+
+  void _onTapPreviousPage() {
+    listReviewScrollController.animateTo(0.0,
+        duration: const Duration(microseconds: 100), curve: Curves.easeInOut);
+    setState(() {
+      currentIndexIndicator--;
+      reviewsDisplay = allReviewsLoaded.sublist(
+          currentIndexIndicator * 10, (currentIndexIndicator * 10) + 10);
+    });
   }
 }

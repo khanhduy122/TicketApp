@@ -82,14 +82,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState>{
       //   onTimeout: () => throw TimeOutException(),
       // );
       if(googleUser != null){
-        final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication.timeout(
+        final GoogleSignInAuthentication googleAuth = await googleUser.authentication.timeout(
         const Duration(seconds: 20),
         onTimeout: () => throw TimeOutException(),
       );
 
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth?.accessToken,
-        idToken: googleAuth?.idToken,
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
       );
       
       emit(SignInWithGoogleState(isLoading: true));

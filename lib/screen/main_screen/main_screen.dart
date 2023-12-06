@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ticket_app/components/app_assets.dart';
 import 'package:ticket_app/components/app_colors.dart';

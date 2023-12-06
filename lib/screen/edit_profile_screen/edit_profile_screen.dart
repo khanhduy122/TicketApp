@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -80,6 +79,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               initValue: user.displayName,
               textInputAction: TextInputAction.next,
               validator: (value) {
+                return null;
+              
                 
               },
               
@@ -91,6 +92,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               initValue: user.email,
               textInputAction: TextInputAction.next,
               validator: (value) {
+                return null;
+              
               },
             ),
       

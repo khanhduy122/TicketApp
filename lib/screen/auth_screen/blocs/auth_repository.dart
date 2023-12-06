@@ -1,6 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:ticket_app/screen/auth_screen/blocs/auth_exception.dart';
 
 
@@ -33,7 +31,7 @@ class AuthRepository {
         if (e.code == 'email-already-in-use') {
           throw AccountAlreadyExistsException();
         }else{
-          print( "FirebaseAuthException" + e.code);
+          print( "FirebaseAuthException${e.code}");
           throw Exception();
         }
       } 
@@ -60,7 +58,7 @@ class AuthRepository {
         throw error;
       });
     }on FirebaseAuthException catch (e) {
-      print("bbb " + e.runtimeType.toString() + "  " + e.code);
+      print("bbb ${e.runtimeType}  ${e.code}");
 
       if (e.code == 'user-not-found'){
         throw UserNotFoundException();
@@ -72,7 +70,7 @@ class AuthRepository {
         throw Exception();
       }
     } catch (e){
-      print("aaa" + e.toString());
+      print("aaa$e");
       if(e is TimeOutException){
         throw TimeOutException();
       }else{

@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:ticket_app/components/logger.dart';
 import 'package:ticket_app/models/banner.dart';
 import 'package:ticket_app/models/cinema_city.dart';
 import 'package:ticket_app/models/home_data.dart';
@@ -79,7 +78,7 @@ class GetDataAppRepo {
     try {
       List<Placemark> placemarks = await placemarkFromCoordinates(lat, long);
 
-      if (placemarks != null && placemarks.isNotEmpty) {
+      if (placemarks.isNotEmpty) {
         Placemark firstPlacemark = placemarks.first;
         String city = firstPlacemark.administrativeArea ?? "";
         return city;
@@ -115,7 +114,7 @@ class GetDataAppRepo {
 
       return await Geolocator.getCurrentPosition();
     } catch (e) {
-      print("_determinePosition:" + e.toString());
+      print("_determinePosition:$e");
       rethrow;
     }
   }
