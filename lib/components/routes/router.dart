@@ -9,6 +9,7 @@ import 'package:ticket_app/screen/detail_movie_screen/detail_movie_screen.dart';
 import 'package:ticket_app/screen/detail_movie_screen/play_video_trailer_screen.dart';
 import 'package:ticket_app/screen/edit_profile_screen/edit_profile_screen.dart';
 import 'package:ticket_app/screen/main_screen/main_screen.dart';
+import 'package:ticket_app/screen/select_filter_movie/select_filter_movie_screen.dart';
 import 'package:ticket_app/screen/splash_screen/on_boarding.screen.dart';
 import 'package:ticket_app/screen/splash_screen/splash_screen.dart';
 
@@ -37,6 +38,11 @@ Map<String, WidgetBuilder> routes = {
   RouteName.allReviewScreen: (context) {
     return AllReviewScreen(
       movie: ModalRoute.of(context)!.settings.arguments as Movie,
+    );
+  },
+  RouteName.selectFilterMovie: (context) {
+    return SelectFilterMovieSscreen(
+      moviename: ModalRoute.of(context)!.settings.arguments as String,
     );
   },
 };

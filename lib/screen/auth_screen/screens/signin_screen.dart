@@ -24,7 +24,6 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-
   final TextEditingController _emailTextController = TextEditingController();
   final TextEditingController _passwordTextController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -75,7 +74,6 @@ class _SignInScreenState extends State<SignInScreen> {
                     textInputAction: TextInputAction.next,
                   ),
                   SizedBox(height: 40.h),
-          
                   TextFormFieldWidget(
                     controller: _passwordTextController,
                     label: 'Password',
@@ -85,48 +83,57 @@ class _SignInScreenState extends State<SignInScreen> {
                     },
                     textInputAction: TextInputAction.done,
                   ),
-          
                   SizedBox(height: 10.h),
                   Container(
                     alignment: Alignment.centerRight,
-                    child: Text("Forgot Password?",
+                    child: Text(
+                      "Forgot Password?",
                       style: AppStyle.defaultStyle,
                     ),
                   ),
                   SizedBox(height: 30.h),
                   Center(
                     child: ButtonWidget(
-                      title: "Login", 
-                      height: 60.h, 
+                      title: "Login",
+                      height: 60.h,
                       width: 250.w,
                       onPressed: () {
-                        if(_formKey.currentState!.validate()){
-                          BlocProvider.of<AuthBloc>(context).add(SignInEvent(email: _emailTextController.text, password: _passwordTextController.text)); 
+                        if (_formKey.currentState!.validate()) {
+                          BlocProvider.of<AuthBloc>(context).add(SignInEvent(
+                              email: _emailTextController.text,
+                              password: _passwordTextController.text));
                         }
-                      }, 
+                      },
                     ),
                   ),
                   SizedBox(height: 20.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Create new account? ", style: AppStyle.defaultStyle,),
-                      InkWell(
-                        onTap: () {
-                          Navigator.pushNamed(context, RouteName.signUpScreen);
-                        },
-                        child: Text("Sign Up ", style: AppStyle.defaultStyle.copyWith(color: AppColors.buttonColor),)
+                      Text(
+                        "Create new account? ",
+                        style: AppStyle.defaultStyle,
                       ),
+                      InkWell(
+                          onTap: () {
+                            Navigator.pushNamed(
+                                context, RouteName.signUpScreen);
+                          },
+                          child: Text(
+                            "Sign Up ",
+                            style: AppStyle.defaultStyle
+                                .copyWith(color: AppColors.buttonColor),
+                          )),
                     ],
                   ),
-                  
                   SizedBox(height: 20.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       GestureDetector(
                         onTap: () {
-                          BlocProvider.of<AuthBloc>(context).add(SignInWithGoogleEvent());
+                          BlocProvider.of<AuthBloc>(context)
+                              .add(SignInWithGoogleEvent());
                         },
                         child: SizedBox(
                           height: 64.h,
@@ -134,7 +141,9 @@ class _SignInScreenState extends State<SignInScreen> {
                           child: Image.asset(AppAssets.imgGoogle),
                         ),
                       ),
-                      SizedBox(width: 20.w,),
+                      SizedBox(
+                        width: 20.w,
+                      ),
                       SizedBox(
                         height: 64.h,
                         width: 64.w,
@@ -152,70 +161,76 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   void _onListenerSignIn(Object? state, BuildContext context) {
-    if(state is SignInState){
-      if(state.isLoading == true){
+    if (state is SignInState) {
+      if (state.isLoading == true) {
         DialogLoading.show(context);
       }
-    
-      if(state.signInSuccess == true){
-        context.read<DataAppProvider>().setData(user: FirebaseAuth.instance.currentUser);
-        Navigator.pushNamedAndRemoveUntil(context, RouteName.mainScreen, (route) => false);
+
+      if (state.signInSuccess == true) {
+        Navigator.pushNamedAndRemoveUntil(
+            context, RouteName.mainScreen, (route) => false);
       }
-    
-      if(state.error != null){
+
+      if (state.error != null) {
         Navigator.pop(context);
-        if(state.error is TimeOutException){
-          DialogError.show(context, "Đã có lỗi xảy ra, vui lòng kiêm tra lại đường truyền");
-        }else{
-          if(state.error is UserNotFoundException){
-            DialogError.show(context, "Email này chưa được đăng kí trên hệ thống");
-          }else{
-            if(state.error is WrongPasswordException){
+        if (state.error is TimeOutException) {
+          DialogError.show(
+              context, "Đã có lỗi xảy ra, vui lòng kiêm tra lại đường truyền");
+        } else {
+          if (state.error is UserNotFoundException) {
+            DialogError.show(
+                context, "Email này chưa được đăng kí trên hệ thống");
+          } else {
+            if (state.error is WrongPasswordException) {
               DialogError.show(context, "Mật khẩu không chính xác");
-            }else{
-              DialogError.show(context, "Đã có lỗi xảy ra, vui lòng thử lại sao");
+            } else {
+              DialogError.show(
+                  context, "Đã có lỗi xảy ra, vui lòng thử lại sao");
             }
           }
         }
       }
     }
 
-    if(state is SignInWithGoogleState){
-      if(state.isLoading == true){
+    if (state is SignInWithGoogleState) {
+      if (state.isLoading == true) {
         DialogLoading.show(context);
       }
-      if(state.isSuccess == true){
-        context.read<DataAppProvider>().setData(user: FirebaseAuth.instance.currentUser);
-        Navigator.pushNamedAndRemoveUntil(context, RouteName.mainScreen, (route) => false);
+      if (state.isSuccess == true) {
+        Navigator.pushNamedAndRemoveUntil(
+            context, RouteName.mainScreen, (route) => false);
       }
-      if(state.error != null){
-        if(state.error is TimeOutException){
-          DialogError.show(context, "Đã có lỗi xảy ra, vui lòng kiêm tra lại đường truyền");
-        }else{
+      if (state.error != null) {
+        if (state.error is TimeOutException) {
+          DialogError.show(
+              context, "Đã có lỗi xảy ra, vui lòng kiêm tra lại đường truyền");
+        } else {
           DialogError.show(context, "Đã có lỗi xảy ra, vui lòng thử lại sao");
         }
       }
     }
   }
 
-  String? validatorEmail(String? value){
-    final bool emailValid = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$').hasMatch(value ?? "");
+  String? validatorEmail(String? value) {
+    final bool emailValid =
+        RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$')
+            .hasMatch(value ?? "");
 
-    if(value == null || value.isEmpty){
+    if (value == null || value.isEmpty) {
       return "Vui lòng nhập thông tin";
-    }else{
-      if(!emailValid){
+    } else {
+      if (!emailValid) {
         return "Địa chỉ email không hợp lệ";
       }
     }
     return null;
   }
 
-  String? validatorPassword(String? value){
-    if(value == null || value.isEmpty){
+  String? validatorPassword(String? value) {
+    if (value == null || value.isEmpty) {
       return "Vui lòng nhập thông tin";
-    }else{
-      if(value.length < 6){
+    } else {
+      if (value.length < 6) {
         return "Mật khẩu phải lớn hơn 6 kí tự";
       }
     }

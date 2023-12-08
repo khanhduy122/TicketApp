@@ -1,7 +1,7 @@
-
 import 'package:ticket_app/models/cinema.dart';
 
 class CinemaCity {
+  String? name;
 
   List<Cinema>? all;
 
@@ -13,14 +13,15 @@ class CinemaCity {
 
   CinemaCity({required this.cgv, required this.galaxy, required this.lotte});
 
-  CinemaCity.fromJson(Map<String, dynamic> json){
+  CinemaCity.fromJson(Map<String, dynamic> json) {
+    name = json["name"];
     cgv = (json['CGV'] as List<dynamic>)
         .map((e) => Cinema.fromJson(e as Map<String, dynamic>))
         .toList();
     galaxy = (json['Galaxy'] as List<dynamic>)
         .map((e) => Cinema.fromJson(e as Map<String, dynamic>))
         .toList();
-    lotte =  (json['Lotte'] as List<dynamic>)
+    lotte = (json['Lotte'] as List<dynamic>)
         .map((e) => Cinema.fromJson(e as Map<String, dynamic>))
         .toList();
   }

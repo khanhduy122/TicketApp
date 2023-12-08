@@ -119,7 +119,7 @@ class _DetailMovieScreenState extends State<DetailMovieScreen>
                           height: 10.h,
                         ),
                         RatingWidget(
-                            rating: 4.5, total: widget.movie.totalReview ?? 0),
+                            rating: widget.movie.rating ?? 0, total: widget.movie.totalReview ?? 0),
                         SizedBox(
                           height: 10.h,
                         ),
@@ -128,7 +128,9 @@ class _DetailMovieScreenState extends State<DetailMovieScreen>
                                 title: "Đặt vé",
                                 height: 30.h,
                                 width: 80.w,
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.pushNamed(context, RouteName.selectFilterMovie, arguments: widget.movie.name);
+                                },
                               )
                             : Container()
                       ],

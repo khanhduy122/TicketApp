@@ -10,4 +10,5 @@ class RouteName{
   static const String detailMovieScreen = "detailMovieScreen";
   static const String playVideoTrailerScreen = "playVideoTrailerScreen";
   static const String allReviewScreen= "allReviewScreen";
+  static const String selectFilterMovie = "selectFilterMovie";
 }

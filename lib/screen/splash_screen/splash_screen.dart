@@ -18,7 +18,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   final GetDataAppBloc getDataAppBloc = GetDataAppBloc();
 
   @override
@@ -28,8 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   @override
-  Widget build(BuildContext context) { 
-
+  Widget build(BuildContext context) {
     return BlocListener(
       bloc: getDataAppBloc,
       listenWhen: (previous, current) {
@@ -43,36 +41,44 @@ class _SplashScreenState extends State<SplashScreen> {
           child: SizedBox(
             height: 120.h,
             width: 120.w,
-            child: Image.asset(AppAssets.imgLogo, fit: BoxFit.fill,),
+            child: Image.asset(
+              AppAssets.imgLogo,
+              fit: BoxFit.fill,
+            ),
           ),
         ),
       ),
     );
   }
 
-  void _listenerSplash(Object? state, BuildContext context, Future<void> Function(BuildContext context) checkIsFirst) {
-    if(state is GetDataAppState){
-      if(state.homeData != null && state.cinemasRecommended != null){
-        context.read<DataAppProvider>().setData(homeData: state.homeData, reconmmedCinemas:state.cinemasRecommended);
+  void _listenerSplash(Object? state, BuildContext context,
+      Future<void> Function(BuildContext context) checkIsFirst) {
+    if (state is GetDataAppState) {
+      if (state.homeData != null && state.cinemasRecommended != null) {
+        context.read<DataAppProvider>().setHomeData(homeData: state.homeData!);
+        context
+            .read<DataAppProvider>()
+            .setRecommendedCinema(cinemas: state.cinemasRecommended!);
         checkIsFirst(context);
       }
     }
   }
 
-  Future<void> checkIsFirst(BuildContext context) async{
-    if(FirebaseAuth.instance.currentUser != null){
-      context.read<DataAppProvider>().user!.reload();
-      Navigator.pushNamedAndRemoveUntil(context, RouteName.mainScreen, (route) => false);
-    }else{
+  Future<void> checkIsFirst(BuildContext context) async {
+    if (FirebaseAuth.instance.currentUser != null) {
+      Navigator.pushNamedAndRemoveUntil(
+          context, RouteName.mainScreen, (route) => false);
+    } else {
       await SharedPreferences.getInstance().then((prefs) {
-        if(prefs.getBool(AppKey.checkIsFirstKey) == null){
+        if (prefs.getBool(AppKey.checkIsFirstKey) == null) {
           prefs.setBool(AppKey.checkIsFirstKey, true);
-          Navigator.pushNamedAndRemoveUntil(context, RouteName.onBoardingScreen, (route) => false);
-        }else{
-          Navigator.pushNamedAndRemoveUntil(context, RouteName.signInScreen, (route) => false);
+          Navigator.pushNamedAndRemoveUntil(
+              context, RouteName.onBoardingScreen, (route) => false);
+        } else {
+          Navigator.pushNamedAndRemoveUntil(
+              context, RouteName.signInScreen, (route) => false);
         }
       });
     }
   }
-
 }

@@ -50,5 +50,7 @@
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>This app needs access to location when in the background.</string>
 	<key>NSAppTransportSecurity</key>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Replace with your permission description.</string>
 </dict>
 </plist>

@@ -5,12 +5,22 @@ import 'package:ticket_app/components/app_colors.dart';
 import 'package:ticket_app/components/app_styles.dart';
 
 class TextFormFieldWidget extends StatefulWidget {
-  const TextFormFieldWidget({super.key,  required this.label, this.obscureText , this.textInputAction, this.initValue , this.controller, this.onChanged, this.validator});
+  const TextFormFieldWidget(
+      {super.key,
+      required this.label,
+      this.obscureText,
+      this.textInputAction,
+      this.initValue,
+      this.controller,
+      this.onChanged,
+      this.validator,
+      this.readOnly});
 
   final String label;
   final TextInputAction? textInputAction;
   final bool? obscureText;
   final String? initValue;
+  final bool? readOnly;
   final TextEditingController? controller;
   final Function(String value)? onChanged;
   final String? Function(String? value)? validator;
@@ -26,7 +36,7 @@ class _TextFormFieldWidgetState extends State<TextFormFieldWidget> {
   void initState() {
     super.initState();
     isShowHidePasseword = widget.obscureText ?? false;
-    if(widget.controller != null && widget.initValue != null){
+    if (widget.controller != null && widget.initValue != null) {
       widget.controller!.text = widget.initValue!;
     }
   }
@@ -35,7 +45,10 @@ class _TextFormFieldWidgetState extends State<TextFormFieldWidget> {
   Widget build(BuildContext context) {
     return TextFormField(
       controller: widget.controller,
-      initialValue: (widget.initValue != null && widget.controller == null) ? widget.initValue : null,
+      readOnly: widget.readOnly ?? false,
+      initialValue: (widget.initValue != null && widget.controller == null)
+          ? widget.initValue
+          : null,
       style: AppStyle.defaultStyle,
       obscureText: isShowHidePasseword,
       textInputAction: widget.textInputAction,
@@ -43,54 +56,41 @@ class _TextFormFieldWidgetState extends State<TextFormFieldWidget> {
       validator: widget.validator,
       decoration: InputDecoration(
         label: Text(widget.label, style: AppStyle.defaultStyle),
-        suffixIcon: widget.obscureText != null ? GestureDetector(
-          onTap: () {
-            setState(() {
-              isShowHidePasseword = !isShowHidePasseword;
-            });
-          },
-          child: Container(
-            height: 10.h,
-            width: 10.w,
-            margin: EdgeInsets.only(right: 10.w),
-            child: Image.asset(isShowHidePasseword ? AppAssets.icHidePassword : AppAssets.icShowPassword, fit: BoxFit.scaleDown,),
-          ),
-        ) : null,
-
+        suffixIcon: widget.obscureText != null
+            ? GestureDetector(
+                onTap: () {
+                  setState(() {
+                    isShowHidePasseword = !isShowHidePasseword;
+                  });
+                },
+                child: Container(
+                  height: 10.h,
+                  width: 10.w,
+                  margin: EdgeInsets.only(right: 10.w),
+                  child: Image.asset(
+                    isShowHidePasseword
+                        ? AppAssets.icHidePassword
+                        : AppAssets.icShowPassword,
+                    fit: BoxFit.scaleDown,
+                  ),
+                ),
+              )
+            : null,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(
-            color: AppColors.textColor
-          )
-        ),
-
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: AppColors.textColor)),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(
-            color: AppColors.buttonColor
-          )
-        ),
-
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: AppColors.buttonColor)),
         disabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(
-            color: AppColors.textColor
-          )
-        ),
-
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: AppColors.textColor)),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(
-            color: AppColors.red
-          )
-        ),
-
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: AppColors.red)),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(
-            color: AppColors.textColor
-          )
-        ),
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: AppColors.textColor)),
       ),
     );
   }

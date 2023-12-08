@@ -8,7 +8,7 @@ AppBar appBarWidget({required String title}){
   return AppBar(
     leading: const ButtonBackWidget(),
     centerTitle: true,
-    title: Text(title, style: AppStyle.titleStyle,),
+    title: Text(title, style: AppStyle.titleStyle, maxLines: 2,),
     elevation: 0,
     backgroundColor: AppColors.background,
   );

@@ -73,14 +73,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState>{
     try {
       googleUser = await googleSignIn.signIn().catchError((onError) => null);
     } catch (e) {
-      // print(e);
     }
 
     try {
-      // final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn().timeout(
-      //   const Duration(seconds: 20),
-      //   onTimeout: () => throw TimeOutException(),
-      // );
       if(googleUser != null){
         final GoogleSignInAuthentication googleAuth = await googleUser.authentication.timeout(
         const Duration(seconds: 20),

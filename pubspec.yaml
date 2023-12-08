@@ -58,6 +58,9 @@ dependencies:
   geocoding: ^2.1.1
   chewie: ^1.7.4
   video_player: ^2.8.1
+  permission_handler: ^11.0.1
+  image_picker: ^1.0.4
+  firebase_storage: ^11.5.3
 
 dev_dependencies:
   flutter_test:

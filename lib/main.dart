@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +11,7 @@ import 'package:ticket_app/components/app_colors.dart';
 import 'package:ticket_app/components/routes/router.dart';
 import 'package:ticket_app/firebase_options.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
+import 'package:ticket_app/moduels/user/user_bloc.dart';
 import 'package:ticket_app/screen/auth_screen/blocs/auth_bloc.dart';
 import 'package:ticket_app/screen/splash_screen/splash_screen.dart';
 
@@ -46,9 +48,16 @@ class MyApp extends StatelessWidget {
           builder: (_, child) {
             return ChangeNotifierProvider(
               create: (context) => DataAppProvider(),
-              child: BlocProvider(
-                create: (context) => AuthBloc(),
-                child: child,
+              child: MultiBlocProvider(
+                providers: [
+                  BlocProvider(
+                    create: (context) => AuthBloc(),
+                  ),
+                  BlocProvider(
+                    create: (context) => UserBloc(),
+                  ),
+                ],
+                child: child!,
               ),
             );
           },
