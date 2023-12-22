@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ticket_app/components/app_assets.dart';
 import 'package:ticket_app/components/app_colors.dart';
 import 'package:ticket_app/components/app_styles.dart';
+import 'package:ticket_app/components/dialogs/dialog_error.dart';
+import 'package:ticket_app/components/dialogs/dialog_loading.dart';
 import 'package:ticket_app/components/logger.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
+import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/models/movie.dart';
 import 'package:ticket_app/models/review.dart';
+import 'package:ticket_app/moduels/get_cinema_in_city/get_cinema_in_city_bloc.dart';
+import 'package:ticket_app/moduels/get_cinema_in_city/get_cinema_in_city_event.dart';
+import 'package:ticket_app/moduels/get_cinema_in_city/get_cinema_in_city_state.dart';
+import 'package:ticket_app/screen/auth_screen/blocs/auth_exception.dart';
 import 'package:ticket_app/widgets/button_widget.dart';
 import 'package:ticket_app/widgets/image_network_widget.dart';
 import 'package:ticket_app/widgets/rating_widget.dart';
@@ -21,9 +29,11 @@ class DetailMovieScreen extends StatefulWidget {
   State<DetailMovieScreen> createState() => _DetailMovieScreenState();
 }
 
-class _DetailMovieScreenState extends State<DetailMovieScreen>
-    with TickerProviderStateMixin {
+class _DetailMovieScreenState extends State<DetailMovieScreen> with TickerProviderStateMixin {
+
   late final TabController _tabController;
+  final GetCinemasBloc getCinemasBloc = GetCinemasBloc();
+
 
   @override
   void initState() {
@@ -32,27 +42,55 @@ class _DetailMovieScreenState extends State<DetailMovieScreen>
   }
 
   @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    debugLog(widget.movie.reviews!.length.toString());
 
-    return DefaultTabController(
-      initialIndex: 0,
-      length: 2,
-      animationDuration: const Duration(milliseconds: 300),
-      child: Scaffold(
-        body: Column(
-          children: [
-            _buidAppBar(size),
-            SizedBox(
-              height: 20.h,
-            ),
-            _buildTabBar(size),
-            SizedBox(
-              height: 20.h,
-            ),
-            Expanded(child: _buildTabView())
-          ],
+    return BlocListener(
+      bloc: getCinemasBloc,
+      listener: (_, state) {
+        if(state is GetCinemasForMovieState){
+          if(state.isLoading = true){
+            DialogLoading.show(context);
+          }
+
+          if(state.cinemaCity != null){
+            Navigator.of(context).pop();
+            Navigator.pushNamed(context, RouteName.selectCinemaScreen, arguments: {"movie": widget.movie, "cinemaCity": state.cinemaCity});
+          }
+
+          if(state.error != null){
+            if(state.error is TimeOutException){
+              DialogError.show(context, "Đã có lỗi xẩy ra, vui lòng kiểm tra lại đường truyền");
+            }else{
+              DialogError.show(context, "Đã có lỗi xảy ra vui lòng thử lại sao");
+            }
+          }
+        }
+      },
+      child: DefaultTabController(
+        initialIndex: 0,
+        length: 2,
+        animationDuration: const Duration(milliseconds: 300),
+        child: Scaffold(
+          body: Column(
+            children: [
+              _buidAppBar(size),
+              SizedBox(
+                height: 20.h,
+              ),
+              _buildTabBar(size),
+              SizedBox(
+                height: 20.h,
+              ),
+              Expanded(child: _buildTabView())
+            ],
+          ),
         ),
       ),
     );
@@ -87,7 +125,7 @@ class _DetailMovieScreenState extends State<DetailMovieScreen>
               child: Row(
                 children: [
                   ImageNetworkWidget(
-                    url: widget.movie.thumbnail,
+                    url: widget.movie.thumbnail!,
                     height: 150.h,
                     width: 100.w,
                     boxFit: BoxFit.fill,
@@ -102,7 +140,7 @@ class _DetailMovieScreenState extends State<DetailMovieScreen>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.movie.name,
+                          widget.movie.name!,
                           maxLines: 3,
                           style: AppStyle.subTitleStyle,
                         ),
@@ -129,7 +167,12 @@ class _DetailMovieScreenState extends State<DetailMovieScreen>
                                 height: 30.h,
                                 width: 80.w,
                                 onPressed: () {
-                                  Navigator.pushNamed(context, RouteName.selectFilterMovie, arguments: widget.movie.name);
+                                  String currentCityName = context.read<DataAppProvider>().cityNameCurrent;
+                                  DateTime now = DateTime.now();
+                                  String currentDate = "${now.day}-${now.month}-${now.year}";
+                                  getCinemasBloc.add(
+                                    GetCinemasForMovieEvent(cityName: currentCityName, movieID: widget.movie.id!, date: currentDate)
+                                  );
                                 },
                               )
                             : Container()
@@ -188,18 +231,18 @@ class _DetailMovieScreenState extends State<DetailMovieScreen>
               height: 10.h,
             ),
             Text(
-              widget.movie.content,
+              widget.movie.content ?? "",
               style: AppStyle.defaultStyle,
             ),
             SizedBox(
               height: 20.h,
             ),
-            _itemInformation("Ngày Phát Hành", widget.movie.date),
+            _itemInformation("Ngày Phát Hành", widget.movie.date ?? ""),
             _itemInformation("Đạo diễn", widget.movie.director ?? ""),
             _itemInformation("Ngôn ngữ", widget.movie.getLanguages()),
             _itemInformation("Thời lượng", "${widget.movie.duration} phút"),
             _itemInformation("Thể loại", widget.movie.getCaterogies()),
-            _itemInformation("Quốc gia sản xuất", widget.movie.nation),
+            _itemInformation("Quốc gia sản xuất", widget.movie.nation ?? ""),
             SizedBox(
               height: 20.h,
             ),
@@ -264,14 +307,14 @@ class _DetailMovieScreenState extends State<DetailMovieScreen>
       height: 100.h,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: widget.movie.actors.length,
+        itemCount: widget.movie.actors!.length,
         itemBuilder: (context, index) {
           return Container(
             margin: EdgeInsets.only(right: 10.w),
             child: Column(
               children: [
                 ImageNetworkWidget(
-                  url: widget.movie.actors[index].thumbnail,
+                  url: widget.movie.actors![index].thumbnail,
                   height: 70.h,
                   width: 70.w,
                   borderRadius: 10.h,
@@ -280,7 +323,7 @@ class _DetailMovieScreenState extends State<DetailMovieScreen>
                   height: 10.h,
                 ),
                 Text(
-                  widget.movie.actors[index].name,
+                  widget.movie.actors![index].name,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: AppStyle.defaultStyle.copyWith(fontSize: 10.sp),

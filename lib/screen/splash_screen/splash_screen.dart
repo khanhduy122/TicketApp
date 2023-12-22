@@ -6,8 +6,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ticket_app/components/app_assets.dart';
 import 'package:ticket_app/components/app_key.dart';
+import 'package:ticket_app/components/dialogs/dialog_error.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
+import 'package:ticket_app/screen/auth_screen/blocs/auth_exception.dart';
 import 'package:ticket_app/screen/splash_screen/bloc/get_data_app_bloc.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -24,17 +26,19 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     getDataAppBloc.add(GetDataAppEvent());
+
   }
 
   @override
   Widget build(BuildContext context) {
+    
     return BlocListener(
       bloc: getDataAppBloc,
       listenWhen: (previous, current) {
         return current is GetDataAppState;
       },
       listener: (_, state) async {
-        _listenerSplash(state, context, checkIsFirst);
+        _listenerSplash(state, context);
       },
       child: Scaffold(
         body: Center(
@@ -51,8 +55,7 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-  void _listenerSplash(Object? state, BuildContext context,
-      Future<void> Function(BuildContext context) checkIsFirst) {
+  void _listenerSplash(Object? state, BuildContext context) {
     if (state is GetDataAppState) {
       if (state.homeData != null && state.cinemasRecommended != null) {
         context.read<DataAppProvider>().setHomeData(homeData: state.homeData!);
@@ -60,6 +63,14 @@ class _SplashScreenState extends State<SplashScreen> {
             .read<DataAppProvider>()
             .setRecommendedCinema(cinemas: state.cinemasRecommended!);
         checkIsFirst(context);
+      }
+
+      if(state.error != null){
+        if(state.error is TimeOutException){
+          DialogError.show(context, "Đã có lỗi xảy ra, vui lòng kiểm tra lại đường truyền");
+        }else{
+          DialogError.show(context, "Đã có lỗi xảy ra, vui lòng thử lại sau");
+        }
       }
     }
   }

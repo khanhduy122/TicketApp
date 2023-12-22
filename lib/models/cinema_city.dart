@@ -11,7 +11,7 @@ class CinemaCity {
 
   List<Cinema>? galaxy;
 
-  CinemaCity({required this.cgv, required this.galaxy, required this.lotte});
+  CinemaCity({required this.cgv, required this.galaxy, required this.lotte, required this.all, required this.name});
 
   CinemaCity.fromJson(Map<String, dynamic> json) {
     name = json["name"];

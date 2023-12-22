@@ -5,44 +5,50 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ticket_app/components/app_assets.dart';
 import 'package:ticket_app/components/app_colors.dart';
 import 'package:ticket_app/components/app_styles.dart';
+import 'package:ticket_app/components/dialogs/dialog_error.dart';
+import 'package:ticket_app/components/dialogs/dialog_loading.dart';
 import 'package:ticket_app/components/logger.dart';
 import 'package:ticket_app/models/cinema.dart';
 import 'package:ticket_app/models/cinema_city.dart';
 import 'package:ticket_app/models/cities.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
+import 'package:ticket_app/models/movie.dart';
+import 'package:ticket_app/moduels/get_cinema_in_city/get_cinema_in_city_bloc.dart';
+import 'package:ticket_app/moduels/get_cinema_in_city/get_cinema_in_city_event.dart';
+import 'package:ticket_app/moduels/get_cinema_in_city/get_cinema_in_city_state.dart';
+import 'package:ticket_app/screen/auth_screen/blocs/auth_exception.dart';
+import 'package:ticket_app/screen/select_filter_movie/widget/item_day_widget.dart';
+import 'package:ticket_app/screen/select_filter_movie/widget/item_time_widget.dart';
 import 'package:ticket_app/widgets/appbar_widget.dart';
 import 'package:ticket_app/widgets/image_network_widget.dart';
 
-class SelectFilterMovieSscreen extends StatefulWidget {
-  const SelectFilterMovieSscreen({super.key, required this.moviename});
+class SelectCinemaScreen extends StatefulWidget {
+  const SelectCinemaScreen({super.key, required this.movie, required this.cinemaCity,});
 
-  final String moviename;
+  final Movie movie;
+  final CinemaCity cinemaCity;
 
   @override
-  State<SelectFilterMovieSscreen> createState() => _SelectFilterMovieSscreenState();
+  State<SelectCinemaScreen> createState() => _SelectCinemaScreenState();
 }
 
-class _SelectFilterMovieSscreenState extends State<SelectFilterMovieSscreen> {
+class _SelectCinemaScreenState extends State<SelectCinemaScreen> {
 
   String? _selectCity;
   int currentSelectedDateIndex = 0;
   int currentSelectedMovieTimeIndex = 0;
   int currentSelctCinemaTypeIndex = 0;
-  final List<String> days = [];
-  final List<String> movieTime = ["Tất cả", "00:00 - 03:00", "03:00 - 06-00", "06:00 - 09:00", "09:00 - 12:00", "12:00 - 15:00", "15:00 - 18:00", "18:00 - 21:00", "21:00 - 24:00"];
-  final TextEditingController _searchCityTextController =
-      TextEditingController();
+  final List<DateTime> listDateTime = [];
+  final TextEditingController _searchCityTextController = TextEditingController();
   final DateTime currentDate = DateTime.now();
-  CinemaCity? _reconmmedCinemas;
-  List<Cinema>? _recomendCinemaSelect;
+  CinemaCity? _allReconmmedCinemas;
+  List<Cinema> _recomendCinemaSelect = [];
+  final GetCinemasBloc getCinemasBloc = GetCinemasBloc();
 
   @override
   void initState() {
     super.initState();
-    _reconmmedCinemas = context.read<DataAppProvider>().reconmmedCinemas;
-    _recomendCinemaSelect = _reconmmedCinemas!.all!.sublist(0);
-    _selectCity = context.read<DataAppProvider>().cityNameCurrent;
-    _initDays();
+    initListCinem();
   }
 
   @override
@@ -54,28 +60,51 @@ class _SelectFilterMovieSscreenState extends State<SelectFilterMovieSscreen> {
   @override
   Widget build(BuildContext context) {
 
-    debugLog(DateTime.now().weekday.toString());
+    return BlocListener(
+      bloc: getCinemasBloc,
+      listener: (context, state) {
+        if(state is GetCinemasForMovieState){
+          if(state.isLoading = true){
+            DialogLoading.show(context);
+          }
 
-    return Scaffold(
-      appBar: appBarWidget(title: widget.moviename),
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Column(
-            children: [
-              SizedBox(height: 20.h,),
-              _searchCity(),
-              SizedBox(height: 20.h,),
-              _buildSelectDate(),
-              SizedBox(height: 20.h,),
-              _buildSelectTimeCGVCinema(),
-              SizedBox(height: 20.h,),
-              _builSelectCinemaType(),
-              SizedBox(height: 20.h,),
-              _buildRecomendCinema()
-            ],
-          ),
-        )
+          if(state.cinemaCity != null){
+            Navigator.of(context).pop();
+            setState(() {
+               _allReconmmedCinemas = state.cinemaCity;
+               currentSelctCinemaTypeIndex = 0;
+               _recomendCinemaSelect = _allReconmmedCinemas!.all!.sublist(0);
+            });
+          }
+
+          if(state.error != null){
+            if(state.error is TimeOutException){
+              DialogError.show(context, "Đã có lỗi xẩy ra, vui lòng kiểm tra lại đường truyền");
+            }else{
+              DialogError.show(context, "Đã có lỗi xảy ra vui lòng thử lại sao");
+            }
+          }
+        }
+      },
+      child: Scaffold(
+        appBar: appBarWidget(title: widget.movie.name),
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: Column(
+              children: [
+                SizedBox(height: 20.h,),
+                _searchCity(),
+                SizedBox(height: 20.h,),
+                _buildSelectDate(),
+                SizedBox(height: 20.h,),
+                _builSelectCinemaType(),
+                SizedBox(height: 20.h,),
+                _buildRecomendCinema()
+              ],
+            ),
+          )
+        ),
       ),
     );
   }
@@ -102,9 +131,10 @@ class _SelectFilterMovieSscreenState extends State<SelectFilterMovieSscreen> {
               );
             }).toList(),
             onChanged: (value) {
-              setState(() {
-                _selectCity = value!;
-              });
+              _selectCity = value!;
+              DateTime dateTime = listDateTime[currentSelectedDateIndex];
+              String dateSelected = "${dateTime.day}-${dateTime.month}-${dateTime.year}";
+              getCinemasBloc.add(GetCinemasForMovieEvent(cityName: _selectCity!, movieID: widget.movie.id!, date: dateSelected));
             },
             buttonStyleData: const ButtonStyleData(
               height: 40,
@@ -174,87 +204,18 @@ class _SelectFilterMovieSscreenState extends State<SelectFilterMovieSscreen> {
         scrollDirection: Axis.horizontal,
         itemCount: 14,
         itemBuilder: (context, index) {
-          return _buildItemSelectDate(
-            day: days[index], 
+          return ItemDayWidget(
+            day: listDateTime[index].day, 
             isActive: index == currentSelectedDateIndex, 
             onTap: () {
-              setState(() {
-                currentSelectedDateIndex = index;
-              });
+              currentSelectedDateIndex = index;
+              DateTime dateTime = listDateTime[index];
+              String dateSelected = "${dateTime.day}-${dateTime.month}-${dateTime.year}";
+              getCinemasBloc.add(GetCinemasForMovieEvent(cityName: _selectCity!, movieID: widget.movie.id!, date: dateSelected));
             },
           );
         },
       ),
-    );
-  }
-
-  Widget _buildSelectTimeCGVCinema(){
-    return SizedBox(
-      height: 40.h,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: 5,
-        itemBuilder: (context, index) {
-          return _buildItemSelectTime(
-            time: movieTime[index], 
-            isActive: currentSelectedMovieTimeIndex == index, 
-            onTap: () {
-              setState(() {
-                  currentSelectedMovieTimeIndex = index;
-              });
-            },
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildItemSelectDate({required String day, required bool isActive, required Function() onTap}){
-    return Row(
-      children: [
-        GestureDetector(
-          onTap: onTap,
-          child: Container(
-            height: 60.h,
-            width: 50.w,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: isActive ? AppColors.buttonColor : AppColors.darkBackground,
-              borderRadius: BorderRadius.circular(10.r)
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text("Ngày", style: AppStyle.defaultStyle.copyWith(fontWeight: FontWeight.w500, fontSize: 12.sp),),
-                SizedBox(height: 5.h,),
-                Text(day, style: AppStyle.titleStyle.copyWith(fontWeight: FontWeight.w400),)
-              ],
-            ),
-          ),
-        ),
-        SizedBox(width: 10.w,)
-      ],
-    );
-  }
-
-  Widget _buildItemSelectTime({required String time, required bool isActive, required Function() onTap}){
-    return Row(
-      children: [
-        GestureDetector(
-          onTap: onTap,
-          child: Container(
-            height: 40.h,
-            width: 90.w,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: isActive ? AppColors.buttonColor : AppColors.darkBackground,
-              borderRadius: BorderRadius.circular(10.r)
-            ),
-            child: Text(time, style: AppStyle.defaultStyle.copyWith(fontSize: 12.sp),),
-          ),
-        ),
-        SizedBox(width: 10.w,)
-      ],
     );
   }
 
@@ -266,7 +227,7 @@ class _SelectFilterMovieSscreenState extends State<SelectFilterMovieSscreen> {
         children: [
           GestureDetector(
             onTap: () {
-              
+              onTapCinemaType(0);
             },
             child: Stack(
               children: [
@@ -312,7 +273,7 @@ class _SelectFilterMovieSscreenState extends State<SelectFilterMovieSscreen> {
             isACtive: currentSelctCinemaTypeIndex == 1,
             img: AppAssets.imgCGV,
             onTap: () {
-              
+              onTapCinemaType(1);
             },
           ),
           SizedBox(
@@ -323,7 +284,7 @@ class _SelectFilterMovieSscreenState extends State<SelectFilterMovieSscreen> {
             isACtive: currentSelctCinemaTypeIndex == 2,
             img: AppAssets.imgLotte,
             onTap: () {
-              
+              onTapCinemaType(2);
             },
           ),
           SizedBox(
@@ -334,7 +295,7 @@ class _SelectFilterMovieSscreenState extends State<SelectFilterMovieSscreen> {
             isACtive: currentSelctCinemaTypeIndex == 3,
             img: AppAssets.imgGalaxy,
             onTap: () {
-              
+              onTapCinemaType(3);
             },
           ),
         ],
@@ -378,7 +339,7 @@ class _SelectFilterMovieSscreenState extends State<SelectFilterMovieSscreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+         Text(
             "Rạp Đề Xuất",
             style: AppStyle.titleStyle,
           ),
@@ -386,13 +347,13 @@ class _SelectFilterMovieSscreenState extends State<SelectFilterMovieSscreen> {
             height: 20.h,
           ),
           Expanded(
-            child: _recomendCinemaSelect!.isNotEmpty
+            child: _recomendCinemaSelect.isNotEmpty
                 ? ListView.builder(
-                    itemCount: _recomendCinemaSelect!.length,
+                    itemCount: _recomendCinemaSelect.length,
                     itemBuilder: (context, index) {
                       return Column(
                         children: [
-                          _buildItemCinema(cinema: _recomendCinemaSelect![index]),
+                          _buildItemShowTimesCinema(cinema: _recomendCinemaSelect[index],),
                           SizedBox(
                             height: 20.h,
                           )
@@ -420,7 +381,7 @@ class _SelectFilterMovieSscreenState extends State<SelectFilterMovieSscreen> {
     );
   }
 
-  Widget _buildItemCinema({required Cinema cinema}){
+  Widget _buildItemShowTimesCinema({required Cinema cinema}){
     bool isShowMore = false;
     return StatefulBuilder(
       builder: (context, setState) {
@@ -463,98 +424,157 @@ class _SelectFilterMovieSscreenState extends State<SelectFilterMovieSscreen> {
                       ],
                     ),
                   ),
-                  SizedBox(
-                      width: 80.w,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            cinema.getDistanceFormat(),
-                            style: AppStyle.defaultStyle
-                                .copyWith(color: AppColors.buttonColor, fontSize: 10.sp),
-                          ),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: AppColors.buttonColor,
-                            size: 20.h,
-                          )
-                        ],
-                      )),
+                  isShowMore ? 
+                  Container(
+                    width: 80.w,
+                    alignment: Alignment.centerRight,
+                    child: Icon(Icons.keyboard_arrow_down, color: AppColors.white, size: 30.h,)
+                  )
+                  : SizedBox(
+                    width: 80.w,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          cinema.getDistanceFormat(),
+                          style: AppStyle.defaultStyle
+                              .copyWith(color: AppColors.buttonColor, fontSize: 10.sp),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          color: AppColors.buttonColor,
+                          size: 20.h,
+                        )
+                      ],
+                    )
+                  ),
                 ],
               ),
               SizedBox(height: 10.h,),
               Visibility(
                 visible: isShowMore,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("2D Phụ Đề", style: AppStyle.titleStyle,),
-                    SizedBox(height: 10.h,),
-                    SizedBox(
-                      height: 40.h,
-                      child: GridView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(  
-                            crossAxisCount: 3,  
-                            mainAxisExtent: 40.h
-                        ), 
-                        itemCount: 5,
-                        itemBuilder: (context, index) {
-                          return _buildItemSelectTime(
-                            time: movieTime[index], 
-                            isActive: false, 
-                            onTap: () {
-                              
+                    (cinema.movies![0].subtitle == null || cinema.movies![0].subtitle!.isEmpty) ? Container() : 
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("2D Phụ Đề", style: AppStyle.titleStyle,),
+                        SizedBox(height: 10.h,),
+                        SizedBox(
+                          height: cinema.movies![0].subtitle!.length % 3 == 0 ? cinema.movies![0].subtitle!.length / 3 * 50.h : (cinema.movies![0].subtitle!.length / 3 + 1) * 50.h,
+                          child: GridView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(  
+                                crossAxisCount: 3, 
+                                mainAxisSpacing: 10.h, 
+                                mainAxisExtent: 40.h
+                            ), 
+                            itemCount: cinema.movies![0].subtitle!.length,
+                            itemBuilder: (context, index) {
+                              return ItemTimeWidget(
+                                time: cinema.movies![0].subtitle![index], 
+                                isActive: false, 
+                                onTap: () {
+                                  
+                                },
+                              );
                             },
-                          );
-                        },
-                      ),
+                          ),
+                        ),
+                        SizedBox(height: 10.h,),
+                      ],
                     ),
-                    SizedBox(height: 10.h,),
-                    Text("2D Lòng Tiếng", style: AppStyle.titleStyle,),
-                    SizedBox(height: 10.h,),
-                    SizedBox(
-                      height: 40.h,
-                      child: GridView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(  
-                            crossAxisCount: 3,  
-                            mainAxisExtent: 40.h
-                        ), 
-                        itemCount: 5,
-                        itemBuilder: (context, index) {
-                          return _buildItemSelectTime(
-                            time: movieTime[index], 
-                            isActive: false, 
-                            onTap: () {
-                              
+                    (cinema.movies![0].voice == null || cinema.movies![0].voice!.isEmpty) ? Container() :
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("2D Lòng Tiếng", style: AppStyle.titleStyle,),
+                        SizedBox(height: 10.h,),
+                        SizedBox(
+                          height: cinema.movies![0].voice!.length /3 * 50.h,
+                          child: GridView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(  
+                                crossAxisCount: 3, 
+                                mainAxisSpacing: 10.h, 
+                                mainAxisExtent: 40.h
+                            ), 
+                            itemCount: cinema.movies![0].voice!.length,
+                            itemBuilder: (context, index) {
+                              return ItemTimeWidget(
+                                time: cinema.movies![0].voice![index], 
+                                isActive: false, 
+                                onTap: () {
+                                  
+                                },
+                              );
                             },
-                          );
-                        },
-                      ),
+                          ),
+                        ),
+                      ],
                     ),
+                    SizedBox(height: 20.h,),
                   ],
-                ),
+                ) ,
               ),
-              SizedBox(height: 20.h,),
             ],
           ),
         );
       },
     );
-    
   }
 
   void _initDays(){
-    int currentDay = currentDate.day;
-    currentDay --;
+    DateTime now = DateTime.now();
+    int currentDay = now.day;
+    int currentMonth = now.month;
+    int currentYear = now.year;
+    listDateTime.add(DateTime(currentYear, currentMonth, currentDay));
     for(int i = 0; i < 14; i++){
       currentDay++;
-      if(currentDay > 311){
-        currentDay = 1;
+      if(currentMonth == 4 || currentMonth == 6 || currentMonth == 9 || currentMonth == 11){
+        if(currentDay > 30){
+          currentDay = 1;
+          currentMonth++;
+        }
       }
-      days.add(currentDay.toString());
+      if(currentMonth == 1 || currentMonth == 3 || currentMonth == 5 || currentMonth == 7 || currentMonth == 8 || currentMonth == 10 || currentMonth == 12){
+        if(currentDay > 31){
+          currentDay = 1;
+          currentMonth++;
+          if(currentDay > 12){
+            currentMonth = 1;
+            currentYear++;
+          }
+        }
+      }
+      listDateTime.add(DateTime(currentYear, currentMonth, currentDay));
     }
+    
+  }
+
+  void initListCinem(){
+    _allReconmmedCinemas = widget.cinemaCity;
+    _recomendCinemaSelect = _allReconmmedCinemas!.all!.sublist(0);
+    _selectCity = context.read<DataAppProvider>().cityNameCurrent;
+    _initDays();
+  }
+
+  void onTapCinemaType(int index){
+    setState(() {
+      currentSelctCinemaTypeIndex = index;
+      switch(index){
+        case 0 : _recomendCinemaSelect = _allReconmmedCinemas!.all!.sublist(0);
+          break;
+        case 1 : _recomendCinemaSelect = _allReconmmedCinemas!.cgv!.sublist(0);
+          break;
+        case 2 : _recomendCinemaSelect = _allReconmmedCinemas!.lotte!.sublist(0);
+          break;
+        case 3 : _recomendCinemaSelect = _allReconmmedCinemas!.galaxy!.sublist(0);
+          break;
+      }
+    });
     
   }
 

@@ -616,6 +616,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.2"
+  google_geocoding_api:
+    dependency: "direct main"
+    description:
+      name: google_geocoding_api
+      sha256: "5b01146ff8bf5dd6f59b0b38515b5b784b9e1007a3fc7929a6638c2de7d2c5d8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.1"
   google_identity_services_web:
     dependency: transitive
     description:

@@ -10,6 +10,7 @@ class DialogLoading {
     showDialog(
       barrierDismissible: false,
       context: context, 
+      useRootNavigator: false,
       builder: (context) {
         return Center(
           child: Container(

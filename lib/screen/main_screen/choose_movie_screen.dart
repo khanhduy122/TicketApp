@@ -131,7 +131,7 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
               ImageNetworkWidget(
                 height: 300,
                 width: 200,
-                url: nowShowing.thumbnail, 
+                url: nowShowing.thumbnail!, 
                 borderRadius: 10.h,
               ),
               Positioned(
@@ -153,7 +153,7 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
             ],
           ),
           SizedBox(height: 10.h,),
-          Text(nowShowing.name, 
+          Text(nowShowing.name!, 
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -261,7 +261,7 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
             child: Row(
               children: [
                 ImageNetworkWidget(
-                  url: comingSoon.thumbnail, 
+                  url: comingSoon.thumbnail!, 
                   height: 150.h, 
                   width: 100.w,
                   borderRadius: 10.h,
@@ -276,7 +276,7 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                           comingSoon.name, 
+                           comingSoon.name!, 
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: AppStyle.titleStyle,

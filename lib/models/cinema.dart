@@ -1,11 +1,13 @@
 
 import 'package:ticket_app/models/enum_model.dart';
+import 'package:ticket_app/models/movie.dart';
 
 class Cinema {
   String? id;
   String? thumbnail;
   String? name;
   CinemasType? cinemasType;
+  List<Movie>? movies;
   double? lat;
   double? long;
   double? distance;
@@ -18,9 +20,7 @@ class Cinema {
     address = json['address'] ?? "";
     name = json['name'] ?? "";
     thumbnail = json["thumbnail"];
-    cinemasType = name! == CinemasType.CGV.name 
-                ? CinemasType.CGV : name! == CinemasType.Lotte.name ? CinemasType.Lotte 
-                : CinemasType.Galaxy;
+    cinemasType = json["cinemas"] == "CGV" ? CinemasType.CGV : json["cinemas"] == "Lotte" ? CinemasType.Lotte : CinemasType.Galaxy;
     lat = json["lat"];
     long = json["long"];
   }

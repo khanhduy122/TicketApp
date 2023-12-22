@@ -39,7 +39,7 @@ class DialogError {
                   Text(message,  style: AppStyle.defaultStyle.copyWith(fontSize: 12.sp), textAlign: TextAlign.center,),
                   SizedBox(height: 40.h,),
                   ButtonWidget(
-                    title: "OK", 
+                    title: "Tiếp Tục", 
                     height: 50.h, 
                     width: 200.w, 
                     onPressed: () {

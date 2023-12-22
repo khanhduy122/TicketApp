@@ -1,8 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ticket_app/components/app_assets.dart';
 import 'package:ticket_app/components/app_colors.dart';
 import 'package:ticket_app/components/app_styles.dart';
+import 'package:ticket_app/components/logger.dart';
+import 'package:ticket_app/components/set_data_firebase.dart';
+import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/screen/main_screen/cinema_screen.dart';
 import 'package:ticket_app/screen/main_screen/voucher_screen.dart';
 import 'package:ticket_app/screen/main_screen/choose_movie_screen.dart';
@@ -15,14 +20,24 @@ class MainScreen extends StatefulWidget {
   State<MainScreen> createState() => _MainScreenState();
 }
 
+
+
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
   @override
+  void initState() {
+    super.initState();
+    // SetDataFirebase.initData(context);
+    debugLog("listMovieMain: ${context.read<DataAppProvider>().homeData.nowShowing.length}" );
+  }
+
+  @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       body:  IndexedStack(
-        index: _currentIndex,
+        index: _currentIndex, 
         children: const [
           ChooseMovieScreen(),
           CinemaScreen(),

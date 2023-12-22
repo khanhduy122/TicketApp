@@ -4,10 +4,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ticket_app/components/app_assets.dart';
 import 'package:ticket_app/components/app_colors.dart';
 import 'package:ticket_app/components/app_styles.dart';
+import 'package:ticket_app/components/dialogs/dialog_error.dart';
 import 'package:ticket_app/components/dialogs/dialog_loading.dart';
 import 'package:ticket_app/components/logger.dart';
 import 'package:ticket_app/models/movie.dart';
 import 'package:ticket_app/models/review.dart';
+import 'package:ticket_app/screen/auth_screen/blocs/auth_exception.dart';
 import 'package:ticket_app/screen/detail_movie_screen/bloc/get_review_movie_bloc.dart';
 import 'package:ticket_app/screen/detail_movie_screen/bloc/get_review_movie_event.dart';
 import 'package:ticket_app/screen/detail_movie_screen/bloc/get_review_movie_state.dart';
@@ -39,7 +41,7 @@ class _AllReviewScreenState extends State<AllReviewScreen>
   void initState() {
     super.initState();
     getReviewMovieBloc.add(
-        GetInitReviewMovieEvent(id: widget.movie.id, rating: currentIndex));
+        GetInitReviewMovieEvent(id: widget.movie.id!, rating: currentIndex));
   }
 
   @override
@@ -98,7 +100,7 @@ class _AllReviewScreenState extends State<AllReviewScreen>
                 currentIndex = 0;
                 currentIndexIndicator = 0;
                 getReviewMovieBloc.add(GetInitReviewMovieEvent(
-                    id: widget.movie.id, rating: currentIndex));
+                    id: widget.movie.id!, rating: currentIndex));
                 setState(() {});
               }
             },
@@ -137,7 +139,7 @@ class _AllReviewScreenState extends State<AllReviewScreen>
                 currentIndex = 1;
                 currentIndexIndicator = 0;
                 getReviewMovieBloc.add(GetInitReviewMovieEvent(
-                    id: widget.movie.id, rating: currentIndex));
+                    id: widget.movie.id!, rating: currentIndex));
                 setState(() {});
               }
             },
@@ -179,7 +181,7 @@ class _AllReviewScreenState extends State<AllReviewScreen>
                 currentIndex = 2;
                 currentIndexIndicator = 0;
                 getReviewMovieBloc.add(GetInitReviewMovieEvent(
-                    id: widget.movie.id, rating: currentIndex));
+                    id: widget.movie.id!, rating: currentIndex));
                 setState(() {});
               }
             },
@@ -193,7 +195,7 @@ class _AllReviewScreenState extends State<AllReviewScreen>
                 currentIndex = 3;
                 currentIndexIndicator = 0;
                 getReviewMovieBloc.add(GetInitReviewMovieEvent(
-                    id: widget.movie.id, rating: currentIndex));
+                    id: widget.movie.id!, rating: currentIndex));
                 setState(() {});
               }
             },
@@ -207,7 +209,7 @@ class _AllReviewScreenState extends State<AllReviewScreen>
                 currentIndex = 4;
                 currentIndexIndicator = 0;
                 getReviewMovieBloc.add(GetInitReviewMovieEvent(
-                    id: widget.movie.id, rating: currentIndex));
+                    id: widget.movie.id!, rating: currentIndex));
                 setState(() {});
               }
             },
@@ -221,7 +223,7 @@ class _AllReviewScreenState extends State<AllReviewScreen>
                 currentIndex = 5;
                 currentIndexIndicator = 0;
                 getReviewMovieBloc.add(GetInitReviewMovieEvent(
-                    id: widget.movie.id, rating: currentIndex));
+                    id: widget.movie.id!, rating: currentIndex));
                 setState(() {});
               }
             },
@@ -235,7 +237,7 @@ class _AllReviewScreenState extends State<AllReviewScreen>
                 currentIndex = 6;
                 currentIndexIndicator = 0;
                 getReviewMovieBloc.add(GetInitReviewMovieEvent(
-                    id: widget.movie.id, rating: currentIndex));
+                    id: widget.movie.id!, rating: currentIndex));
                 setState(() {});
               }
             },
@@ -501,6 +503,13 @@ class _AllReviewScreenState extends State<AllReviewScreen>
           reviewsDisplay = state.reviews!.sublist(0);
         });
       }
+      if(state.error != null){
+        if(state.error is TimeOutException){
+          DialogError.show(context, "Đã có lỗi xảy ra, vui lòng kiểm tra lại đường truyền");
+        }else{
+          DialogError.show(context, "Đã có lỗi xảy ra, vui lòng thử lại sau");
+        }
+      }
     }
 
     if (state is LoadMoreReviewMovieState) {
@@ -535,7 +544,7 @@ class _AllReviewScreenState extends State<AllReviewScreen>
       });
     } else {
       getReviewMovieBloc.add(
-          LoadMoreReviewMovieEvent(id: widget.movie.id, rating: currentIndex));
+          LoadMoreReviewMovieEvent(id: widget.movie.id!, rating: currentIndex));
     }
   }
 

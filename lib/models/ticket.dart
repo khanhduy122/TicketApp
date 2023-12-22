@@ -6,14 +6,14 @@ import 'movie.dart';
 class Ticket {
   Movie movie;
   TicketType ticketType;
-  ChairType chairType;
+  TypeSeat typeSeat;
   int number;
   int price;
   DateTime date;
   Cinema cinema;
   String chair;
 
-  Ticket({required this.chairType, 
+  Ticket({required this.typeSeat, 
   required this.date, 
   required this.movie, 
   required this.number, 

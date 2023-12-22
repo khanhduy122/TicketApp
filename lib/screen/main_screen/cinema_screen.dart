@@ -5,13 +5,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ticket_app/components/app_assets.dart';
 import 'package:ticket_app/components/app_colors.dart';
 import 'package:ticket_app/components/app_styles.dart';
+import 'package:ticket_app/components/dialogs/dialog_error.dart';
 import 'package:ticket_app/components/dialogs/dialog_loading.dart';
+import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/models/cinema_city.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/models/cinema.dart';
 import 'package:ticket_app/models/cities.dart';
-import 'package:ticket_app/moduels/get_cinema_by_city/get_cinema_by_city_event.dart';
-import 'package:ticket_app/moduels/get_cinema_by_city/get_cinema_city_bloc.dart';
+import 'package:ticket_app/moduels/get_cinema_in_city/get_cinema_in_city_event.dart';
+import 'package:ticket_app/moduels/get_cinema_in_city/get_cinema_in_city_bloc.dart';
+import 'package:ticket_app/moduels/get_cinema_in_city/get_cinema_in_city_state.dart';
+import 'package:ticket_app/screen/auth_screen/blocs/auth_exception.dart';
 import 'package:ticket_app/widgets/image_network_widget.dart';
 
 class CinemaScreen extends StatefulWidget {
@@ -23,20 +27,20 @@ class CinemaScreen extends StatefulWidget {
 
 class _CinemaScreenState extends State<CinemaScreen> {
   String? _selectCity;
-  final TextEditingController _searchCityTextController =
-      TextEditingController();
-  final GetCinemasBloc _getCinemasBloc = GetCinemasBloc();
-  CinemaCity? _reconmmedCinemas;
+  DateTime dateTime = DateTime.now();
+  final TextEditingController _searchCityTextController = TextEditingController();
+  final GetCinemasBloc getCinemasBloc = GetCinemasBloc();
+  CinemaCity? _allReconmmedCinemas;
   List<Cinema>? _recomendCinemaSelect;
   int _currentIndexCinemaType = 0;
 
   @override
   void initState() {
     super.initState();
-    _reconmmedCinemas = context.read<DataAppProvider>().reconmmedCinemas;
-    _selectCity = _reconmmedCinemas!.name ?? "";
-    _recomendCinemaSelect = _reconmmedCinemas!.all!.sublist(0);
-    context.read<DataAppProvider>().setCityNameCurrent(name: _reconmmedCinemas!.name ?? "");
+    _allReconmmedCinemas = context.read<DataAppProvider>().reconmmedCinemas;
+    _selectCity = _allReconmmedCinemas!.name ?? "";
+    _recomendCinemaSelect = _allReconmmedCinemas!.all!.sublist(0);
+    context.read<DataAppProvider>().setCityNameCurrent(name: _allReconmmedCinemas!.name ?? "");
   }
 
   @override
@@ -47,20 +51,50 @@ class _CinemaScreenState extends State<CinemaScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<GetCinemasBloc, GetCinemasState>(
-      bloc: _getCinemasBloc,
-      listener: (context, state) {
-        if (state.isLoading == true) {
-          DialogLoading.show(context);
+    return BlocListener(
+      bloc: getCinemasBloc,
+      listener: (_, state) {
+        if(state is GetCinemasCityState){
+          if (state.isLoading == true) {
+            DialogLoading.show(context);
+          }
+      
+          if (state.cinemaCity != null) {
+            Navigator.pop(context);
+            setState(() {
+              _allReconmmedCinemas = state.cinemaCity;
+              _recomendCinemaSelect = _allReconmmedCinemas!.all!.sublist(0);
+            });
+          }
+      
+          if(state.error != null){
+            if(state.error is TimeOutException){
+              DialogError.show(context, "Đã có lỗi xẩy ra, vui lòng kiểm tra lại đường truyền");
+            }else{
+              DialogError.show(context, "Đã có lỗi xảy ra vui lòng thử lại sao");
+            }
+          }
         }
 
-        if (state.cinemaCity != null) {
-          Navigator.pop(context);
-          setState(() {
-            _reconmmedCinemas = state.cinemaCity;
-            _recomendCinemaSelect = _reconmmedCinemas!.all!.sublist(0);
-          });
+        if(state is GetAllMovieCinemaState){
+          if (state.isLoading == true) {
+            DialogLoading.show(context);
+          }
+      
+          if (state.cinema != null) {
+            Navigator.pop(context);
+            Navigator.pushNamed(context, RouteName.selectMovieScreen, arguments: {"cinema": state.cinema, "cityName": _selectCity});
+          }
+      
+          if(state.error != null){
+            if(state.error is TimeOutException){
+              DialogError.show(context, "Đã có lỗi xẩy ra, vui lòng kiểm tra lại đường truyền");
+            }else{
+              DialogError.show(context, "Đã có lỗi xảy ra vui lòng thử lại sao");
+            }
+          }
         }
+        
       },
       child: Scaffold(
         body: SafeArea(
@@ -80,7 +114,7 @@ class _CinemaScreenState extends State<CinemaScreen> {
               SizedBox(
                 height: 20.h,
               ),
-              _recomendCinema(_recomendCinemaSelect ?? []),
+              _recomendCinema(),
             ],
           ),
         )),
@@ -110,7 +144,7 @@ class _CinemaScreenState extends State<CinemaScreen> {
             }).toList(),
             onChanged: (value) {
               _selectCity = value!;
-              _getCinemasBloc.add(GetCinemasByCityEvent(cityName: value));
+              getCinemasBloc.add(GetCinemasInCityEvent(cityName: value));
             },
             buttonStyleData: const ButtonStyleData(
               height: 40,
@@ -262,27 +296,27 @@ class _CinemaScreenState extends State<CinemaScreen> {
     if (index == 0) {
       _currentIndexCinemaType = 0;
       _recomendCinemaSelect!.clear();
-      _recomendCinemaSelect = _reconmmedCinemas!.all!.sublist(0);
+      _recomendCinemaSelect = _allReconmmedCinemas!.all!.sublist(0);
       setState(() {});
     }
 
     if (index == 1) {
       _currentIndexCinemaType = 1;
       _recomendCinemaSelect!.clear();
-      _recomendCinemaSelect = _reconmmedCinemas!.cgv!.sublist(0);
+      _recomendCinemaSelect = _allReconmmedCinemas!.cgv!.sublist(0);
       setState(() {});
     }
 
     if (index == 2) {
       _currentIndexCinemaType = 2;
       _recomendCinemaSelect!.clear();
-      _recomendCinemaSelect = _reconmmedCinemas!.lotte!.sublist(0);
+      _recomendCinemaSelect = _allReconmmedCinemas!.lotte!.sublist(0);
       setState(() {});
     }
     if (index == 3) {
       _currentIndexCinemaType = 3;
       _recomendCinemaSelect!.clear();
-      _recomendCinemaSelect = _reconmmedCinemas!.galaxy!.sublist(0);
+      _recomendCinemaSelect = _allReconmmedCinemas!.galaxy!.sublist(0);
       setState(() {});
     }
   }
@@ -318,7 +352,7 @@ class _CinemaScreenState extends State<CinemaScreen> {
     );
   }
 
-  Widget _recomendCinema(List<Cinema> reconmmedCinemas) {
+  Widget _recomendCinema() {
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -331,13 +365,13 @@ class _CinemaScreenState extends State<CinemaScreen> {
             height: 20.h,
           ),
           Expanded(
-            child: reconmmedCinemas.isNotEmpty
+            child: _recomendCinemaSelect!.isNotEmpty
                 ? ListView.builder(
-                    itemCount: reconmmedCinemas.length,
+                    itemCount: _recomendCinemaSelect!.length,
                     itemBuilder: (context, index) {
                       return Column(
                         children: [
-                          _itemCinema(reconmmedCinemas[index]),
+                          _itemCinema(_recomendCinemaSelect![index]),
                           SizedBox(
                             height: 20.h,
                           )
@@ -366,55 +400,64 @@ class _CinemaScreenState extends State<CinemaScreen> {
   }
 
   Widget _itemCinema(Cinema cinema) {
-    return Row(
-      children: [
-        ImageNetworkWidget(
-          url: cinema.thumbnail!,
-          height: 30.h,
-          width: 30.w,
-          borderRadius: 5.h,
-        ),
-        SizedBox(
-          width: 10.w,
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Text(
-                cinema.name!,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: AppStyle.titleStyle.copyWith(fontSize: 14.sp),
-              ),
-              Text(
-                cinema.address!,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                style: AppStyle.defaultStyle.copyWith(fontSize: 10.sp),
-              )
-            ],
+    return GestureDetector(
+      onTap: () {
+        DateTime now = DateTime.now();
+        String currentDate = "${now.day}-${now.month}-${now.year}";
+        getCinemasBloc.add(GetAllMovieCinemaEvent(cinema: cinema, cityName: _selectCity!, date: currentDate));
+      },
+      child: Row(
+        children: [
+          ImageNetworkWidget(
+            url: cinema.thumbnail!,
+            height: 30.h,
+            width: 30.w,
+            borderRadius: 5.h,
           ),
-        ),
-        SizedBox(
-            width: 80.w,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+          SizedBox(
+            width: 10.w,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                  cinema.getDistanceFormat(),
-                  style: AppStyle.defaultStyle
-                      .copyWith(color: AppColors.buttonColor, fontSize: 10.sp),
+                  cinema.name!,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppStyle.titleStyle.copyWith(fontSize: 14.sp),
                 ),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  color: AppColors.buttonColor,
-                  size: 20.h,
+                Text(
+                  cinema.address!,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppStyle.defaultStyle.copyWith(fontSize: 10.sp),
                 )
               ],
-            )),
-      ],
+            ),
+          ),
+          SizedBox(
+              width: 80.w,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    cinema.getDistanceFormat(),
+                    style: AppStyle.defaultStyle
+                        .copyWith(color: AppColors.buttonColor, fontSize: 10.sp),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    color: AppColors.buttonColor,
+                    size: 20.h,
+                  )
+                ],
+              )),
+        ],
+      ),
     );
   }
+
+  
 }

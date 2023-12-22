@@ -11,9 +11,14 @@ class GetDataAppBloc extends Bloc<GetDataAppEvent, GetDataAppState>{
 
   GetDataAppBloc() : super(GetDataAppState()){
     on<GetDataAppEvent>((event, emit) async {
-      final movies = await _getDataAppRepo.getMovieApp();
-      final cinemasRecommended = await _getDataAppRepo.getCinemasRecommended();
-      emit(GetDataAppState(cinemasRecommended: cinemasRecommended, homeData: movies));
+      try {
+        final movies = await _getDataAppRepo.getMovieApp();
+        final cinemasRecommended = await _getDataAppRepo.getCinemasRecommended();
+        emit(GetDataAppState(cinemasRecommended: cinemasRecommended, homeData: movies));
+      } catch (e) {
+        emit(GetDataAppState(error: e));
+      }
+      
     });
   }
 }
@@ -23,6 +28,7 @@ class GetDataAppEvent {}
 class GetDataAppState {
   HomeData? homeData;
   CinemaCity? cinemasRecommended;
+  Object? error;
 
-  GetDataAppState({this.cinemasRecommended, this.homeData});
+  GetDataAppState({this.cinemasRecommended, this.homeData, this.error});
 }

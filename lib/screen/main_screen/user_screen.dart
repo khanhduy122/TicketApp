@@ -10,7 +10,6 @@ import 'package:ticket_app/components/dialogs/dialog_confirm.dart';
 import 'package:ticket_app/components/dialogs/dialog_loading.dart';
 import 'package:ticket_app/components/logger.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
-import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/moduels/user/user_bloc.dart';
 import 'package:ticket_app/moduels/user/user_state.dart';
 import 'package:ticket_app/widgets/button_widget.dart';

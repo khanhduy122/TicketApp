@@ -10,9 +10,6 @@ enum Category {drama, romance, intense, comedy, science_fiction, adventure, act,
 @JsonEnum()
 enum TicketType {d2, d3}
 
-@JsonEnum()
-// ignore: constant_identifier_names
-enum ChairType {sweetbox, normal, VIP}
 
 @JsonEnum()
 enum Ban {c13, c16, c18, p}
@@ -20,3 +17,6 @@ enum Ban {c13, c16, c18, p}
 @JsonEnum()
 // ignore: constant_identifier_names
 enum CinemasType {CGV, Lotte, Galaxy}
+
+@JsonEnum()
+enum TypeSeat {normal, vip, sweetBox}

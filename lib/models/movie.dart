@@ -8,29 +8,35 @@ part 'movie.g.dart';
 @JsonSerializable()
 class Movie {
 
-  String id;
+  String? id;
 
-  String name;
+  String? name;
 
-  String thumbnail;
+  String? thumbnail;
 
   String? banner;
 
-  List<Category> categories;
+  List<Category>? categories;
 
-  Ban ban;
+  @JsonKey(name: "2D_subtitle")
+  List<String>? subtitle;
 
-  String date;
+  @JsonKey(name: "2D_voice")
+  List<String>? voice;
+
+  Ban? ban;
+
+  String? date;
 
   double? rating;
 
   String? premiere;
 
-  int duration;
+  int? duration;
 
-  List<Languages> languages;
+  List<Languages>? languages;
 
-  String content;
+  String? content;
 
   @JsonKey(name: "total_review")
   int? totalReview;
@@ -54,38 +60,40 @@ class Movie {
   int? totalRatingWithPicture;
 
   @JsonKey(name: "actor")
-  List<Actor> actors;
+  List<Actor>? actors;
 
   String? director;
 
-  String trailer;
+  String? trailer;
 
   List<Review>? reviews;
 
-  int status;
+  int? status;
 
-  String nation;
+  String? nation;
 
   Movie({
-    required this.id,
-    required this.date,
-    required this.name,
-    required this.thumbnail,
+     this.id,
+     this.date,
+     this.name,
+     this.thumbnail,
     this.banner,
-    required this.categories,
-    required this.ban,
-    required this.actors,
+    this.subtitle,
+    this.voice,
+     this.categories,
+     this.ban,
+     this.actors,
     this.totalReview,
-    required this.content,
+     this.content,
      this.director,
-    required this.duration,
-    required this.languages, 
-    required this.nation,
+     this.duration,
+     this.languages, 
+     this.nation,
     this.premiere,
     this.rating,
     this.reviews,
-    required this.status,
-    required this.trailer
+     this.status,
+     this.trailer
   });
 
   factory Movie.fromJson(Map<String, dynamic> json) => _$MovieFromJson(json);
@@ -95,7 +103,7 @@ class Movie {
   String getCaterogies () {
     String category = "";
 
-    for (var element in categories) {
+    for (var element in categories ?? []) {
       switch(element){
         case Category.drama: category += "Chính Kịch, ";
         case Category.romance: category += "Lãng Mạn, ";
@@ -116,7 +124,7 @@ class Movie {
 
   String getLanguages() {
     String language = "";
-    for (var element in languages) {
+    for (var element in languages ?? []) {
       switch(element){
         case Languages.subtitle : language += "Phụ Đề, ";
         case Languages.voice: language += "Thuyết Minh, ";
@@ -128,8 +136,8 @@ class Movie {
 
   String getBan () {
 
-    String stringBan;
-    switch(ban){
+    String stringBan = "";
+    switch(ban ?? ""){
       case Ban.c13: 
         stringBan = "13+";
         break;

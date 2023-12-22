@@ -21,7 +21,7 @@ class _PlayVideoTrailerScreenState extends State<PlayVideoTrailerScreen> {
   late final ChewieController _chewieController;
 
   Future<void> _loadVideoFormUrl() async {
-    _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(widget.movie.trailer));
+    _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(widget.movie.trailer!));
     await _videoPlayerController.initialize();
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController,
