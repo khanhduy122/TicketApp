@@ -6,6 +6,7 @@ import 'package:ticket_app/components/app_assets.dart';
 import 'package:ticket_app/components/app_colors.dart';
 import 'package:ticket_app/components/app_styles.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
+import 'package:ticket_app/models/banner.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/models/enum_model.dart';
 import 'package:ticket_app/models/home_data.dart';
@@ -73,12 +74,15 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
             items: _homeData.banners.map((e){
               return Builder(
                 builder: (BuildContext context) {
-                  return ImageNetworkWidget(
-                    borderRadius: 10.h,
-                    url: e.thumbnail, 
-                    height: 150.h, 
-                    width: size.width,
-                    boxFit: BoxFit.cover,
+                  return GestureDetector(
+                    onTap: () => _onTapBanner(e),
+                    child: ImageNetworkWidget(
+                      borderRadius: 10.h,
+                      url: e.thumbnail, 
+                      height: 150.h, 
+                      width: size.width,
+                      boxFit: BoxFit.cover,
+                    ),
                   );
                 },
               );
@@ -118,10 +122,10 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
     );
   }
 
-  Widget _buildItemNowShowing(Movie nowShowing) {
+  Widget _buildItemNowShowing(Movie movie) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, RouteName.detailMovieScreen, arguments: nowShowing);
+        Navigator.pushNamed(context, RouteName.detailMovieScreen, arguments: movie);
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -131,7 +135,7 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
               ImageNetworkWidget(
                 height: 300,
                 width: 200,
-                url: nowShowing.thumbnail!, 
+                url: movie.thumbnail!, 
                 borderRadius: 10.h,
               ),
               Positioned(
@@ -143,17 +147,17 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10.h),
-                    color: nowShowing.ban == Ban.c13 ? AppColors.orange300
-                          : nowShowing.ban == Ban.c16 ? AppColors.orange  
-                          : nowShowing.ban == Ban.c18 ? AppColors.red : AppColors.green
+                    color: movie.ban == Ban.c13 ? AppColors.orange300
+                          : movie.ban == Ban.c16 ? Colors.orange  
+                          : movie.ban == Ban.c18 ? AppColors.red : Colors.green
                   ),
-                  child: Text(nowShowing.getBan(), style: AppStyle.defaultStyle.copyWith(fontSize: 10.sp),),
+                  child: Text(movie.getBan(), style: AppStyle.defaultStyle.copyWith(fontSize: 10.sp),),
                 )
               ),
             ],
           ),
           SizedBox(height: 10.h,),
-          Text(nowShowing.name!, 
+          Text(movie.name!, 
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -161,14 +165,14 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
           ),
           SizedBox(height: 10.h,),
           Text(
-            nowShowing.getCaterogies(),
+            movie.getCaterogies(),
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: AppStyle.defaultStyle.copyWith(fontSize: 12.sp),
           ),
           SizedBox(height: 10.h,),
-          RatingWidget(rating: nowShowing.rating ?? 0, total: nowShowing.totalReview ?? 0, isCenter: true,),
+          RatingWidget(rating: movie.rating ?? 0, total: movie.totalReview ?? 0, isCenter: true,),
           Expanded(
             child: Align(
               alignment: Alignment.bottomCenter,
@@ -177,7 +181,7 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
                 height: 40.h, 
                 width: 80.w, 
                 onPressed: () {
-                  Navigator.pushNamed(context, RouteName.detailMovieScreen, arguments: nowShowing);
+                  Navigator.pushNamed(context, RouteName.detailMovieScreen, arguments: movie);
                 },
               ),
             ),
@@ -237,9 +241,9 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
               )
             ],
           ),
-          GestureDetector(
+          InkWell(
             onTap: () {
-              
+              Navigator.pushNamed(context, RouteName.searchScreen);
             },
             child: Icon(Icons.search, color: AppColors.white, size: 30.h,)
           ),
@@ -270,26 +274,19 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                           comingSoon.name!, 
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppStyle.titleStyle,
-                          ),
-                          SizedBox(height: 10.h,),
-                          Text(
-                            comingSoon.getCaterogies(),
-                            style: AppStyle.defaultStyle.copyWith(fontSize: 12.sp),
-                          ),
-                          SizedBox(height: 10.h,),
-                        ],
+                      Text(
+                        comingSoon.name!, 
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppStyle.titleStyle,
                       ),
-                      
+                      SizedBox(height: 10.h,),
+                      Text(
+                        comingSoon.getCaterogies(),
+                        style: AppStyle.defaultStyle.copyWith(fontSize: 12.sp),
+                      ),
+                      SizedBox(height: 10.h,),
                       Row(
                         children: [
                           SizedBox(
@@ -316,4 +313,29 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
       ),
     );
   }
+
+  void _onTapBanner(BannerHome bannerHome) {
+    switch(bannerHome.type){
+      case 1:
+        Movie? movie;
+        for (var element in _homeData.nowShowing) {
+          if(element.id == bannerHome.movie!.id){
+            movie = element;
+            break;
+          }
+        }
+        if(movie == null){
+          for (var element in _homeData.comingSoon) {
+          if(element.id == bannerHome.movie!.id){
+            movie = element;
+            break;
+          }
+        }
+        }
+        Navigator.pushNamed(context, RouteName.detailMovieScreen, arguments: movie);
+        break;
+    }
+  }
+
+
 }

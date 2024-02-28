@@ -9,6 +9,8 @@ class AppAssets {
   static const String imgLotte = "assets/images/img_lotte.jpg";
   static const String imgGalaxy = "assets/images/img_galaxy.png";
   static const String imgEmpty = "assets/images/illustration_empty.png";
+  static const String imgScreen = "assets/images/img_screen.png";
+  static const String imgCheck = "assets/images/img_check.png";
 
   //Icons
   static const String icBack = "assets/icons/ic_back.png";
@@ -30,6 +32,8 @@ class AppAssets {
   static const String icPassword = "assets/icons/ic_password.png";
   static const String icMovieActive = "assets/icons/ic_movie_active.png";
   static const String icMovieUnActive = "assets/icons/ic_movie_unactive.png";
+  static const String icVietinbank = "assets/icons/ic_vietinbank.png";
+  static const String icNCB = "assets/icons/ic_ncb.png";
 
   // json
   static const String jsonLoading = "assets/jsons/loading.json";

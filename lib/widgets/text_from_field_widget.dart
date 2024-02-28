@@ -7,7 +7,8 @@ import 'package:ticket_app/components/app_styles.dart';
 class TextFormFieldWidget extends StatefulWidget {
   const TextFormFieldWidget(
       {super.key,
-      required this.label,
+      this.label,
+      this.hint,
       this.obscureText,
       this.textInputAction,
       this.initValue,
@@ -16,7 +17,8 @@ class TextFormFieldWidget extends StatefulWidget {
       this.validator,
       this.readOnly});
 
-  final String label;
+  final String? label;
+  final String? hint;
   final TextInputAction? textInputAction;
   final bool? obscureText;
   final String? initValue;
@@ -55,7 +57,10 @@ class _TextFormFieldWidgetState extends State<TextFormFieldWidget> {
       onChanged: widget.onChanged,
       validator: widget.validator,
       decoration: InputDecoration(
-        label: Text(widget.label, style: AppStyle.defaultStyle),
+        hintText: widget.hint,
+        hintStyle: AppStyle.defaultStyle,
+        helperStyle: AppStyle.defaultStyle,
+        label: widget.label != null ? Text(widget.label ?? "", style: AppStyle.defaultStyle) : null,
         suffixIcon: widget.obscureText != null
             ? GestureDetector(
                 onTap: () {

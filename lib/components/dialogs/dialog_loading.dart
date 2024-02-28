@@ -5,12 +5,10 @@ import 'package:ticket_app/components/app_colors.dart';
 import 'package:lottie/lottie.dart';
 
 class DialogLoading {
-
   static void show(BuildContext context){
     showDialog(
       barrierDismissible: false,
       context: context, 
-      useRootNavigator: false,
       builder: (context) {
         return Center(
           child: Container(

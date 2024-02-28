@@ -3,7 +3,7 @@ import 'package:ticket_app/models/banner.dart';
 import 'package:ticket_app/models/movie.dart';
 
 class HomeData{
-  List<Banner> banners;
+  List<BannerHome> banners;
 
   List<Movie> nowShowing;
 

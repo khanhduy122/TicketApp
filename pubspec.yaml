@@ -62,6 +62,12 @@ dependencies:
   image_picker: ^1.0.4
   firebase_storage: ^11.5.3
   google_geocoding_api: ^1.4.1
+  qr_flutter: ^4.1.0
+  tiengviet: ^1.0.0
+  webview_flutter: ^4.4.2
+  intl: ^0.19.0
+  crypto: ^3.0.3
+  auto_size_text: ^3.0.0
 
 dev_dependencies:
   flutter_test:

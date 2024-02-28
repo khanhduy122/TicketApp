@@ -3,10 +3,10 @@ import 'dart:io';
 abstract class UserEvent {}
 
 class EditProfileUserEvent extends UserEvent {
-  String? photoURL;
+  File? photo;
   String? name;
 
-  EditProfileUserEvent({this.name, this.photoURL});
+  EditProfileUserEvent({this.name, this.photo});
 }
 
 class UploadPhotoUserEvent extends UserEvent {

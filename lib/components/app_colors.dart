@@ -10,8 +10,7 @@ class AppColors {
   static const Color buttonPressColor = Color.fromRGBO(72, 202, 231, 0.1);
   static const Color red = Colors.red;
   static Color orange300 = Colors.orange.shade300;
-  static const Color orange = Colors.orange;
-  static const Color green = Colors.green;
-  static const Color grey = Colors.grey;
   static const Color rating = Colors.amber;
+  static const Color grey = Color(0xFFABADBD);
+  static const Color seccondBackgroud = Color(0xFF051138);
 }

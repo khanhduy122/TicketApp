@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ticket_app/components/app_assets.dart';
@@ -7,15 +6,14 @@ import 'package:ticket_app/components/app_colors.dart';
 import 'package:ticket_app/components/app_styles.dart';
 import 'package:ticket_app/components/dialogs/dialog_error.dart';
 import 'package:ticket_app/components/dialogs/dialog_loading.dart';
-import 'package:ticket_app/components/logger.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/models/movie.dart';
 import 'package:ticket_app/models/review.dart';
-import 'package:ticket_app/moduels/get_cinema_in_city/get_cinema_in_city_bloc.dart';
-import 'package:ticket_app/moduels/get_cinema_in_city/get_cinema_in_city_event.dart';
-import 'package:ticket_app/moduels/get_cinema_in_city/get_cinema_in_city_state.dart';
-import 'package:ticket_app/screen/auth_screen/blocs/auth_exception.dart';
+import 'package:ticket_app/moduels/auth/auth_exception.dart';
+import 'package:ticket_app/moduels/cinema/cinema_bloc.dart';
+import 'package:ticket_app/moduels/cinema/cinema_event.dart';
+import 'package:ticket_app/moduels/cinema/cinema_state.dart';
 import 'package:ticket_app/widgets/button_widget.dart';
 import 'package:ticket_app/widgets/image_network_widget.dart';
 import 'package:ticket_app/widgets/rating_widget.dart';
@@ -32,7 +30,7 @@ class DetailMovieScreen extends StatefulWidget {
 class _DetailMovieScreenState extends State<DetailMovieScreen> with TickerProviderStateMixin {
 
   late final TabController _tabController;
-  final GetCinemasBloc getCinemasBloc = GetCinemasBloc();
+  final CinemaBloc cinemaBloc = CinemaBloc();
 
 
   @override
@@ -52,51 +50,47 @@ class _DetailMovieScreenState extends State<DetailMovieScreen> with TickerProvid
     final Size size = MediaQuery.of(context).size;
 
     return BlocListener(
-      bloc: getCinemasBloc,
-      listener: (_, state) {
-        if(state is GetCinemasForMovieState){
-          if(state.isLoading = true){
+      bloc: cinemaBloc,
+      listener: (context, state) {
+        if(state is GetCinemasShowingMovieState){
+          if(state.isLoading == true){
             DialogLoading.show(context);
           }
 
           if(state.cinemaCity != null){
-            Navigator.of(context).pop();
+            Navigator.of(context, rootNavigator: true).pop();
             Navigator.pushNamed(context, RouteName.selectCinemaScreen, arguments: {"movie": widget.movie, "cinemaCity": state.cinemaCity});
           }
 
           if(state.error != null){
+            Navigator.of(context, rootNavigator: true).pop();
             if(state.error is TimeOutException){
-              DialogError.show(context, "Đã có lỗi xẩy ra, vui lòng kiểm tra lại đường truyền");
+              DialogError.show(context: context, message: "Đã có lỗi xẩy ra, vui lòng kiểm tra lại đường truyền");
             }else{
-              DialogError.show(context, "Đã có lỗi xảy ra vui lòng thử lại sao");
+              DialogError.show(context: context, message: "Đã có lỗi xảy ra vui lòng thử lại sao");
             }
           }
         }
       },
-      child: DefaultTabController(
-        initialIndex: 0,
-        length: 2,
-        animationDuration: const Duration(milliseconds: 300),
-        child: Scaffold(
-          body: Column(
-            children: [
-              _buidAppBar(size),
-              SizedBox(
-                height: 20.h,
-              ),
-              _buildTabBar(size),
-              SizedBox(
-                height: 20.h,
-              ),
-              Expanded(child: _buildTabView())
-            ],
-          ),
+      child: Scaffold(
+        body: Column(
+          children: [
+            _buidHeader(size),
+            SizedBox(
+              height: 20.h,
+            ),
+            _buildTabBar(size),
+            SizedBox(
+              height: 20.h,
+            ),
+            Expanded(child: _buildTabView())
+          ],
         ),
       ),
     );
   }
 
-  SizedBox _buidAppBar(Size size) {
+  SizedBox _buidHeader(Size size) {
     return SizedBox(
       height: 300.h,
       child: Stack(
@@ -170,8 +164,8 @@ class _DetailMovieScreenState extends State<DetailMovieScreen> with TickerProvid
                                   String currentCityName = context.read<DataAppProvider>().cityNameCurrent;
                                   DateTime now = DateTime.now();
                                   String currentDate = "${now.day}-${now.month}-${now.year}";
-                                  getCinemasBloc.add(
-                                    GetCinemasForMovieEvent(cityName: currentCityName, movieID: widget.movie.id!, date: currentDate)
+                                  cinemaBloc.add(
+                                    GetCinemasShowingMovieEvent(cityName: currentCityName, movieID: widget.movie.id!, date: currentDate, context: context)
                                   );
                                 },
                               )
@@ -441,10 +435,23 @@ class _DetailMovieScreenState extends State<DetailMovieScreen> with TickerProvid
                   review.content,
                   style: AppStyle.defaultStyle,
                 ),
-                review.photoReview != null
-                    ? ImageNetworkWidget(
-                        url: review.photoReview!, height: 100.h, width: 70.w)
-                    : Container()
+                SizedBox(height: 10.h,),
+                (review.images != null) ?
+                SizedBox(
+                  width: MediaQuery.of(context).size.width - 70.w,
+                  child: Wrap(
+                    spacing: 10.w,
+                    runSpacing: 10.h,
+                    children: [
+                      for (var image in review.images!)
+                        ImageNetworkWidget(
+                          url: image,
+                          height: 100.h,
+                          width: 100.w,
+                        ),
+                    ],
+                  ),
+                ) : Container()
               ],
             )
           ],

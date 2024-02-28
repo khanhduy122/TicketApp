@@ -9,9 +9,11 @@ import 'package:ticket_app/components/app_assets.dart';
 import 'package:ticket_app/components/app_colors.dart';
 import 'package:ticket_app/components/app_styles.dart';
 import 'package:ticket_app/components/dialogs/dialog_confirm.dart';
+import 'package:ticket_app/components/dialogs/dialog_error.dart';
 import 'package:ticket_app/components/dialogs/dialog_loading.dart';
 import 'package:ticket_app/components/logger.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
+import 'package:ticket_app/moduels/exceptions/all_exception.dart';
 import 'package:ticket_app/moduels/user/user_bloc.dart';
 import 'package:ticket_app/moduels/user/user_event.dart';
 import 'package:ticket_app/moduels/user/user_state.dart';
@@ -31,8 +33,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   User? user;
   late final UserBloc userBloc;
   String userName = "";
+  File? imageSelected;
   final emailController = TextEditingController();
-  String? photoUrlEdit;
   final formKey = GlobalKey<FormState>();
 
   @override
@@ -42,7 +44,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     user = FirebaseAuth.instance.currentUser!;
     userName = user!.displayName ?? "";
     emailController.text = user!.email ?? "";
-    photoUrlEdit = user!.photoURL ?? "";
   }
 
   @override
@@ -50,29 +51,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return BlocListener(
       bloc: userBloc,
       listener: (context, state) {
-        if (state is EditProfileUserState) {
-          if (state.isLoading == true) {
-            DialogLoading.show(context);
-          }
-
-          if (state.user != null) {
-            Navigator.popUntil(context,
-                (route) => route.settings.name == RouteName.mainScreen);
-          }
-        }
-
-        if (state is UploadPhotoUserState) {
-          if (state.isLoading == true) {
-            DialogLoading.show(context);
-          }
-
-          if (state.photoUrl != null) {
-            Navigator.pop(context);
-            setState(() {
-              photoUrlEdit = state.photoUrl;
-            });
-          }
-        }
+        _onListener(state);
       },
       child: WillPopScope(
         onWillPop: () => _onWillPop(),
@@ -119,25 +98,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   ButtonWidget _buildButtonSave() {
-    return (userName.trim() != user!.displayName!.trim() ||
-            photoUrlEdit! != user!.photoURL!)
-        ? ButtonWidget(
-            title: "Cập Nhật",
-            height: 60.h,
-            width: 250.w,
-            onPressed: () {
-              if (formKey.currentState!.validate()) {
-                userBloc.add(EditProfileUserEvent(
-                    name: userName, photoURL: photoUrlEdit));
-              }
-            })
-        : ButtonWidget(
-            title: "Cập Nhật",
-            height: 60.h,
-            width: 250.w,
-            color: AppColors.buttonPressColor,
-            onPressed: () => null,
-          );
+    return ButtonWidget(
+      title: "Cập Nhật",
+      height: 60.h,
+      width: 250.w,
+      color: (userName.trim() != user!.displayName!.trim() || imageSelected != null) ? AppColors.buttonColor : AppColors.darkBackground,
+      onPressed: () {
+        if (formKey.currentState!.validate()) {
+          userBloc.add(EditProfileUserEvent(
+              name: userName, photo: imageSelected));
+        }
+      });
   }
 
   Widget _buildTextFieldEmail() {
@@ -187,7 +158,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         child: Stack(
           children: [
             Center(
-                child: (photoUrlEdit == null || photoUrlEdit!.isEmpty)
+                child: imageSelected != null ?
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(45.h),
+                  child: Image.file(
+                    imageSelected!,
+                    fit: BoxFit.fill,
+                    height: 90.h,
+                    width: 90.w,
+                  ),
+                ) :
+                (user!.photoURL == null)
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(45.h),
                         child: SizedBox(
@@ -199,7 +180,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             )),
                       )
                     : ImageNetworkWidget(
-                        url: photoUrlEdit!,
+                        url: user!.photoURL!,
                         height: 90.h,
                         width: 90.w,
                         borderRadius: 45.h,
@@ -230,7 +211,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(source: ImageSource.gallery);
       if (image != null) {
-        userBloc.add(UploadPhotoUserEvent(photo: File(image.path)));
+        setState(() {
+          imageSelected = File(image.path);
+        });
       }
     } catch (e) {
       debugLog(e.toString());
@@ -238,12 +221,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _onBackScreen() async {
-    if (userName.trim() != user!.displayName!.trim() ||
-        photoUrlEdit! != user!.photoURL!) {
-      await DialogConfirm.show(context, "Bạn có chắc muốn hủy thay đổi ?")
-          .then((isConfirm) {
+    if (userName.trim() != user!.displayName!.trim() || imageSelected != null) {
+      await DialogConfirm.show(context: context, message: "Bạn có chắc muốn hủy thay đổi ?").then((isConfirm) {
         if (isConfirm) {
-          Navigator.pop(context);
+          Navigator.popUntil(context, (route) => route.settings.name == RouteName.mainScreen,);
         }
       });
     } else {
@@ -252,18 +233,44 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<bool> _onWillPop() async {
-    if (userName.trim() != user!.displayName!.trim() ||
-        photoUrlEdit! != user!.photoURL!) {
-      await DialogConfirm.show(context, "Bạn có chắc muốn hủy thay đổi ?")
-          .then((isConfirm) {
+    if (userName.trim() != user!.displayName!.trim() || imageSelected != null) {
+      await DialogConfirm.show(context: context, message: "Bạn có chắc muốn hủy thay đổi ?").then((isConfirm) {
         if (isConfirm) {
+          Navigator.pop(context);
           return true;
         }
         return false;
       });
-    } else {
-      return true;
-    }
-    return false;
+    } 
+    return true;
   }
+
+  void _onListener(Object? state){
+    if (state is EditProfileUserState) {
+      if (state.isLoading == true) {
+        DialogLoading.show(context);
+      }
+
+      if (state.user != null) {
+        Navigator.popUntil(context,
+            (route) => route.settings.name == RouteName.mainScreen);
+      }
+
+      if(state.error != null) {
+        if(state.error is NoInternetException){
+          DialogError.show(
+            context: context, 
+            message: "Không có kết nối internet, vui lòng kiểm tra lại!"
+          );
+          return;
+        }
+
+        DialogError.show(
+          context: context, 
+          message: "Đã Có lỗi xảy ra vui lòng thử lại!"
+        );
+      }
+    }
+  }
+
 }

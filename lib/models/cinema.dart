@@ -1,40 +1,45 @@
-
+import 'package:json_annotation/json_annotation.dart';
 import 'package:ticket_app/models/enum_model.dart';
-import 'package:ticket_app/models/movie.dart';
+import 'package:ticket_app/models/movie_showing_in_cinema.dart';
+import 'package:ticket_app/models/room.dart';
+part 'cinema.g.dart';
 
+@JsonSerializable()
 class Cinema {
-  String? id;
-  String? thumbnail;
-  String? name;
-  CinemasType? cinemasType;
-  List<Movie>? movies;
-  double? lat;
-  double? long;
+  final String id;
+  final String thumbnail;
+  final String name;
+  final String cityName;
+  final CinemasType type;
+  List<MovieShowinginCinema>? movieShowinginCinema;
+  List<Room>? rooms;
+  final double lat;
+  final double long;
   double? distance;
-  String? address;
+  final String address;
 
-  Cinema({required this.id ,required this.address, required this.name, required this.thumbnail, required this.cinemasType});
+  Cinema({required this.id ,required this.address, required this.name, required this.cityName, required this.thumbnail, required this.type, required this.lat, required this.long, this.rooms, this.movieShowinginCinema});
 
-  Cinema.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    address = json['address'] ?? "";
-    name = json['name'] ?? "";
-    thumbnail = json["thumbnail"];
-    cinemasType = json["cinemas"] == "CGV" ? CinemasType.CGV : json["cinemas"] == "Lotte" ? CinemasType.Lotte : CinemasType.Galaxy;
-    lat = json["lat"];
-    long = json["long"];
-  }
+  factory Cinema.fromJson(Map<String, dynamic> json) => _$CinemaFromJson(json);
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'thumbnail': thumbnail,
       'name': name,
-      'cinemas': cinemasType!.name,
+      'type': type.name.toString(),
+      'cityName': cityName,
+      'movieShowinginCinema': movieShowinginCinema?.map((movie) => movie.toJson()).toList(),
+      'rooms': rooms?.map((room) => room.toJson()).toList(),
       'lat': lat,
       'long': long,
+      'distance': distance,
       'address': address,
     };
+  }
+
+  Cinema clone(){
+    return Cinema(id: id, address: address, name: name, thumbnail: thumbnail, type: type, lat: lat, long: long, rooms: rooms!.sublist(0), cityName: cityName);
   }
 
   String getDistanceFormat(){

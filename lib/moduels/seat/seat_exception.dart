@@ -1,0 +1,1 @@
+class SeatReservedException implements Exception {}

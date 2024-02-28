@@ -1,15 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ticket_app/components/app_assets.dart';
 import 'package:ticket_app/components/app_colors.dart';
 import 'package:ticket_app/components/app_styles.dart';
-import 'package:ticket_app/components/logger.dart';
 import 'package:ticket_app/components/set_data_firebase.dart';
-import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/screen/main_screen/cinema_screen.dart';
-import 'package:ticket_app/screen/main_screen/voucher_screen.dart';
+import 'package:ticket_app/screen/main_screen/my_ticket_screen.dart';
 import 'package:ticket_app/screen/main_screen/choose_movie_screen.dart';
 import 'package:ticket_app/screen/main_screen/user_screen.dart';
 
@@ -29,7 +25,6 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     // SetDataFirebase.initData(context);
-    debugLog("listMovieMain: ${context.read<DataAppProvider>().homeData.nowShowing.length}" );
   }
 
   @override
@@ -41,7 +36,7 @@ class _MainScreenState extends State<MainScreen> {
         children: const [
           ChooseMovieScreen(),
           CinemaScreen(),
-          VoucherScreen(),
+          MyTicketScreen(),
           UserScreen()
         ],
       ),

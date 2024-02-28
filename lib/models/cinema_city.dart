@@ -25,4 +25,13 @@ class CinemaCity {
         .map((e) => Cinema.fromJson(e as Map<String, dynamic>))
         .toList();
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "name": name,
+      "CGV": cgv?.map((cinema) => cinema.toJson()).toList(),
+      "Lotte": lotte?.map((cinema) => cinema.toJson()).toList(),
+      "Galaxy": galaxy?.map((cinema) => cinema.toJson()).toList(),
+    };
+  }
 }

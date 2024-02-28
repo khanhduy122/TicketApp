@@ -1,16 +1,23 @@
 
 
 import 'package:json_annotation/json_annotation.dart';
+import 'package:ticket_app/models/movie.dart';
+import 'package:ticket_app/models/offer.dart';
+import 'package:ticket_app/models/voucher.dart';
 part 'banner.g.dart';
 
 @JsonSerializable()
-class Banner {
+class BannerHome {
   String thumbnail;
   int type;
+  Movie? movie;
+  Voucher? voucher;
+  Offer? offers;
 
-  Banner({required this.thumbnail, required this.type});
 
-  factory Banner.fromJson(Map<String, dynamic> json) => _$BannerFromJson(json);
+  BannerHome({required this.thumbnail, required this.type, this.movie, this.offers, this.voucher});
 
-  Map<String, dynamic> toJson() => _$BannerToJson(this);
+  factory BannerHome.fromJson(Map<String, dynamic> json) => _$BannerHomeFromJson(json);
+
+  Map<String, dynamic> toJson() => _$BannerHomeToJson(this);
 }

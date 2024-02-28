@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,7 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ticket_app/components/app_assets.dart';
 import 'package:ticket_app/components/app_styles.dart';
 import 'package:ticket_app/components/dialogs/dialog_confirm.dart';
-import 'package:ticket_app/components/dialogs/dialog_loading.dart';
 import 'package:ticket_app/components/logger.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/moduels/user/user_bloc.dart';
@@ -90,17 +88,19 @@ class _UserScreenState extends State<UserScreen> {
                     Navigator.pushNamed(context, RouteName.editProfileScreen);
                   },
                 ),
-                isAllowChangePass
-                    ? _itemOption(
-                        icon: AppAssets.icPassword,
-                        title: "Thay Đổi Mật Khẩu",
-                        onTap: () {},
-                      )
-                    : Container(),
+                // isAllowChangePass
+                //     ? _itemOption(
+                //         icon: AppAssets.icPassword,
+                //         title: "Thay Đổi Mật Khẩu",
+                //         onTap: () {},
+                //       )
+                //     : Container(),
                 _itemOption(
                   icon: AppAssets.icVoucher,
                   title: "Voucher",
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.pushNamed(context, RouteName.voucherScreen);
+                  },
                 ),
                 _itemOption(
                   icon: AppAssets.icSuport,
@@ -115,8 +115,7 @@ class _UserScreenState extends State<UserScreen> {
                   height: 50.h,
                   width: 250.w,
                   onPressed: () async {
-                    DialogLoading.show(context);
-                    await DialogConfirm.show(context, "Bạn có chắc muốn đăng xuất ?").then((isConfirm) {
+                    await DialogConfirm.show(context: context, message: "Bạn có chắc muốn đăng xuất ?").then((isConfirm) {
                       if(isConfirm){
                         FirebaseAuth.instance.signOut().then((value) {
                           Navigator.pushNamedAndRemoveUntil(context, RouteName.signInScreen, (route) => false);
@@ -134,17 +133,22 @@ class _UserScreenState extends State<UserScreen> {
   }
 
   Widget _avatarProfie(BuildContext context) {
-    return StreamBuilder(
-        stream: userProfileController.stream,
-        builder: (context, snapshot) {
-          debugLog("build user profile");
-          return Column(
-            children: [
-              Container(
+    return BlocBuilder(
+      bloc: userBloc,
+      builder: (context, snapshot) {
+        debugLog("build user profile");
+        user = FirebaseAuth.instance.currentUser;
+        return Column(
+          children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, RouteName.editProfileScreen);
+              },
+              child: Container(
                   child: user!.photoURL == null
                       ? SizedBox(
                           height: 100.h,
-                          width: 10.w,
+                          width: 100.w,
                           child: Image.asset(AppAssets.imgAvatarDefault),
                         )
                       : ImageNetworkWidget(
@@ -153,23 +157,22 @@ class _UserScreenState extends State<UserScreen> {
                           width: 100.w,
                           borderRadius: 50.h,
                         )),
-              SizedBox(
-                height: 20.h,
-              ),
-              Text(
-                user!.displayName ?? "",
+            ),
+            SizedBox(
+              height: 20.h,
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, RouteName.editProfileScreen);
+              },
+              child: Text(
+                user!.displayName!,
                 style: AppStyle.titleStyle,
               ),
-              SizedBox(
-                height: 10.h,
-              ),
-              Text(
-                user!.email ?? "",
-                style: AppStyle.defaultStyle,
-              ),
-            ],
-          );
-        });
+            ),
+          ],
+        );
+      });
   }
 }
 

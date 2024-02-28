@@ -12,10 +12,11 @@ import 'package:ticket_app/models/cinema_city.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/models/cinema.dart';
 import 'package:ticket_app/models/cities.dart';
-import 'package:ticket_app/moduels/get_cinema_in_city/get_cinema_in_city_event.dart';
-import 'package:ticket_app/moduels/get_cinema_in_city/get_cinema_in_city_bloc.dart';
-import 'package:ticket_app/moduels/get_cinema_in_city/get_cinema_in_city_state.dart';
-import 'package:ticket_app/screen/auth_screen/blocs/auth_exception.dart';
+import 'package:ticket_app/moduels/auth/auth_exception.dart';
+import 'package:ticket_app/moduels/cinema/cinema_bloc.dart';
+import 'package:ticket_app/moduels/cinema/cinema_event.dart';
+import 'package:ticket_app/moduels/cinema/cinema_state.dart';
+import 'package:ticket_app/moduels/exceptions/all_exception.dart';
 import 'package:ticket_app/widgets/image_network_widget.dart';
 
 class CinemaScreen extends StatefulWidget {
@@ -29,7 +30,8 @@ class _CinemaScreenState extends State<CinemaScreen> {
   String? _selectCity;
   DateTime dateTime = DateTime.now();
   final TextEditingController _searchCityTextController = TextEditingController();
-  final GetCinemasBloc getCinemasBloc = GetCinemasBloc();
+  final ScrollController _scrollController = ScrollController();
+  final CinemaBloc cinemaBloc = CinemaBloc();
   CinemaCity? _allReconmmedCinemas;
   List<Cinema>? _recomendCinemaSelect;
   int _currentIndexCinemaType = 0;
@@ -47,54 +49,15 @@ class _CinemaScreenState extends State<CinemaScreen> {
   void dispose() {
     super.dispose();
     _searchCityTextController.dispose();
+    _scrollController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener(
-      bloc: getCinemasBloc,
+      bloc: cinemaBloc,
       listener: (_, state) {
-        if(state is GetCinemasCityState){
-          if (state.isLoading == true) {
-            DialogLoading.show(context);
-          }
-      
-          if (state.cinemaCity != null) {
-            Navigator.pop(context);
-            setState(() {
-              _allReconmmedCinemas = state.cinemaCity;
-              _recomendCinemaSelect = _allReconmmedCinemas!.all!.sublist(0);
-            });
-          }
-      
-          if(state.error != null){
-            if(state.error is TimeOutException){
-              DialogError.show(context, "Đã có lỗi xẩy ra, vui lòng kiểm tra lại đường truyền");
-            }else{
-              DialogError.show(context, "Đã có lỗi xảy ra vui lòng thử lại sao");
-            }
-          }
-        }
-
-        if(state is GetAllMovieCinemaState){
-          if (state.isLoading == true) {
-            DialogLoading.show(context);
-          }
-      
-          if (state.cinema != null) {
-            Navigator.pop(context);
-            Navigator.pushNamed(context, RouteName.selectMovieScreen, arguments: {"cinema": state.cinema, "cityName": _selectCity});
-          }
-      
-          if(state.error != null){
-            if(state.error is TimeOutException){
-              DialogError.show(context, "Đã có lỗi xẩy ra, vui lòng kiểm tra lại đường truyền");
-            }else{
-              DialogError.show(context, "Đã có lỗi xảy ra vui lòng thử lại sao");
-            }
-          }
-        }
-        
+        _listener(state);
       },
       child: Scaffold(
         body: SafeArea(
@@ -125,7 +88,7 @@ class _CinemaScreenState extends State<CinemaScreen> {
   Widget _searchCity() {
     return Container(
         height: 50.h,
-        width: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20.h),
             color: AppColors.darkBackground),
@@ -144,19 +107,18 @@ class _CinemaScreenState extends State<CinemaScreen> {
             }).toList(),
             onChanged: (value) {
               _selectCity = value!;
-              getCinemasBloc.add(GetCinemasInCityEvent(cityName: value));
+              cinemaBloc.add(GetCinemaCityEvent(cityName: value, context: context));
             },
-            buttonStyleData: const ButtonStyleData(
+            buttonStyleData: ButtonStyleData(
               height: 40,
+              overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
             ),
             dropdownStyleData: DropdownStyleData(
                 maxHeight: MediaQuery.of(context).size.height / 2,
-                decoration:
-                    const BoxDecoration(color: AppColors.darkBackground)),
+                decoration: const BoxDecoration(color: AppColors.darkBackground)),
             menuItemStyleData: MenuItemStyleData(
                 height: 40,
-                overlayColor: MaterialStateProperty.all<Color>(
-                    AppColors.buttonPressColor)),
+                overlayColor: MaterialStateProperty.all<Color>(AppColors.buttonPressColor)),
             dropdownSearchData: DropdownSearchData(
               searchController: _searchCityTextController,
               searchInnerWidgetHeight: 50,
@@ -297,6 +259,9 @@ class _CinemaScreenState extends State<CinemaScreen> {
       _currentIndexCinemaType = 0;
       _recomendCinemaSelect!.clear();
       _recomendCinemaSelect = _allReconmmedCinemas!.all!.sublist(0);
+      if(_recomendCinemaSelect!.isNotEmpty){
+        _scrollController.jumpTo(0);
+      }
       setState(() {});
     }
 
@@ -304,6 +269,9 @@ class _CinemaScreenState extends State<CinemaScreen> {
       _currentIndexCinemaType = 1;
       _recomendCinemaSelect!.clear();
       _recomendCinemaSelect = _allReconmmedCinemas!.cgv!.sublist(0);
+      if(_recomendCinemaSelect!.isNotEmpty){
+        _scrollController.jumpTo(0);
+      }
       setState(() {});
     }
 
@@ -311,12 +279,18 @@ class _CinemaScreenState extends State<CinemaScreen> {
       _currentIndexCinemaType = 2;
       _recomendCinemaSelect!.clear();
       _recomendCinemaSelect = _allReconmmedCinemas!.lotte!.sublist(0);
+      if(_recomendCinemaSelect!.isNotEmpty){
+        _scrollController.jumpTo(0);
+      }
       setState(() {});
     }
     if (index == 3) {
       _currentIndexCinemaType = 3;
       _recomendCinemaSelect!.clear();
       _recomendCinemaSelect = _allReconmmedCinemas!.galaxy!.sublist(0);
+      if(_recomendCinemaSelect!.isNotEmpty){
+        _scrollController.jumpTo(0);
+      }
       setState(() {});
     }
   }
@@ -366,33 +340,34 @@ class _CinemaScreenState extends State<CinemaScreen> {
           ),
           Expanded(
             child: _recomendCinemaSelect!.isNotEmpty
-                ? ListView.builder(
-                    itemCount: _recomendCinemaSelect!.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        children: [
-                          _itemCinema(_recomendCinemaSelect![index]),
-                          SizedBox(
-                            height: 20.h,
-                          )
-                        ],
-                      );
-                    },
-                  )
-                : Center(
-                    child: Column(
-                      children: [
-                        Image.asset(AppAssets.imgEmpty),
-                        SizedBox(
-                          height: 20.h,
-                        ),
-                        Text(
-                          "Không có rạp phim",
-                          style: AppStyle.titleStyle,
-                        )
-                      ],
+            ? ListView.builder(
+                controller: _scrollController,
+                itemCount: _recomendCinemaSelect!.length,
+                itemBuilder: (context, index) {
+                  return Column(
+                    children: [
+                      _itemCinema(_recomendCinemaSelect![index]),
+                      SizedBox(
+                        height: 20.h,
+                      )
+                    ],
+                  );
+                },
+              )
+            : Center(
+                child: Column(
+                  children: [
+                    Image.asset(AppAssets.imgEmpty),
+                    SizedBox(
+                      height: 20.h,
                     ),
-                  ),
+                    Text(
+                      "Không có rạp phim",
+                      style: AppStyle.titleStyle,
+                    )
+                  ],
+                ),
+              ),
           )
         ],
       ),
@@ -404,12 +379,12 @@ class _CinemaScreenState extends State<CinemaScreen> {
       onTap: () {
         DateTime now = DateTime.now();
         String currentDate = "${now.day}-${now.month}-${now.year}";
-        getCinemasBloc.add(GetAllMovieCinemaEvent(cinema: cinema, cityName: _selectCity!, date: currentDate));
+        cinemaBloc.add(GetAllMovieReleasedCinemaEvent(cinema: cinema, date: currentDate, context: context));
       },
       child: Row(
         children: [
           ImageNetworkWidget(
-            url: cinema.thumbnail!,
+            url: cinema.thumbnail,
             height: 30.h,
             width: 30.w,
             borderRadius: 5.h,
@@ -423,13 +398,13 @@ class _CinemaScreenState extends State<CinemaScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Text(
-                  cinema.name!,
+                  cinema.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: AppStyle.titleStyle.copyWith(fontSize: 14.sp),
                 ),
                 Text(
-                  cinema.address!,
+                  cinema.address,
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   style: AppStyle.defaultStyle.copyWith(fontSize: 10.sp),
@@ -459,5 +434,48 @@ class _CinemaScreenState extends State<CinemaScreen> {
     );
   }
 
+  void _listener(Object? state){
+    if(state is GetCinemasCityState){
+      if (state.isLoading == true) {
+        DialogLoading.show(context);
+      }
   
+      if (state.cinemaCity != null) {
+        Navigator.pop(context);
+        setState(() {
+          _allReconmmedCinemas = state.cinemaCity;
+          _recomendCinemaSelect = _allReconmmedCinemas!.all!.sublist(0);
+        });
+      }
+  
+      if(state.error != null){
+        Navigator.pop(context);
+        if(state.error is NoInternetException){
+          DialogError.show(context: context, message: "Không có kết nối internet, vui lòng kiểm tra lại đường truyền");
+        }else{
+          DialogError.show(context: context,  message: "Đã có lỗi xảy ra vui lòng thử lại sao");
+        }
+      }
+    }
+
+    if(state is GetAllMovieReleasedCinemaState){
+      if (state.isLoading == true) {
+        DialogLoading.show(context);
+      }
+  
+      if (state.cinema != null) {
+        Navigator.pop(context);
+        Navigator.pushNamed(context, RouteName.selectMovieScreen, arguments: state.cinema);
+      }
+  
+      if(state.error != null){
+        Navigator.pop(context);
+        if(state.error is NoInternetException){
+          DialogError.show(context: context, message: "Không có kết nối internet, vui lòng kiểm tra lại đường truyền");
+        }else{
+          DialogError.show(context: context,  message: "Đã có lỗi xảy ra vui lòng thử lại sao");
+        }
+      }
+    }
+  }
 }

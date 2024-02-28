@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:ticket_app/models/cinema_city.dart';
 import 'package:ticket_app/models/home_data.dart';

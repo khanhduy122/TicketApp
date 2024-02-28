@@ -10,7 +10,7 @@ import 'package:ticket_app/widgets/button_widget.dart';
 
 class DialogConfirm {
 
-  static Future<bool> show (BuildContext context, String message) async{
+  static Future<bool> show ({required BuildContext context, required String message, String? titlePositive, String? titleNegative}) async{
     bool isConfirm = await showDialog(
       context: context,
       barrierDismissible: false,
@@ -45,7 +45,7 @@ class DialogConfirm {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       ButtonNegativeWidget(
-                        title: "No", 
+                        title: titleNegative ?? "No", 
                         height: 50.h, 
                         width: 100.w, 
                         onPressed: () {
@@ -54,7 +54,7 @@ class DialogConfirm {
                       ),
                       SizedBox(width: 20.w,),
                       ButtonWidget(
-                        title: "OK", 
+                        title: titlePositive ?? "OK", 
                         height: 50.h, 
                         width: 100.w, 
                         onPressed: () {

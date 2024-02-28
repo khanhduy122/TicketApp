@@ -18,12 +18,6 @@ class Movie {
 
   List<Category>? categories;
 
-  @JsonKey(name: "2D_subtitle")
-  List<String>? subtitle;
-
-  @JsonKey(name: "2D_voice")
-  List<String>? voice;
-
   Ban? ban;
 
   String? date;
@@ -78,8 +72,6 @@ class Movie {
      this.name,
      this.thumbnail,
     this.banner,
-    this.subtitle,
-    this.voice,
      this.categories,
      this.ban,
      this.actors,
@@ -100,6 +92,18 @@ class Movie {
 
   Map<String, dynamic> toJson() => _$MovieToJson(this);
 
+  Map<String, dynamic> toJsonFirebase() {
+    return {
+      'id': id,
+      'name': name,
+      'thumbnail': thumbnail,
+      'categories': categories?.map((category) => category.name).toList(),
+      'rating': rating,
+      'duration': duration,
+      'total_review': totalReview,
+    };
+  }
+
   String getCaterogies () {
     String category = "";
 
@@ -119,7 +123,7 @@ class Movie {
       }
     }
    
-    return category.substring(0, category.length - 2);
+    return category;
   }
 
   String getLanguages() {

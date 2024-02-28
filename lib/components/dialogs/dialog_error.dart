@@ -8,7 +8,7 @@ import 'package:ticket_app/widgets/button_widget.dart';
 
 class DialogError {
 
-  static void show (BuildContext context, String message){
+  static void show ({required BuildContext context, required String message, Function()? onTap}){
     showDialog(
       context: context,
       builder: (context) {
@@ -42,10 +42,11 @@ class DialogError {
                     title: "Tiếp Tục", 
                     height: 50.h, 
                     width: 200.w, 
-                    onPressed: () {
+                    onPressed:  onTap ?? () {
                       Navigator.pop(context);
                     },
-                  )
+                  ),
+                  SizedBox(height: 20.h,),
                 ],
               ),
             ),

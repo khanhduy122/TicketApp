@@ -12,12 +12,6 @@ Movie _$MovieFromJson(Map<String, dynamic> json) => Movie(
       name: json['name'] as String?,
       thumbnail: json['thumbnail'] as String?,
       banner: json['banner'] as String?,
-      subtitle: (json['2D_subtitle'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      voice: (json['2D_voice'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
       categories: (json['categories'] as List<dynamic>?)
           ?.map((e) => $enumDecode(_$CategoryEnumMap, e))
           .toList(),
@@ -55,8 +49,6 @@ Map<String, dynamic> _$MovieToJson(Movie instance) => <String, dynamic>{
       'banner': instance.banner,
       'categories':
           instance.categories?.map((e) => _$CategoryEnumMap[e]!).toList(),
-      '2D_subtitle': instance.subtitle,
-      '2D_voice': instance.voice,
       'ban': _$BanEnumMap[instance.ban],
       'date': instance.date,
       'rating': instance.rating,

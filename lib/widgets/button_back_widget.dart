@@ -15,8 +15,8 @@ class ButtonBackWidget extends StatelessWidget {
             Navigator.pop(context);
           },
       child: SizedBox(
-        height: 24.h,
-        width: 24.w,
+        height: 20.h,
+        width: 20.w,
         child: Image.asset(
           AppAssets.icBack,
           fit: BoxFit.scaleDown,

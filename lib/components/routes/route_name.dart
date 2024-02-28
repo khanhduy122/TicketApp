@@ -12,4 +12,16 @@ class RouteName{
   static const String allReviewScreen= "allReviewScreen";
   static const String selectMovieScreen = "selectMovieScreen";
   static const String selectCinemaScreen = "selectCinemaScreen";
+  static const String selectSeatScreen = "selectSeatScreen";
+  static const String checkoutTicketScreen = "checkoutTicketScreen";
+  static const String detailMyTicketScreen = "detailMyTicketScreen";
+  static const String searchScreen = "searchScreen";
+  static const String webviewVNPayScreen = "webviewVNPayScreen";
+  static const String selectCardScreen = "selectCardScreen";
+  static const String paymentScreen = "paymentScreen";
+  static const String paymentSuccessScreen = "paymentSuccessScreen";
+  static const String detailTicketExpiredScreen = "detailTicketExpiredScreen";
+  static const String writeReviewScreen = "writeReviewScreen";
+  static const String forgotPasswordScreen = "forgotPasswordScreen";
+  static const String voucherScreen = "voucherScreen";
 }

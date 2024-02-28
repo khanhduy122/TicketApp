@@ -7,12 +7,13 @@ import 'package:ticket_app/components/app_styles.dart';
 import 'package:ticket_app/components/dialogs/dialog_error.dart';
 import 'package:ticket_app/components/dialogs/dialog_loading.dart';
 import 'package:ticket_app/components/logger.dart';
+import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/models/movie.dart';
 import 'package:ticket_app/models/review.dart';
-import 'package:ticket_app/screen/auth_screen/blocs/auth_exception.dart';
-import 'package:ticket_app/screen/detail_movie_screen/bloc/get_review_movie_bloc.dart';
-import 'package:ticket_app/screen/detail_movie_screen/bloc/get_review_movie_event.dart';
-import 'package:ticket_app/screen/detail_movie_screen/bloc/get_review_movie_state.dart';
+import 'package:ticket_app/moduels/auth/auth_exception.dart';
+import 'package:ticket_app/moduels/review/review_bloc.dart';
+import 'package:ticket_app/moduels/review/review_event.dart';
+import 'package:ticket_app/moduels/review/review_state.dart';
 import 'package:ticket_app/widgets/appbar_widget.dart';
 import 'package:ticket_app/widgets/button_outline_widget.dart';
 import 'package:ticket_app/widgets/button_widget.dart';
@@ -30,7 +31,7 @@ class AllReviewScreen extends StatefulWidget {
 
 class _AllReviewScreenState extends State<AllReviewScreen>
     with TickerProviderStateMixin {
-  final GetReviewMovieBloc getReviewMovieBloc = GetReviewMovieBloc();
+  final ReviewBloc reviewBloc = ReviewBloc();
   final ScrollController listReviewScrollController = ScrollController();
   List<Review> reviewsDisplay = [];
   List<Review> allReviewsLoaded = [];
@@ -40,7 +41,7 @@ class _AllReviewScreenState extends State<AllReviewScreen>
   @override
   void initState() {
     super.initState();
-    getReviewMovieBloc.add(
+    reviewBloc.add(
         GetInitReviewMovieEvent(id: widget.movie.id!, rating: currentIndex));
   }
 
@@ -53,7 +54,7 @@ class _AllReviewScreenState extends State<AllReviewScreen>
   @override
   Widget build(BuildContext context) {
     return BlocListener(
-      bloc: getReviewMovieBloc,
+      bloc: reviewBloc,
       listener: (context, state) {
         _onListener(state!);
       },
@@ -99,7 +100,7 @@ class _AllReviewScreenState extends State<AllReviewScreen>
               if (currentIndex != 0) {
                 currentIndex = 0;
                 currentIndexIndicator = 0;
-                getReviewMovieBloc.add(GetInitReviewMovieEvent(
+                reviewBloc.add(GetInitReviewMovieEvent(
                     id: widget.movie.id!, rating: currentIndex));
                 setState(() {});
               }
@@ -138,7 +139,7 @@ class _AllReviewScreenState extends State<AllReviewScreen>
               if (currentIndex != 1) {
                 currentIndex = 1;
                 currentIndexIndicator = 0;
-                getReviewMovieBloc.add(GetInitReviewMovieEvent(
+                reviewBloc.add(GetInitReviewMovieEvent(
                     id: widget.movie.id!, rating: currentIndex));
                 setState(() {});
               }
@@ -180,7 +181,7 @@ class _AllReviewScreenState extends State<AllReviewScreen>
               if (currentIndex != 2) {
                 currentIndex = 2;
                 currentIndexIndicator = 0;
-                getReviewMovieBloc.add(GetInitReviewMovieEvent(
+                reviewBloc.add(GetInitReviewMovieEvent(
                     id: widget.movie.id!, rating: currentIndex));
                 setState(() {});
               }
@@ -194,7 +195,7 @@ class _AllReviewScreenState extends State<AllReviewScreen>
               if (currentIndex != 3) {
                 currentIndex = 3;
                 currentIndexIndicator = 0;
-                getReviewMovieBloc.add(GetInitReviewMovieEvent(
+                reviewBloc.add(GetInitReviewMovieEvent(
                     id: widget.movie.id!, rating: currentIndex));
                 setState(() {});
               }
@@ -208,7 +209,7 @@ class _AllReviewScreenState extends State<AllReviewScreen>
               if (currentIndex != 4) {
                 currentIndex = 4;
                 currentIndexIndicator = 0;
-                getReviewMovieBloc.add(GetInitReviewMovieEvent(
+                reviewBloc.add(GetInitReviewMovieEvent(
                     id: widget.movie.id!, rating: currentIndex));
                 setState(() {});
               }
@@ -222,7 +223,7 @@ class _AllReviewScreenState extends State<AllReviewScreen>
               if (currentIndex != 5) {
                 currentIndex = 5;
                 currentIndexIndicator = 0;
-                getReviewMovieBloc.add(GetInitReviewMovieEvent(
+                reviewBloc.add(GetInitReviewMovieEvent(
                     id: widget.movie.id!, rating: currentIndex));
                 setState(() {});
               }
@@ -236,7 +237,7 @@ class _AllReviewScreenState extends State<AllReviewScreen>
               if (currentIndex != 6) {
                 currentIndex = 6;
                 currentIndexIndicator = 0;
-                getReviewMovieBloc.add(GetInitReviewMovieEvent(
+                reviewBloc.add(GetInitReviewMovieEvent(
                     id: widget.movie.id!, rating: currentIndex));
                 setState(() {});
               }
@@ -357,10 +358,19 @@ class _AllReviewScreenState extends State<AllReviewScreen>
                 SizedBox(
                   height: 10.h,
                 ),
-                review.photoReview != null
-                    ? ImageNetworkWidget(
-                        url: review.photoReview!, height: 150.h, width: 100.w)
-                    : Container()
+                (review.images != null) ?
+                    Wrap(
+                      spacing: 10.w,
+                      runSpacing: 10.h,
+                      children: [
+                        for (var image in review.images!)
+                          ImageNetworkWidget(
+                            url: image,
+                            height: 100.h,
+                            width: 100.w,
+                          )
+                      ],
+                    ) : Container()
               ],
             )
           ],
@@ -495,8 +505,7 @@ class _AllReviewScreenState extends State<AllReviewScreen>
       }
       if (state.reviews != null) {
         Navigator.pop(context);
-        listReviewScrollController.animateTo(0.0,
-            duration: const Duration(seconds: 1), curve: Curves.easeInOut);
+        listReviewScrollController.jumpTo(0.0,);
         setState(() {
           debugLog(allReviewsLoaded.length.toString());
           allReviewsLoaded = state.reviews!.sublist(0);
@@ -504,10 +513,23 @@ class _AllReviewScreenState extends State<AllReviewScreen>
         });
       }
       if(state.error != null){
+        Navigator.pop(context);
         if(state.error is TimeOutException){
-          DialogError.show(context, "Đã có lỗi xảy ra, vui lòng kiểm tra lại đường truyền");
+          DialogError.show(
+            context: context, 
+            message: "Đã có lỗi xảy ra, vui lòng kiểm tra lại đường truyền", 
+            onTap: () {
+              Navigator.popUntil(context, (route) => route.settings.name == RouteName.detailMovieScreen);
+            },
+          );
         }else{
-          DialogError.show(context, "Đã có lỗi xảy ra, vui lòng thử lại sau");
+          DialogError.show(
+            context: context, 
+            message: "Đã có lỗi xảy ra, vui lòng thử lại sau",
+            onTap: () {
+              Navigator.popUntil(context, (route) => route.settings.name == RouteName.detailMovieScreen);
+            },
+          );
         }
       }
     }
@@ -526,6 +548,26 @@ class _AllReviewScreenState extends State<AllReviewScreen>
           reviewsDisplay = state.reviews!.sublist(0);
         });
       }
+      if(state.error != null){
+        Navigator.pop(context);
+        if(state.error is TimeOutException){
+          DialogError.show(
+            context: context, 
+            message: "Đã có lỗi xảy ra, vui lòng kiểm tra lại đường truyền", 
+            onTap: () {
+              Navigator.popUntil(context, (route) => route.settings.name == RouteName.detailMovieScreen);
+            },
+          );
+        }else{
+          DialogError.show(
+            context: context, 
+            message: "Đã có lỗi xảy ra, vui lòng thử lại sau",
+            onTap: () {
+              Navigator.popUntil(context, (route) => route.settings.name == RouteName.detailMovieScreen);
+            },
+          );
+        }
+      }
     }
   }
 
@@ -543,7 +585,7 @@ class _AllReviewScreenState extends State<AllReviewScreen>
         }
       });
     } else {
-      getReviewMovieBloc.add(
+      reviewBloc.add(
           LoadMoreReviewMovieEvent(id: widget.movie.id!, rating: currentIndex));
     }
   }
