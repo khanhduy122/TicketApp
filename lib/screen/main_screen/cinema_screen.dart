@@ -12,7 +12,6 @@ import 'package:ticket_app/models/cinema_city.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/models/cinema.dart';
 import 'package:ticket_app/models/cities.dart';
-import 'package:ticket_app/moduels/auth/auth_exception.dart';
 import 'package:ticket_app/moduels/cinema/cinema_bloc.dart';
 import 'package:ticket_app/moduels/cinema/cinema_event.dart';
 import 'package:ticket_app/moduels/cinema/cinema_state.dart';
@@ -29,7 +28,8 @@ class CinemaScreen extends StatefulWidget {
 class _CinemaScreenState extends State<CinemaScreen> {
   String? _selectCity;
   DateTime dateTime = DateTime.now();
-  final TextEditingController _searchCityTextController = TextEditingController();
+  final TextEditingController _searchCityTextController =
+      TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final CinemaBloc cinemaBloc = CinemaBloc();
   CinemaCity? _allReconmmedCinemas;
@@ -42,7 +42,9 @@ class _CinemaScreenState extends State<CinemaScreen> {
     _allReconmmedCinemas = context.read<DataAppProvider>().reconmmedCinemas;
     _selectCity = _allReconmmedCinemas!.name ?? "";
     _recomendCinemaSelect = _allReconmmedCinemas!.all!.sublist(0);
-    context.read<DataAppProvider>().setCityNameCurrent(name: _allReconmmedCinemas!.name ?? "");
+    context
+        .read<DataAppProvider>()
+        .setCityNameCurrent(name: _allReconmmedCinemas!.name ?? "");
   }
 
   @override
@@ -107,18 +109,22 @@ class _CinemaScreenState extends State<CinemaScreen> {
             }).toList(),
             onChanged: (value) {
               _selectCity = value!;
-              cinemaBloc.add(GetCinemaCityEvent(cityName: value, context: context));
+              cinemaBloc
+                  .add(GetCinemaCityEvent(cityName: value, context: context));
             },
             buttonStyleData: ButtonStyleData(
               height: 40,
-              overlayColor: MaterialStateProperty.all<Color>(Colors.transparent),
+              overlayColor:
+                  MaterialStateProperty.all<Color>(Colors.transparent),
             ),
             dropdownStyleData: DropdownStyleData(
                 maxHeight: MediaQuery.of(context).size.height / 2,
-                decoration: const BoxDecoration(color: AppColors.darkBackground)),
+                decoration:
+                    const BoxDecoration(color: AppColors.darkBackground)),
             menuItemStyleData: MenuItemStyleData(
                 height: 40,
-                overlayColor: MaterialStateProperty.all<Color>(AppColors.buttonPressColor)),
+                overlayColor: MaterialStateProperty.all<Color>(
+                    AppColors.buttonPressColor)),
             dropdownSearchData: DropdownSearchData(
               searchController: _searchCityTextController,
               searchInnerWidgetHeight: 50,
@@ -172,7 +178,7 @@ class _CinemaScreenState extends State<CinemaScreen> {
 
   Widget _selectCinemaType() {
     return SizedBox(
-      height: 70.h,
+      height: 80.h,
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: [
@@ -259,7 +265,7 @@ class _CinemaScreenState extends State<CinemaScreen> {
       _currentIndexCinemaType = 0;
       _recomendCinemaSelect!.clear();
       _recomendCinemaSelect = _allReconmmedCinemas!.all!.sublist(0);
-      if(_recomendCinemaSelect!.isNotEmpty){
+      if (_recomendCinemaSelect!.isNotEmpty) {
         _scrollController.jumpTo(0);
       }
       setState(() {});
@@ -269,7 +275,7 @@ class _CinemaScreenState extends State<CinemaScreen> {
       _currentIndexCinemaType = 1;
       _recomendCinemaSelect!.clear();
       _recomendCinemaSelect = _allReconmmedCinemas!.cgv!.sublist(0);
-      if(_recomendCinemaSelect!.isNotEmpty){
+      if (_recomendCinemaSelect!.isNotEmpty) {
         _scrollController.jumpTo(0);
       }
       setState(() {});
@@ -279,7 +285,7 @@ class _CinemaScreenState extends State<CinemaScreen> {
       _currentIndexCinemaType = 2;
       _recomendCinemaSelect!.clear();
       _recomendCinemaSelect = _allReconmmedCinemas!.lotte!.sublist(0);
-      if(_recomendCinemaSelect!.isNotEmpty){
+      if (_recomendCinemaSelect!.isNotEmpty) {
         _scrollController.jumpTo(0);
       }
       setState(() {});
@@ -288,7 +294,7 @@ class _CinemaScreenState extends State<CinemaScreen> {
       _currentIndexCinemaType = 3;
       _recomendCinemaSelect!.clear();
       _recomendCinemaSelect = _allReconmmedCinemas!.galaxy!.sublist(0);
-      if(_recomendCinemaSelect!.isNotEmpty){
+      if (_recomendCinemaSelect!.isNotEmpty) {
         _scrollController.jumpTo(0);
       }
       setState(() {});
@@ -340,34 +346,34 @@ class _CinemaScreenState extends State<CinemaScreen> {
           ),
           Expanded(
             child: _recomendCinemaSelect!.isNotEmpty
-            ? ListView.builder(
-                controller: _scrollController,
-                itemCount: _recomendCinemaSelect!.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      _itemCinema(_recomendCinemaSelect![index]),
-                      SizedBox(
-                        height: 20.h,
-                      )
-                    ],
-                  );
-                },
-              )
-            : Center(
-                child: Column(
-                  children: [
-                    Image.asset(AppAssets.imgEmpty),
-                    SizedBox(
-                      height: 20.h,
+                ? ListView.builder(
+                    controller: _scrollController,
+                    itemCount: _recomendCinemaSelect!.length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          _itemCinema(_recomendCinemaSelect![index]),
+                          SizedBox(
+                            height: 20.h,
+                          )
+                        ],
+                      );
+                    },
+                  )
+                : Center(
+                    child: Column(
+                      children: [
+                        Image.asset(AppAssets.imgEmpty),
+                        SizedBox(
+                          height: 20.h,
+                        ),
+                        Text(
+                          "Không có rạp phim",
+                          style: AppStyle.titleStyle,
+                        )
+                      ],
                     ),
-                    Text(
-                      "Không có rạp phim",
-                      style: AppStyle.titleStyle,
-                    )
-                  ],
-                ),
-              ),
+                  ),
           )
         ],
       ),
@@ -379,7 +385,8 @@ class _CinemaScreenState extends State<CinemaScreen> {
       onTap: () {
         DateTime now = DateTime.now();
         String currentDate = "${now.day}-${now.month}-${now.year}";
-        cinemaBloc.add(GetAllMovieReleasedCinemaEvent(cinema: cinema, date: currentDate, context: context));
+        cinemaBloc.add(GetAllMovieReleasedCinemaEvent(
+            cinema: cinema, date: currentDate, context: context));
       },
       child: Row(
         children: [
@@ -419,8 +426,8 @@ class _CinemaScreenState extends State<CinemaScreen> {
                 children: [
                   Text(
                     cinema.getDistanceFormat(),
-                    style: AppStyle.defaultStyle
-                        .copyWith(color: AppColors.buttonColor, fontSize: 10.sp),
+                    style: AppStyle.defaultStyle.copyWith(
+                        color: AppColors.buttonColor, fontSize: 10.sp),
                   ),
                   Icon(
                     Icons.arrow_forward_ios,
@@ -434,12 +441,12 @@ class _CinemaScreenState extends State<CinemaScreen> {
     );
   }
 
-  void _listener(Object? state){
-    if(state is GetCinemasCityState){
+  void _listener(Object? state) {
+    if (state is GetCinemasCityState) {
       if (state.isLoading == true) {
         DialogLoading.show(context);
       }
-  
+
       if (state.cinemaCity != null) {
         Navigator.pop(context);
         setState(() {
@@ -447,33 +454,44 @@ class _CinemaScreenState extends State<CinemaScreen> {
           _recomendCinemaSelect = _allReconmmedCinemas!.all!.sublist(0);
         });
       }
-  
-      if(state.error != null){
+
+      if (state.error != null) {
         Navigator.pop(context);
-        if(state.error is NoInternetException){
-          DialogError.show(context: context, message: "Không có kết nối internet, vui lòng kiểm tra lại đường truyền");
-        }else{
-          DialogError.show(context: context,  message: "Đã có lỗi xảy ra vui lòng thử lại sao");
+        if (state.error is NoInternetException) {
+          DialogError.show(
+              context: context,
+              message:
+                  "Không có kết nối internet, vui lòng kiểm tra lại đường truyền");
+        } else {
+          DialogError.show(
+              context: context,
+              message: "Đã có lỗi xảy ra vui lòng thử lại sao");
         }
       }
     }
 
-    if(state is GetAllMovieReleasedCinemaState){
+    if (state is GetAllMovieReleasedCinemaState) {
       if (state.isLoading == true) {
         DialogLoading.show(context);
       }
-  
+
       if (state.cinema != null) {
         Navigator.pop(context);
-        Navigator.pushNamed(context, RouteName.selectMovieScreen, arguments: state.cinema);
+        Navigator.pushNamed(context, RouteName.selectMovieScreen,
+            arguments: state.cinema);
       }
-  
-      if(state.error != null){
+
+      if (state.error != null) {
         Navigator.pop(context);
-        if(state.error is NoInternetException){
-          DialogError.show(context: context, message: "Không có kết nối internet, vui lòng kiểm tra lại đường truyền");
-        }else{
-          DialogError.show(context: context,  message: "Đã có lỗi xảy ra vui lòng thử lại sao");
+        if (state.error is NoInternetException) {
+          DialogError.show(
+              context: context,
+              message:
+                  "Không có kết nối internet, vui lòng kiểm tra lại đường truyền");
+        } else {
+          DialogError.show(
+              context: context,
+              message: "Đã có lỗi xảy ra vui lòng thử lại sao");
         }
       }
     }

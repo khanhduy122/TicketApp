@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ticket_app/components/app_assets.dart';
 import 'package:ticket_app/components/app_key.dart';
 import 'package:ticket_app/components/dialogs/dialog_error.dart';
+import 'package:ticket_app/components/logger.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/moduels/auth/auth_exception.dart';
@@ -23,7 +24,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   final GetDataAppBloc getDataAppBloc = GetDataAppBloc();
 
   @override
@@ -31,7 +31,6 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     getDataAppBloc.add(GetDataAppEvent(context: context));
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -59,40 +58,52 @@ class _SplashScreenState extends State<SplashScreen> {
     if (state is GetDataAppState) {
       if (state.homeData != null && state.cinemasRecommended != null) {
         context.read<DataAppProvider>().setHomeData(homeData: state.homeData!);
-        context.read<DataAppProvider>().setRecommendedCinema(cinemas: state.cinemasRecommended!);
+        context
+            .read<DataAppProvider>()
+            .setRecommendedCinema(cinemas: state.cinemasRecommended!);
         checkIsFirst(context);
       }
 
-      if(state.error != null){
-        if(state.error is NoInternetException){
-          DialogError.show(context: context, message: "Không có kết nối internet, vui lòng kiểm tra lại kết nối của bạn");
+      if (state.error != null) {
+        debugLog(state.error.toString());
+        if (state.error is NoInternetException) {
+          DialogError.show(
+              context: context,
+              message:
+                  "Không có kết nối internet, vui lòng kiểm tra lại kết nối của bạn");
           return;
         }
-        if(state.error is DeniedPermissionPositionException){
+        if (state.error is DeniedPermissionPositionException) {
           DialogError.show(
-            context: context, 
-            message: "Chúng tôi cần quyền truy cập vào vị trí cho mốt số chức năng nêu bạn không châp nhận thì ứng dụng không thể hoạt động Đúng được",
+            context: context,
+            message:
+                "Chúng tôi cần quyền truy cập vào vị trí cho mốt số chức năng nêu bạn không châp nhận thì ứng dụng không thể hoạt động Đúng được",
             onTap: () {
-               SystemNavigator.pop();
+              SystemNavigator.pop();
             },
           );
           return;
         }
-        DialogError.show(context: context, message: "Đã có lỗi xảy ra, vui lòng thử lại sau");
+        DialogError.show(
+            context: context,
+            message: "Đã có lỗi xảy ra, vui lòng thử lại sau");
       }
     }
   }
 
   Future<void> checkIsFirst(BuildContext context) async {
     if (FirebaseAuth.instance.currentUser != null) {
-      Navigator.pushNamedAndRemoveUntil(context, RouteName.mainScreen, (route) => false);
+      Navigator.pushNamedAndRemoveUntil(
+          context, RouteName.mainScreen, (route) => false);
     } else {
       await SharedPreferences.getInstance().then((prefs) {
         if (prefs.getBool(AppKey.checkIsFirstKey) == null) {
           prefs.setBool(AppKey.checkIsFirstKey, true);
-          Navigator.pushNamedAndRemoveUntil(context, RouteName.onBoardingScreen, (route) => false);
+          Navigator.pushNamedAndRemoveUntil(
+              context, RouteName.onBoardingScreen, (route) => false);
         } else {
-          Navigator.pushNamedAndRemoveUntil(context, RouteName.signInScreen, (route) => false);
+          Navigator.pushNamedAndRemoveUntil(
+              context, RouteName.signInScreen, (route) => false);
         }
       });
     }

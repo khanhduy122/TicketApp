@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:ticket_app/components/logger.dart';
 import 'package:ticket_app/models/banner.dart';
 import 'package:ticket_app/models/home_data.dart';
 import 'package:ticket_app/models/movie.dart';
@@ -34,9 +35,9 @@ class GetDataAppRepo {
           nowShowing: homeNowShowing,
           comingSoon: homeComingSoon);
     } catch (e) {
+      debugLog("get Movie App: ${e.toString()}");
       return Future.error(e);
     }
-    
   }
 
   Future<List<Review>> getReviewMovie({required String movieID}) async {
@@ -53,5 +54,4 @@ class GetDataAppRepo {
     }
     return reviews;
   }
-
 }

@@ -27,7 +27,11 @@ import 'package:ticket_app/widgets/appbar_widget.dart';
 import 'package:ticket_app/widgets/image_network_widget.dart';
 
 class SelectCinemaScreen extends StatefulWidget {
-  const SelectCinemaScreen({super.key, required this.movie, required this.cinemaCity,});
+  const SelectCinemaScreen({
+    super.key,
+    required this.movie,
+    required this.cinemaCity,
+  });
 
   final Movie movie;
   final CinemaCity cinemaCity;
@@ -37,13 +41,13 @@ class SelectCinemaScreen extends StatefulWidget {
 }
 
 class _SelectCinemaScreenState extends State<SelectCinemaScreen> {
-
   String? _selectCity;
   int currentSelectedDateIndex = 0;
   int currentSelectedMovieTimeIndex = 0;
   int currentSelctCinemaTypeIndex = 0;
   final List<DateTime> listDateTime = [];
-  final TextEditingController _searchCityTextController = TextEditingController();
+  final TextEditingController _searchCityTextController =
+      TextEditingController();
   final DateTime currentDate = DateTime.now();
   CinemaCity? _allReconmmedCinemas;
   List<Cinema> _recomendCinemaSelect = [];
@@ -71,22 +75,29 @@ class _SelectCinemaScreenState extends State<SelectCinemaScreen> {
       child: Scaffold(
         appBar: appBarWidget(title: widget.movie.name),
         body: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Column(
-              children: [
-                SizedBox(height: 20.h,),
-                _searchCity(),
-                SizedBox(height: 20.h,),
-                _buildSelectDate(),
-                SizedBox(height: 20.h,),
-                _builSelectCinemaType(),
-                SizedBox(height: 20.h,),
-                _buildRecomendCinema()
-              ],
-            ),
-          )
-        ),
+            child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 20.h,
+              ),
+              _searchCity(),
+              SizedBox(
+                height: 20.h,
+              ),
+              _buildSelectDate(),
+              SizedBox(
+                height: 20.h,
+              ),
+              _builSelectCinemaType(),
+              SizedBox(
+                height: 20.h,
+              ),
+              _buildRecomendCinema()
+            ],
+          ),
+        )),
       ),
     );
   }
@@ -102,7 +113,10 @@ class _SelectCinemaScreenState extends State<SelectCinemaScreen> {
         child: DropdownButtonHideUnderline(
           child: DropdownButton2<String>(
             value: _selectCity,
-            hint: Text("-- Tìm Kiếm Tĩnh Thành Phố --", style: AppStyle.defaultStyle,),
+            hint: Text(
+              "-- Tìm Kiếm Tĩnh Thành Phố --",
+              style: AppStyle.defaultStyle,
+            ),
             items: cities.map((element) {
               return DropdownMenuItem(
                 value: element,
@@ -115,8 +129,13 @@ class _SelectCinemaScreenState extends State<SelectCinemaScreen> {
             onChanged: (value) {
               _selectCity = value!;
               DateTime dateTime = listDateTime[currentSelectedDateIndex];
-              String dateSelected = "${dateTime.day}-${dateTime.month}-${dateTime.year}";
-              cinemaBloc.add(GetCinemasShowingMovieEvent(cityName: _selectCity!, movieID: widget.movie.id!, date: dateSelected, context: context));
+              String dateSelected =
+                  "${dateTime.day}-${dateTime.month}-${dateTime.year}";
+              cinemaBloc.add(GetCinemasShowingMovieEvent(
+                  cityName: _selectCity!,
+                  movieID: widget.movie.id!,
+                  date: dateSelected,
+                  context: context));
             },
             buttonStyleData: const ButtonStyleData(
               height: 40,
@@ -179,7 +198,7 @@ class _SelectCinemaScreenState extends State<SelectCinemaScreen> {
         ));
   }
 
-  Widget _buildSelectDate(){
+  Widget _buildSelectDate() {
     return SizedBox(
       height: 60.h,
       child: ListView.builder(
@@ -187,13 +206,18 @@ class _SelectCinemaScreenState extends State<SelectCinemaScreen> {
         itemCount: 14,
         itemBuilder: (context, index) {
           return ItemDayWidget(
-            day: listDateTime[index].day, 
-            isActive: index == currentSelectedDateIndex, 
+            day: listDateTime[index].day,
+            isActive: index == currentSelectedDateIndex,
             onTap: () {
               currentSelectedDateIndex = index;
               DateTime dateTime = listDateTime[index];
-              String dateSelected = "${dateTime.day}-${dateTime.month}-${dateTime.year}";
-              cinemaBloc.add(GetCinemasShowingMovieEvent(cityName: _selectCity!, movieID: widget.movie.id!, date: dateSelected, context: context));
+              String dateSelected =
+                  "${dateTime.day}-${dateTime.month}-${dateTime.year}";
+              cinemaBloc.add(GetCinemasShowingMovieEvent(
+                  cityName: _selectCity!,
+                  movieID: widget.movie.id!,
+                  date: dateSelected,
+                  context: context));
             },
           );
         },
@@ -201,9 +225,9 @@ class _SelectCinemaScreenState extends State<SelectCinemaScreen> {
     );
   }
 
-  Widget _builSelectCinemaType(){
+  Widget _builSelectCinemaType() {
     return SizedBox(
-      height: 70.h,
+      height: 80.h,
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: [
@@ -330,46 +354,48 @@ class _SelectCinemaScreenState extends State<SelectCinemaScreen> {
           ),
           Expanded(
             child: _recomendCinemaSelect.isNotEmpty
-          ? ListView.builder(
-              itemCount: _recomendCinemaSelect.length,
-              itemBuilder: (context, index) {
-                return Column(
-                  children: [
-                    _buildItemCinema(cinema: _recomendCinemaSelect[index],),
-                    SizedBox(
-                      height: 20.h,
-                    )
-                  ],
-                );
-              },
-            )
-          : Center(
-              child: Column(
-                children: [
-                  Image.asset(AppAssets.imgEmpty),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  Text(
-                    "Không có rạp phim",
-                    style: AppStyle.titleStyle,
+                ? ListView.builder(
+                    itemCount: _recomendCinemaSelect.length,
+                    itemBuilder: (context, index) {
+                      return Column(
+                        children: [
+                          _buildItemCinema(
+                            cinema: _recomendCinemaSelect[index],
+                          ),
+                          SizedBox(
+                            height: 20.h,
+                          )
+                        ],
+                      );
+                    },
                   )
-                ],
-              ),
-            ),
+                : Center(
+                    child: Column(
+                      children: [
+                        Image.asset(AppAssets.imgEmpty),
+                        SizedBox(
+                          height: 20.h,
+                        ),
+                        Text(
+                          "Không có rạp phim",
+                          style: AppStyle.titleStyle,
+                        )
+                      ],
+                    ),
+                  ),
           )
         ],
       ),
     );
   }
 
-  Widget _buildItemCinema({required Cinema cinema}){
+  Widget _buildItemCinema({required Cinema cinema}) {
     bool isShowMore = false;
     return StatefulBuilder(
       builder: (context, setState) {
         return GestureDetector(
           onTap: () {
-            setState((){
+            setState(() {
               isShowMore = !isShowMore;
             });
           },
@@ -401,88 +427,108 @@ class _SelectCinemaScreenState extends State<SelectCinemaScreen> {
                           cinema.address,
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
-                          style: AppStyle.defaultStyle.copyWith(fontSize: 10.sp),
+                          style:
+                              AppStyle.defaultStyle.copyWith(fontSize: 10.sp),
                         )
                       ],
                     ),
                   ),
-                  isShowMore ? 
-                  Container(
-                    width: 80.w,
-                    alignment: Alignment.centerRight,
-                    child: Icon(Icons.keyboard_arrow_down, color: AppColors.white, size: 30.h,)
-                  )
-                  : SizedBox(
-                    width: 80.w,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          cinema.getDistanceFormat(),
-                          style: AppStyle.defaultStyle
-                              .copyWith(color: AppColors.buttonColor, fontSize: 10.sp),
-                        ),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: AppColors.buttonColor,
-                          size: 20.h,
-                        )
-                      ],
-                    )
-                  ),
+                  isShowMore
+                      ? Container(
+                          width: 80.w,
+                          alignment: Alignment.centerRight,
+                          child: Icon(
+                            Icons.keyboard_arrow_down,
+                            color: AppColors.white,
+                            size: 30.h,
+                          ))
+                      : SizedBox(
+                          width: 80.w,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Text(
+                                cinema.getDistanceFormat(),
+                                style: AppStyle.defaultStyle.copyWith(
+                                    color: AppColors.buttonColor,
+                                    fontSize: 10.sp),
+                              ),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                color: AppColors.buttonColor,
+                                size: 20.h,
+                              )
+                            ],
+                          )),
                 ],
               ),
-              SizedBox(height: 10.h,),
-              Visibility(
-                visible: isShowMore,
-                child: Column(
-                  children: [
-                    cinema.movieShowinginCinema![0].subtitle_2D != null ? 
-                      BuildListShowtimnes(
-                        movieTimes: cinema.movieShowinginCinema![0].subtitle_2D!, 
-                        crossAxisCount: 3,
-                        title: "Phim 2D Phụ Đề",
-                        onTap: (time, roomID) {
-                          _onTapItemShowTimes(time: time, roomID: roomID, movie: cinema.movieShowinginCinema![0].movie, cinema: cinema);
-                        },
-                      ) 
-                    : const SizedBox(),
-
-                    cinema.movieShowinginCinema![0].voice_2D != null ? 
-                      BuildListShowtimnes(
-                        movieTimes: cinema.movieShowinginCinema![0].voice_2D!, 
-                        crossAxisCount: 3,
-                        title: "Phim 2D Lồng Tiếng",
-                        onTap: (time, roomID) {
-                          _onTapItemShowTimes(time: time, roomID: roomID, movie: cinema.movieShowinginCinema![0].movie, cinema: cinema);
-                        },
-                      ) 
-                    : const SizedBox(),
-
-                    cinema.movieShowinginCinema![0].subtitle_3D != null ? 
-                      BuildListShowtimnes(
-                        movieTimes: cinema.movieShowinginCinema![0].subtitle_3D!, 
-                        crossAxisCount: 3,
-                        title: "Phim 3D Phụ Đề",
-                        onTap: (time, roomID) {
-                          _onTapItemShowTimes(time: time, roomID: roomID, movie: cinema.movieShowinginCinema![0].movie, cinema: cinema);
-                        },
-                      ) 
-                    : const SizedBox(),
-
-                    cinema.movieShowinginCinema![0].voice_3D != null ? 
-                      BuildListShowtimnes(
-                        movieTimes: cinema.movieShowinginCinema![0].voice_3D!,
-                        crossAxisCount: 3,
-                        title: "Phim 3D Lòng Tiếng",
-                        onTap: (time, roomID) {
-                          _onTapItemShowTimes(time: time, roomID: roomID, movie: cinema.movieShowinginCinema![0].movie, cinema: cinema);
-                        },
-                      ) 
-                    : const SizedBox(),
-                  ]
-                )
+              SizedBox(
+                height: 10.h,
               ),
+              Visibility(
+                  visible: isShowMore,
+                  child: Column(children: [
+                    cinema.movieShowinginCinema![0].subtitle_2D != null
+                        ? BuildListShowtimnes(
+                            movieTimes:
+                                cinema.movieShowinginCinema![0].subtitle_2D!,
+                            crossAxisCount: 3,
+                            title: "Phim 2D Phụ Đề",
+                            onTap: (time, roomID) {
+                              _onTapItemShowTimes(
+                                  time: time,
+                                  roomID: roomID,
+                                  movie: cinema.movieShowinginCinema![0].movie,
+                                  cinema: cinema);
+                            },
+                          )
+                        : const SizedBox(),
+                    cinema.movieShowinginCinema![0].voice_2D != null
+                        ? BuildListShowtimnes(
+                            movieTimes:
+                                cinema.movieShowinginCinema![0].voice_2D!,
+                            crossAxisCount: 3,
+                            title: "Phim 2D Lồng Tiếng",
+                            onTap: (time, roomID) {
+                              _onTapItemShowTimes(
+                                  time: time,
+                                  roomID: roomID,
+                                  movie: cinema.movieShowinginCinema![0].movie,
+                                  cinema: cinema);
+                            },
+                          )
+                        : const SizedBox(),
+                    cinema.movieShowinginCinema![0].subtitle_3D != null
+                        ? BuildListShowtimnes(
+                            movieTimes:
+                                cinema.movieShowinginCinema![0].subtitle_3D!,
+                            crossAxisCount: 3,
+                            title: "Phim 3D Phụ Đề",
+                            onTap: (time, roomID) {
+                              _onTapItemShowTimes(
+                                  time: time,
+                                  roomID: roomID,
+                                  movie: cinema.movieShowinginCinema![0].movie,
+                                  cinema: cinema);
+                            },
+                          )
+                        : const SizedBox(),
+                    cinema.movieShowinginCinema![0].voice_3D != null
+                        ? BuildListShowtimnes(
+                            movieTimes:
+                                cinema.movieShowinginCinema![0].voice_3D!,
+                            crossAxisCount: 3,
+                            title: "Phim 3D Lòng Tiếng",
+                            onTap: (time, roomID) {
+                              _onTapItemShowTimes(
+                                  time: time,
+                                  roomID: roomID,
+                                  movie: cinema.movieShowinginCinema![0].movie,
+                                  cinema: cinema);
+                            },
+                          )
+                        : const SizedBox(),
+                  ])),
             ],
           ),
         );
@@ -490,25 +536,34 @@ class _SelectCinemaScreenState extends State<SelectCinemaScreen> {
     );
   }
 
-  void _initDays(){
+  void _initDays() {
     DateTime now = DateTime.now();
     int currentDay = now.day;
     int currentMonth = now.month;
     int currentYear = now.year;
     listDateTime.add(DateTime(currentYear, currentMonth, currentDay));
-    for(int i = 0; i < 14; i++){
+    for (int i = 0; i < 14; i++) {
       currentDay++;
-      if(currentMonth == 4 || currentMonth == 6 || currentMonth == 9 || currentMonth == 11){
-        if(currentDay > 30){
+      if (currentMonth == 4 ||
+          currentMonth == 6 ||
+          currentMonth == 9 ||
+          currentMonth == 11) {
+        if (currentDay > 30) {
           currentDay = 1;
           currentMonth++;
         }
       }
-      if(currentMonth == 1 || currentMonth == 3 || currentMonth == 5 || currentMonth == 7 || currentMonth == 8 || currentMonth == 10 || currentMonth == 12){
-        if(currentDay > 31){
+      if (currentMonth == 1 ||
+          currentMonth == 3 ||
+          currentMonth == 5 ||
+          currentMonth == 7 ||
+          currentMonth == 8 ||
+          currentMonth == 10 ||
+          currentMonth == 12) {
+        if (currentDay > 31) {
           currentDay = 1;
           currentMonth++;
-          if(currentDay > 12){
+          if (currentDay > 12) {
             currentMonth = 1;
             currentYear++;
           }
@@ -516,38 +571,44 @@ class _SelectCinemaScreenState extends State<SelectCinemaScreen> {
       }
       listDateTime.add(DateTime(currentYear, currentMonth, currentDay));
     }
-    
   }
 
-  void initListCinem(){
+  void initListCinem() {
     _allReconmmedCinemas = widget.cinemaCity;
     _recomendCinemaSelect = _allReconmmedCinemas!.all!.sublist(0);
     _selectCity = context.read<DataAppProvider>().cityNameCurrent;
     _initDays();
   }
 
-  void onTapCinemaType(int index){
+  void onTapCinemaType(int index) {
     setState(() {
       currentSelctCinemaTypeIndex = index;
-      switch(index){
-        case 0 : _recomendCinemaSelect = _allReconmmedCinemas!.all!.sublist(0);
+      switch (index) {
+        case 0:
+          _recomendCinemaSelect = _allReconmmedCinemas!.all!.sublist(0);
           break;
-        case 1 : _recomendCinemaSelect = _allReconmmedCinemas!.cgv!.sublist(0);
+        case 1:
+          _recomendCinemaSelect = _allReconmmedCinemas!.cgv!.sublist(0);
           break;
-        case 2 : _recomendCinemaSelect = _allReconmmedCinemas!.lotte!.sublist(0);
+        case 2:
+          _recomendCinemaSelect = _allReconmmedCinemas!.lotte!.sublist(0);
           break;
-        case 3 : _recomendCinemaSelect = _allReconmmedCinemas!.galaxy!.sublist(0);
+        case 3:
+          _recomendCinemaSelect = _allReconmmedCinemas!.galaxy!.sublist(0);
           break;
       }
     });
-    
   }
 
-  void _onTapItemShowTimes({required String time, required String roomID, required Movie movie, required Cinema cinema}){
+  void _onTapItemShowTimes(
+      {required String time,
+      required String roomID,
+      required Movie movie,
+      required Cinema cinema}) {
     Cinema cinemaTicket = cinema.clone();
     late Room room;
     for (var roomTicket in cinemaTicket.rooms!) {
-      if(roomTicket.id == roomID){
+      if (roomTicket.id == roomID) {
         room = roomTicket;
         break;
       }
@@ -564,13 +625,13 @@ class _SelectCinemaScreenState extends State<SelectCinemaScreen> {
     Navigator.pushNamed(context, RouteName.selectSeatScreen, arguments: ticket);
   }
 
-  void _onListener(Object? state){
-    if(state is GetCinemasShowingMovieState){
-      if(state.isLoading == true){
+  void _onListener(Object? state) {
+    if (state is GetCinemasShowingMovieState) {
+      if (state.isLoading == true) {
         DialogLoading.show(context);
       }
 
-      if(state.cinemaCity != null){
+      if (state.cinemaCity != null) {
         Navigator.of(context, rootNavigator: true).pop();
         setState(() {
           _allReconmmedCinemas = state.cinemaCity;
@@ -579,15 +640,18 @@ class _SelectCinemaScreenState extends State<SelectCinemaScreen> {
         });
       }
 
-      if(state.error != null){
+      if (state.error != null) {
         Navigator.pop(context);
-        if(state.error is NoInternetException){
-          DialogError.show(context: context, message: "Không có kết nối internet, vui lòng kiểm tra lại");
-        }else{
-          DialogError.show(context: context, message: "Đã có lỗi xảy ra vui lòng thử lại sao");
+        if (state.error is NoInternetException) {
+          DialogError.show(
+              context: context,
+              message: "Không có kết nối internet, vui lòng kiểm tra lại");
+        } else {
+          DialogError.show(
+              context: context,
+              message: "Đã có lỗi xảy ra vui lòng thử lại sao");
         }
       }
     }
   }
-
 }
