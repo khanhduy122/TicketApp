@@ -234,7 +234,7 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
                   children: [
                     TextSpan(
                       text: "Ticket",
-                      style: AppStyle.titleStyle.copyWith(color: AppColors.buttonColor, fontWeight: FontWeight.normal, fontSize: 24.sp)
+                      style: AppStyle.titleStyle.copyWith(color: AppColors.white, fontWeight: FontWeight.normal, fontSize: 24.sp)
                     )
                   ]
                 ),

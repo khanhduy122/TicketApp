@@ -64,6 +64,7 @@ class SetDataFirebase{
               {"time": addDurationToTime("14:00", movie.duration!), "roomID": cinemas.rooms![roomRandom2].id},
               {"time": addDurationToTime("16:00", movie.duration!), "roomID": cinemas.rooms![roomRandom3].id},
               {"time": addDurationToTime("18:00", movie.duration!), "roomID": cinemas.rooms![roomRandom4].id},
+              {"time": addDurationToTime("23:00", movie.duration!), "roomID": cinemas.rooms![roomRandom4].id},
             ],
             // "voice_2D": [
             //   {"time": addDurationToTime("10:0$i", movie.duration!), "roomID": cinemas.rooms!.elementAt(randomIndexRoom(cinemas.rooms!)).id},
@@ -106,6 +107,10 @@ class SetDataFirebase{
 
         await setInitSeats(
           colum: cinemas.rooms![roomRandom4].column!, row: cinemas.rooms![roomRandom4].row!, showtimes: "${addDurationToTime("18:00", movie.duration!)} - ${cinemas.rooms![roomRandom4].id}", 
+          cityNam: cityName, cinemaID: cinemas.id, date: "$day-$month-$year", movieID: movie.id!, cinemaType: cinemaStyle
+        );
+        await setInitSeats(
+          colum: cinemas.rooms![roomRandom4].column!, row: cinemas.rooms![roomRandom4].row!, showtimes: "${addDurationToTime("23:00", movie.duration!)} - ${cinemas.rooms![roomRandom4].id}", 
           cityNam: cityName, cinemaID: cinemas.id, date: "$day-$month-$year", movieID: movie.id!, cinemaType: cinemaStyle
         );
       }

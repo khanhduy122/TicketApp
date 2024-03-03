@@ -11,6 +11,7 @@ import 'package:ticket_app/components/app_colors.dart';
 import 'package:ticket_app/components/app_styles.dart';
 import 'package:ticket_app/components/dialogs/dialog_error.dart';
 import 'package:ticket_app/components/dialogs/dialog_loading.dart';
+import 'package:ticket_app/components/logger.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/models/ticket.dart';
 import 'package:ticket_app/moduels/exceptions/all_exception.dart';
@@ -37,18 +38,19 @@ class CheckoutTicketScreen extends StatefulWidget {
 class _CheckoutTicketScreenState extends State<CheckoutTicketScreen>
     with WidgetsBindingObserver {
   final PaymentBloc paymentBloc = PaymentBloc();
-  String id = (Random().nextInt(99999999) + 100000000).toString() +
-      DateFormat('yyyyMMddHHmmss').format(DateTime.now()).toString();
+  String id = ""; 
   Timer? timmer;
   final StreamController countDownController = StreamController();
   final SelectSeatBloc selectSeatBloc = SelectSeatBloc();
-  int currentSecond = 600;
+  int currentSecond = 300;
   bool isInited = false;
   final SelectSeatRepo selectSeatRepo = SelectSeatRepo();
 
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
+    id = (Random().nextInt(99999999) + 100000000).toString() + DateFormat('yyyyMMddHHmmss').format(DateTime.now()).toString();
+    widget.ticket.id = id;
     timmer = Timer.periodic(const Duration(seconds: 1), (timer) {
       currentSecond--;
       if (currentSecond == 0) {
@@ -58,11 +60,7 @@ class _CheckoutTicketScreenState extends State<CheckoutTicketScreen>
       }
       countDownController.sink.add(currentSecond);
     });
-    // final service = FlutterBackgroundService();
-    //   service.invoke("ticket", {"ticket": widget.ticket});
-    //   service.startService();
-    Workmanager().registerPeriodicTask("task-identifier", "simpleTask",
-        frequency: Duration(minutes: 1));
+    
     super.initState();
   }
 
@@ -74,12 +72,24 @@ class _CheckoutTicketScreenState extends State<CheckoutTicketScreen>
     countDownController.close();
     super.dispose();
   }
-
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
+  void didChangeAppLifecycleState(AppLifecycleState state) async {
+    debugLog(state.name);
     if (state == AppLifecycleState.detached) {
-      print("destroy");
+      print("on destry");
+      await Workmanager().registerOneOffTask(
+        widget.ticket.id!, 
+        "Delete Seat", 
+        inputData: {
+          "cityName": widget.ticket.cinema!.cityName,
+          "cinemaType": widget.ticket.cinema!.type.name,
+          "cinemaID": widget.ticket.cinema!.id,
+          "date": "${widget.ticket.date!.day}-${widget.ticket.date!.month}-${widget.ticket.date!.year}",
+          "movieID": widget.ticket.movie!.id,
+          "showtimes": "${widget.ticket.showtimes} - ${widget.ticket.cinema!.rooms!.first.id}",
+          "seats": widget.ticket.seats!.map((e) => e.name).toList()
+        }
+      );
     }
   }
 
@@ -314,7 +324,6 @@ class _CheckoutTicketScreenState extends State<CheckoutTicketScreen>
       }
 
       if (state.listCard != null) {
-        widget.ticket.id = id;
         Navigator.pop(context);
         Navigator.pushNamed(context, RouteName.selectCardScreen,
             arguments: {"listCard": state.listCard, "ticket": widget.ticket});
