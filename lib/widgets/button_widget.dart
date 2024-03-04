@@ -33,7 +33,7 @@ class ButtonWidget extends StatelessWidget {
         ),
         child: Text(
           title,
-          style: AppStyle.textButtonStyle.copyWith(fontSize: height / 3.5.sp),
+          style: AppStyle.textButtonStyle.copyWith(fontSize: (height / 4).sp),
         ));
   }
 }

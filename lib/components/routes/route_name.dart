@@ -1,5 +1,4 @@
-
-class RouteName{
+class RouteName {
   static const String splashScreen = "splashScreen";
   static const String onBoardingScreen = "onBoardingScreen";
   static const String signInScreen = "signInScreen";
@@ -9,7 +8,7 @@ class RouteName{
   static const String editProfileScreen = "editProfileScreen";
   static const String detailMovieScreen = "detailMovieScreen";
   static const String playVideoTrailerScreen = "playVideoTrailerScreen";
-  static const String allReviewScreen= "allReviewScreen";
+  static const String allReviewScreen = "allReviewScreen";
   static const String selectMovieScreen = "selectMovieScreen";
   static const String selectCinemaScreen = "selectCinemaScreen";
   static const String selectSeatScreen = "selectSeatScreen";
@@ -24,4 +23,5 @@ class RouteName{
   static const String writeReviewScreen = "writeReviewScreen";
   static const String forgotPasswordScreen = "forgotPasswordScreen";
   static const String voucherScreen = "voucherScreen";
+  static const String detailVoucherScreen = "detailVoucherScreen";
 }

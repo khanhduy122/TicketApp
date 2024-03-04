@@ -135,7 +135,8 @@ class CinemaRepo {
     try {
       Position position = await _locationRepo.determinePosition(context);
 
-      String cityName = await getCurrentCity(position);
+      // String cityName = await getCurrentCity(position);
+      String cityName = "An Giang";
 
       debugLog(cityName);
 

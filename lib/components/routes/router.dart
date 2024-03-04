@@ -3,6 +3,7 @@ import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/models/cinema.dart';
 import 'package:ticket_app/models/movie.dart';
 import 'package:ticket_app/models/ticket.dart';
+import 'package:ticket_app/models/voucher.dart';
 import 'package:ticket_app/screen/auth_screen/forgot_password.dart';
 import 'package:ticket_app/screen/auth_screen/signin_screen.dart';
 import 'package:ticket_app/screen/auth_screen/signup_screen.dart';
@@ -24,6 +25,7 @@ import 'package:ticket_app/screen/select_showtimes_movie/select_movie_screen.dar
 import 'package:ticket_app/screen/select_seat_screen.dart/select_seat_screen.dart';
 import 'package:ticket_app/screen/splash_screen/on_boarding.screen.dart';
 import 'package:ticket_app/screen/splash_screen/splash_screen.dart';
+import 'package:ticket_app/screen/voucher_screen/detaile_voucher_screen.dart';
 import 'package:ticket_app/screen/voucher_screen/voucher_screen.dart';
 import 'package:ticket_app/screen/write_review_screen/write_review_screen.dart';
 
@@ -60,7 +62,8 @@ Map<String, WidgetBuilder> routes = {
     );
   },
   RouteName.selectCinemaScreen: (context) {
-    final arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final arguments =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     return SelectCinemaScreen(
       movie: arguments["movie"],
       cinemaCity: arguments["cinemaCity"],
@@ -73,32 +76,30 @@ Map<String, WidgetBuilder> routes = {
   },
   RouteName.checkoutTicketScreen: (context) {
     return CheckoutTicketScreen(
-      ticket: ModalRoute.of(context)!.settings.arguments as Ticket
-    );
+        ticket: ModalRoute.of(context)!.settings.arguments as Ticket);
   },
-
   RouteName.detailMyTicketScreen: (context) {
     return DetailMyTicketScreen(
-      ticket:ModalRoute.of(context)!.settings.arguments as Ticket,
+      ticket: ModalRoute.of(context)!.settings.arguments as Ticket,
     );
   },
-
   RouteName.detailTicketExpiredScreen: (context) {
     return DetailTicketExpiredScreen(
-      ticket:ModalRoute.of(context)!.settings.arguments as Ticket,
+      ticket: ModalRoute.of(context)!.settings.arguments as Ticket,
     );
   },
-
   RouteName.searchScreen: (context) => const SearchScreen(),
   RouteName.selectCardScreen: (context) {
-    final arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final arguments =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     return SelectCardScreen(
       listCard: arguments["listCard"],
       ticket: arguments["ticket"],
     );
   },
   RouteName.paymentScreen: (context) {
-    final arguments = ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final arguments =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     return PaymentScreen(
       paymentCard: arguments["paymentCard"],
       ticket: arguments["ticket"],
@@ -107,19 +108,20 @@ Map<String, WidgetBuilder> routes = {
   RouteName.paymentSuccessScreen: (context) {
     return const PaymentSuccessScreen();
   },
-
   RouteName.writeReviewScreen: (context) {
     return WriteReviewScreen(
-      ticket:ModalRoute.of(context)!.settings.arguments as Ticket,
+      ticket: ModalRoute.of(context)!.settings.arguments as Ticket,
     );
   },
-
   RouteName.forgotPasswordScreen: (context) {
     return const ForgotPasswordScreen();
   },
-
   RouteName.voucherScreen: (context) {
     return const VoucherScreen();
   },
-
+  RouteName.detailVoucherScreen: (context) {
+    return DetailVoucherScreen(
+      voucher: ModalRoute.of(context)!.settings.arguments as Voucher,
+    );
+  },
 };

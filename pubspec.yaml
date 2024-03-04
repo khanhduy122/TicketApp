@@ -69,7 +69,7 @@ dependencies:
   crypto: ^3.0.3
   auto_size_text: ^3.0.0
   flutter_background_service: ^5.0.5
-  workmanager: ^0.5.2
+  flutter_background_service_android: ^6.2.2
 
 dev_dependencies:
   flutter_test:

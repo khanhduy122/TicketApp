@@ -20,65 +20,74 @@ import 'package:ticket_app/models/ticket.dart';
 import 'package:ticket_app/moduels/auth/auth_bloc.dart';
 import 'package:ticket_app/moduels/user/user_bloc.dart';
 import 'package:ticket_app/screen/splash_screen/splash_screen.dart';
-import 'package:workmanager/workmanager.dart';
 
 Future<void> main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  
-  Workmanager().initialize(
-    callbackDispatcher, // The top level function, aka callbackDispatcher
-    isInDebugMode: true // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
-  );
+
+  final service = FlutterBackgroundService();
+
+  await service.configure(
+      androidConfiguration: AndroidConfiguration(
+        // this will be executed when app is in foreground or background in separated isolate
+        onStart: onStart,
+
+        // auto start service
+        autoStart: false,
+        isForegroundMode: true,
+      ),
+      iosConfiguration: IosConfiguration());
 
   runApp(const MyApp());
 }
 
-@pragma('vm:entry-point') // Mandatory if the App is obfuscated or using Flutter 3.1+
-void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) async {
-    WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    print("onbackground");
-    print("Native called background task: $task");
-    Map<String, dynamic> ticket = inputData!;
+@pragma('vm:entry-point')
+void onStart(ServiceInstance service) async {
+  WidgetsFlutterBinding.ensureInitialized();
+  DartPluginRegistrant.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  debugLog("start service");
+  service.on("stopService").listen((event) {
+    print("stop");
+    service.stopSelf();
+  });
+
+  service.on("deleteTicket").listen((event) async {
+    print(event.toString());
     try {
-      for (var seat in ticket["seats"]) {
-        debugLog("${ticket["cityName"]} - ${ticket["cinemaType"]} - ${ticket["cinemaID"]} - ${ticket["date"]} - ${ticket["movieID"]} - ${ticket["showtimes"]} - $seat");
+      for (var seat in event!["seats"]) {
         final response = await FirebaseFirestore.instance
-                                .collection("Cinemas")
-                                .doc(ticket["cityName"])
-                                .collection(ticket["cinemaType"])
-                                .doc(ticket["cinemaID"])
-                                .collection(ticket["date"])
-                                .doc(ticket["movieID"])
-                                .collection(ticket["showtimes"])
-                                .doc(seat).get();
-        if(response["booked"] == ""){
+            .collection("Cinemas")
+            .doc(event["cityName"])
+            .collection(event["cinemaType"])
+            .doc(event["cinemaID"])
+            .collection(event["date"])
+            .doc(event["movieID"])
+            .collection(event["showtimes"])
+            .doc(seat)
+            .get();
+        if (response["booked"] == "") {
           await FirebaseFirestore.instance
-                                .collection("Cinemas")
-                                .doc(ticket["cityName"])
-                                .collection(ticket["cinemaType"])
-                                .doc(ticket["cinemaID"])
-                                .collection(ticket["date"])
-                                .doc(ticket["movieID"])
-                                .collection(ticket["showtimes"])
-                                .doc(seat)
-                                .update({"status": 0, "booked": ""});
+              .collection("Cinemas")
+              .doc(event["cityName"])
+              .collection(event["cinemaType"])
+              .doc(event["cinemaID"])
+              .collection(event["date"])
+              .doc(event["movieID"])
+              .collection(event["showtimes"])
+              .doc(seat)
+              .update({"status": 0, "booked": ""});
         }
       }
     } catch (e) {
       debugLog(e.toString());
     }
-    
-
-    print("success");
-    return Future.value(true);
+    debugLog("success");
+    service.stopSelf();
   });
 }
 
