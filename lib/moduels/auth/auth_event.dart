@@ -1,32 +1,42 @@
-
 import 'dart:io';
 
-abstract class AuthEvent{}
+import 'package:flutter/material.dart';
 
-class SignInEvent extends AuthEvent{
+abstract class AuthEvent {}
+
+class SignInEvent extends AuthEvent {
   final String email;
   final String password;
+  final BuildContext context;
 
-  SignInEvent({required this.email, required this.password});
+  SignInEvent(
+      {required this.context, required this.email, required this.password});
 }
 
-class SignUpEvent extends AuthEvent{
+class SignUpEvent extends AuthEvent {
   final String fullName;
   final String email;
   final String password;
   final File? image;
 
-  SignUpEvent({required this.fullName, required this.email, required this.password, required this.image});
-
+  SignUpEvent(
+      {required this.fullName,
+      required this.email,
+      required this.password,
+      required this.image});
 }
 
-class SignInWithGoogleEvent extends AuthEvent {}
+class SignInWithGoogleEvent extends AuthEvent {
+  final BuildContext context;
 
-class CheckVerifyEvent extends AuthEvent{}
+  SignInWithGoogleEvent({required this.context});
+}
 
-class DeleteUserEvent extends AuthEvent{}
+class CheckVerifyEvent extends AuthEvent {}
 
-class SendLinkResetPasswordEvent extends AuthEvent{
+class DeleteUserEvent extends AuthEvent {}
+
+class SendLinkResetPasswordEvent extends AuthEvent {
   String email;
 
   SendLinkResetPasswordEvent({required this.email});

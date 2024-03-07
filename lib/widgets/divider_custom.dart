@@ -1,9 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class DividerCustom extends StatelessWidget {
-
   const DividerCustom({
     super.key,
   });
@@ -13,14 +11,13 @@ class DividerCustom extends StatelessWidget {
     return CustomPaint(
       painter: DashedDividerPainter(),
       child: Container(
-        height: 2.h,
+        height: 1.h,
       ),
     );
   }
 }
 
 class DashedDividerPainter extends CustomPainter {
-
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
@@ -29,9 +26,7 @@ class DashedDividerPainter extends CustomPainter {
 
     double startY = size.height / 2;
 
-    for (double startX = 0;
-        startX < size.width;
-        startX += 5.w + 3.w) {
+    for (double startX = 0; startX < size.width; startX += 5.w + 3.w) {
       canvas.drawLine(
         Offset(startX, startY),
         Offset(startX + 5.w, startY),

@@ -27,11 +27,10 @@ class DetailMovieScreen extends StatefulWidget {
   State<DetailMovieScreen> createState() => _DetailMovieScreenState();
 }
 
-class _DetailMovieScreenState extends State<DetailMovieScreen> with TickerProviderStateMixin {
-
+class _DetailMovieScreenState extends State<DetailMovieScreen>
+    with TickerProviderStateMixin {
   late final TabController _tabController;
   final CinemaBloc cinemaBloc = CinemaBloc();
-
 
   @override
   void initState() {
@@ -52,22 +51,31 @@ class _DetailMovieScreenState extends State<DetailMovieScreen> with TickerProvid
     return BlocListener(
       bloc: cinemaBloc,
       listener: (context, state) {
-        if(state is GetCinemasShowingMovieState){
-          if(state.isLoading == true){
+        if (state is GetCinemasShowingMovieState) {
+          if (state.isLoading == true) {
             DialogLoading.show(context);
           }
 
-          if(state.cinemaCity != null){
+          if (state.cinemaCity != null) {
             Navigator.of(context, rootNavigator: true).pop();
-            Navigator.pushNamed(context, RouteName.selectCinemaScreen, arguments: {"movie": widget.movie, "cinemaCity": state.cinemaCity});
+            Navigator.pushNamed(context, RouteName.selectCinemaScreen,
+                arguments: {
+                  "movie": widget.movie,
+                  "cinemaCity": state.cinemaCity
+                });
           }
 
-          if(state.error != null){
+          if (state.error != null) {
             Navigator.of(context, rootNavigator: true).pop();
-            if(state.error is TimeOutException){
-              DialogError.show(context: context, message: "Đã có lỗi xẩy ra, vui lòng kiểm tra lại đường truyền");
-            }else{
-              DialogError.show(context: context, message: "Đã có lỗi xảy ra vui lòng thử lại sao");
+            if (state.error is TimeOutException) {
+              DialogError.show(
+                  context: context,
+                  message:
+                      "Đã có lỗi xẩy ra, vui lòng kiểm tra lại đường truyền");
+            } else {
+              DialogError.show(
+                  context: context,
+                  message: "Đã có lỗi xảy ra vui lòng thử lại sao");
             }
           }
         }
@@ -151,7 +159,8 @@ class _DetailMovieScreenState extends State<DetailMovieScreen> with TickerProvid
                           height: 10.h,
                         ),
                         RatingWidget(
-                            rating: widget.movie.rating ?? 0, total: widget.movie.totalReview ?? 0),
+                            rating: widget.movie.rating ?? 0,
+                            total: widget.movie.totalReview ?? 0),
                         SizedBox(
                           height: 10.h,
                         ),
@@ -161,12 +170,17 @@ class _DetailMovieScreenState extends State<DetailMovieScreen> with TickerProvid
                                 height: 30.h,
                                 width: 80.w,
                                 onPressed: () {
-                                  String currentCityName = context.read<DataAppProvider>().cityNameCurrent;
+                                  String currentCityName = context
+                                      .read<DataAppProvider>()
+                                      .cityNameCurrent;
                                   DateTime now = DateTime.now();
-                                  String currentDate = "${now.day}-${now.month}-${now.year}";
-                                  cinemaBloc.add(
-                                    GetCinemasShowingMovieEvent(cityName: currentCityName, movieID: widget.movie.id!, date: currentDate, context: context)
-                                  );
+                                  String currentDate =
+                                      "${now.day}-${now.month}-${now.year}";
+                                  cinemaBloc.add(GetCinemasShowingMovieEvent(
+                                      cityName: currentCityName,
+                                      movieID: widget.movie.id!,
+                                      date: currentDate,
+                                      context: context));
                                 },
                               )
                             : Container()
@@ -185,7 +199,9 @@ class _DetailMovieScreenState extends State<DetailMovieScreen> with TickerProvid
   Widget _buildTabBar(Size size) {
     return TabBar(
         controller: _tabController,
+        dividerColor: Colors.transparent,
         indicatorColor: AppColors.buttonColor,
+        indicatorSize: TabBarIndicatorSize.tab,
         tabs: [
           Tab(
               child: Text(
@@ -435,23 +451,26 @@ class _DetailMovieScreenState extends State<DetailMovieScreen> with TickerProvid
                   review.content,
                   style: AppStyle.defaultStyle,
                 ),
-                SizedBox(height: 10.h,),
-                (review.images != null) ?
                 SizedBox(
-                  width: MediaQuery.of(context).size.width - 70.w,
-                  child: Wrap(
-                    spacing: 10.w,
-                    runSpacing: 10.h,
-                    children: [
-                      for (var image in review.images!)
-                        ImageNetworkWidget(
-                          url: image,
-                          height: 100.h,
-                          width: 100.w,
+                  height: 10.h,
+                ),
+                (review.images != null)
+                    ? SizedBox(
+                        width: MediaQuery.of(context).size.width - 70.w,
+                        child: Wrap(
+                          spacing: 10.w,
+                          runSpacing: 10.h,
+                          children: [
+                            for (var image in review.images!)
+                              ImageNetworkWidget(
+                                url: image,
+                                height: 100.h,
+                                width: 100.w,
+                              ),
+                          ],
                         ),
-                    ],
-                  ),
-                ) : Container()
+                      )
+                    : Container()
               ],
             )
           ],

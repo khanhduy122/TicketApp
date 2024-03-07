@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:ticket_app/components/app_assets.dart';
+import 'package:ticket_app/components/app_colors.dart';
 import 'package:ticket_app/components/app_styles.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/models/ticket.dart';
@@ -15,8 +16,8 @@ class MyTicketScreen extends StatefulWidget {
   State<MyTicketScreen> createState() => _VoucherScreenState();
 }
 
-class _VoucherScreenState extends State<MyTicketScreen> with TickerProviderStateMixin {
-
+class _VoucherScreenState extends State<MyTicketScreen>
+    with TickerProviderStateMixin {
   late final TabController _tabController;
 
   @override
@@ -40,27 +41,33 @@ class _VoucherScreenState extends State<MyTicketScreen> with TickerProviderState
         body: SafeArea(
           child: Column(
             children: [
-              SizedBox(height: 10.h,),
+              SizedBox(
+                height: 10.h,
+              ),
               TabBar(
                 controller: _tabController,
+                dividerColor: Colors.transparent,
+                labelColor: AppColors.buttonColor,
+                indicatorColor: AppColors.buttonColor,
+                indicatorSize: TabBarIndicatorSize.tab,
                 tabs: const [
-                  Tab(text: "Vé Đang Chờ",),
-                  Tab(text: "Vé Đã Xem",),
+                  Tab(
+                    text: "Vé Đang Chờ",
+                  ),
+                  Tab(
+                    text: "Vé Đã Xem",
+                  ),
                 ],
               ),
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      tabViewNewTicket(),
-                      tabViewExpiredTicket(),
-                    ]
-                  ),
+                  child: TabBarView(controller: _tabController, children: [
+                    tabViewNewTicket(),
+                    tabViewExpiredTicket(),
+                  ]),
                 ),
               )
-              
             ],
           ),
         ),
@@ -70,52 +77,60 @@ class _VoucherScreenState extends State<MyTicketScreen> with TickerProviderState
 
   Widget tabViewNewTicket() {
     return StreamBuilder(
-      stream: TicketRepo.getNewTickets(),
-      builder: (context, snapshot) {
-        if(snapshot.connectionState == ConnectionState.waiting){
-          return const Center(child: CircularProgressIndicator(),);
-        }
-        if(snapshot.connectionState == ConnectionState.active){
-          return Column(
-            children: [
-              SizedBox(height: 40.h,),
-              _buildListMyTicket(snapshot.data?? []),
-            ],
-          );
-        }
-        return Container();
-      }
-    );
+        stream: TicketRepo.getNewTickets(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (snapshot.connectionState == ConnectionState.active) {
+            return Column(
+              children: [
+                SizedBox(
+                  height: 40.h,
+                ),
+                _buildListMyTicket(snapshot.data ?? []),
+              ],
+            );
+          }
+          return Container();
+        });
   }
 
   Widget tabViewExpiredTicket() {
     return StreamBuilder(
-      stream: TicketRepo.getExpiredTickets(),
-      builder: (context, snapshot) {
-        if(snapshot.connectionState == ConnectionState.waiting){
-          return const Center(child: CircularProgressIndicator(),);
-        }
-        if(snapshot.connectionState == ConnectionState.active){
-          return Column(
-            children: [
-              SizedBox(height: 40.h,),
-              _buildListMyTicket(snapshot.data ?? []),
-            ],
-          );
-        }
-        return Container();
-      }
-    );
+        stream: TicketRepo.getExpiredTickets(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (snapshot.connectionState == ConnectionState.active) {
+            return Column(
+              children: [
+                SizedBox(
+                  height: 40.h,
+                ),
+                _buildListMyTicket(snapshot.data ?? []),
+              ],
+            );
+          }
+          return Container();
+        });
   }
 
-  Widget _buildListMyTicket(List<Ticket> tickets){
-    if(tickets.isEmpty){
+  Widget _buildListMyTicket(List<Ticket> tickets) {
+    if (tickets.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(AppAssets.imgEmpty),
-            SizedBox(height: 20.h,),
+            SizedBox(
+              height: 20.h,
+            ),
             Text(
               "Bạn chưa có vé nào",
               style: AppStyle.titleStyle,
@@ -125,28 +140,30 @@ class _VoucherScreenState extends State<MyTicketScreen> with TickerProviderState
       );
     }
     return Expanded(
-      child: ListView.builder(
-        itemCount: tickets.length,
-        itemBuilder: (context, index) {
-          return Column(
-            children: [
-              _buildItemMyTicket(tickets[index]),
-              SizedBox(height: 20.h,)
-            ],
-          );
-        },
-      )
-    );
+        child: ListView.builder(
+      itemCount: tickets.length,
+      itemBuilder: (context, index) {
+        return Column(
+          children: [
+            _buildItemMyTicket(tickets[index]),
+            SizedBox(
+              height: 20.h,
+            )
+          ],
+        );
+      },
+    ));
   }
 
-  Widget _buildItemMyTicket(Ticket ticket){
+  Widget _buildItemMyTicket(Ticket ticket) {
     return GestureDetector(
       onTap: () {
-        if(ticket.isExpired == 0){
-          Navigator.pushNamed(context, RouteName.detailMyTicketScreen, arguments: ticket);
-        }
-        else {
-          Navigator.pushNamed(context, RouteName.detailTicketExpiredScreen, arguments: ticket);
+        if (ticket.isExpired == 0) {
+          Navigator.pushNamed(context, RouteName.detailMyTicketScreen,
+              arguments: ticket);
+        } else {
+          Navigator.pushNamed(context, RouteName.detailTicketExpiredScreen,
+              arguments: ticket);
         }
       },
       child: Row(
@@ -185,11 +202,12 @@ class _VoucherScreenState extends State<MyTicketScreen> with TickerProviderState
                 Row(
                   children: [
                     SizedBox(
-                      height: 16.h,
-                      width: 16.w,
-                      child: Image.asset(AppAssets.icClock)
+                        height: 16.h,
+                        width: 16.w,
+                        child: Image.asset(AppAssets.icClock)),
+                    SizedBox(
+                      width: 10.w,
                     ),
-                    SizedBox(width: 10.w,),
                     Text(
                       "${ticket.movie!.duration} phút",
                       style: AppStyle.defaultStyle,

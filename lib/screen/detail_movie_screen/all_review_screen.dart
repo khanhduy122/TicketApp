@@ -358,19 +358,20 @@ class _AllReviewScreenState extends State<AllReviewScreen>
                 SizedBox(
                   height: 10.h,
                 ),
-                (review.images != null) ?
-                    Wrap(
-                      spacing: 10.w,
-                      runSpacing: 10.h,
-                      children: [
-                        for (var image in review.images!)
-                          ImageNetworkWidget(
-                            url: image,
-                            height: 100.h,
-                            width: 100.w,
-                          )
-                      ],
-                    ) : Container()
+                (review.images != null)
+                    ? Wrap(
+                        spacing: 10.w,
+                        runSpacing: 10.h,
+                        children: [
+                          for (var image in review.images!)
+                            ImageNetworkWidget(
+                              url: image,
+                              height: 100.h,
+                              width: 100.w,
+                            )
+                        ],
+                      )
+                    : Container()
               ],
             )
           ],
@@ -505,29 +506,37 @@ class _AllReviewScreenState extends State<AllReviewScreen>
       }
       if (state.reviews != null) {
         Navigator.pop(context);
-        listReviewScrollController.jumpTo(0.0,);
+        listReviewScrollController.jumpTo(
+          0.0,
+        );
         setState(() {
           debugLog(allReviewsLoaded.length.toString());
           allReviewsLoaded = state.reviews!.sublist(0);
           reviewsDisplay = state.reviews!.sublist(0);
         });
       }
-      if(state.error != null){
+      if (state.error != null) {
         Navigator.pop(context);
-        if(state.error is TimeOutException){
+        if (state.error is TimeOutException) {
           DialogError.show(
-            context: context, 
-            message: "Đã có lỗi xảy ra, vui lòng kiểm tra lại đường truyền", 
+            context: context,
+            message: "Đã có lỗi xảy ra, vui lòng kiểm tra lại đường truyền",
             onTap: () {
-              Navigator.popUntil(context, (route) => route.settings.name == RouteName.detailMovieScreen);
+              Navigator.popUntil(
+                  context,
+                  (route) =>
+                      route.settings.name == RouteName.detailMovieScreen);
             },
           );
-        }else{
+        } else {
           DialogError.show(
-            context: context, 
+            context: context,
             message: "Đã có lỗi xảy ra, vui lòng thử lại sau",
             onTap: () {
-              Navigator.popUntil(context, (route) => route.settings.name == RouteName.detailMovieScreen);
+              Navigator.popUntil(
+                  context,
+                  (route) =>
+                      route.settings.name == RouteName.detailMovieScreen);
             },
           );
         }
@@ -548,22 +557,28 @@ class _AllReviewScreenState extends State<AllReviewScreen>
           reviewsDisplay = state.reviews!.sublist(0);
         });
       }
-      if(state.error != null){
+      if (state.error != null) {
         Navigator.pop(context);
-        if(state.error is TimeOutException){
+        if (state.error is TimeOutException) {
           DialogError.show(
-            context: context, 
-            message: "Đã có lỗi xảy ra, vui lòng kiểm tra lại đường truyền", 
+            context: context,
+            message: "Đã có lỗi xảy ra, vui lòng kiểm tra lại đường truyền",
             onTap: () {
-              Navigator.popUntil(context, (route) => route.settings.name == RouteName.detailMovieScreen);
+              Navigator.popUntil(
+                  context,
+                  (route) =>
+                      route.settings.name == RouteName.detailMovieScreen);
             },
           );
-        }else{
+        } else {
           DialogError.show(
-            context: context, 
+            context: context,
             message: "Đã có lỗi xảy ra, vui lòng thử lại sau",
             onTap: () {
-              Navigator.popUntil(context, (route) => route.settings.name == RouteName.detailMovieScreen);
+              Navigator.popUntil(
+                  context,
+                  (route) =>
+                      route.settings.name == RouteName.detailMovieScreen);
             },
           );
         }

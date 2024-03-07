@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:ticket_app/components/app_assets.dart';
 import 'package:ticket_app/components/app_colors.dart';
 import 'package:ticket_app/components/app_styles.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
+import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/models/voucher.dart';
 import 'package:ticket_app/moduels/user/user_repo.dart';
 import 'package:ticket_app/widgets/appbar_widget.dart';
@@ -24,12 +26,15 @@ class _VoucherScreenState extends State<VoucherScreen> {
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: StreamBuilder(
-            stream: UserRepo.getListVoucher(),
+            stream: UserRepo.getListVoucherStream(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               }
               if (snapshot.connectionState == ConnectionState.active) {
+                context
+                    .read<DataAppProvider>()
+                    .setListVoucher(vouchers: snapshot.data!);
                 return _buildListVoucher(snapshot.data!);
               }
               return Container();
@@ -61,7 +66,14 @@ class _VoucherScreenState extends State<VoucherScreen> {
             child: ListView.builder(
           itemCount: vouchers.length,
           itemBuilder: (context, index) {
-            return _buildVoucherItem(vouchers[index]);
+            return Column(
+              children: [
+                _buildVoucherItem(vouchers[index]),
+                SizedBox(
+                  height: 10.h,
+                )
+              ],
+            );
           },
         ))
       ],

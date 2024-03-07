@@ -1,9 +1,8 @@
-
 import 'package:ticket_app/models/payment_card.dart';
 
-class PaymentState{}
+class PaymentState {}
 
-class CreateURLState extends PaymentState{
+class CreateURLState extends PaymentState {
   Object? error;
   bool? isLoading;
   String? createTokenUrl;
@@ -11,7 +10,7 @@ class CreateURLState extends PaymentState{
   CreateURLState({this.error, this.isLoading, this.createTokenUrl});
 }
 
-class AddMethodPaymentState extends PaymentState{
+class AddMethodPaymentState extends PaymentState {
   bool? isLoading;
   bool? isSuccess;
   Object? error;
@@ -19,7 +18,15 @@ class AddMethodPaymentState extends PaymentState{
   AddMethodPaymentState({this.error, this.isLoading, this.isSuccess});
 }
 
-class GetMethodPaymentUserState extends PaymentState{
+class DeleteMethodPaymentState extends PaymentState {
+  bool? isLoading;
+  bool? isSuccess;
+  Object? error;
+
+  DeleteMethodPaymentState({this.error, this.isLoading, this.isSuccess});
+}
+
+class GetMethodPaymentUserState extends PaymentState {
   bool? isLoading;
   List<PaymentCard>? listCard;
   Object? error;
@@ -27,7 +34,7 @@ class GetMethodPaymentUserState extends PaymentState{
   GetMethodPaymentUserState({this.error, this.isLoading, this.listCard});
 }
 
-class CreatePaymentUrlState extends PaymentState{
+class CreatePaymentUrlState extends PaymentState {
   bool? isLoading;
   String? paymentUrl;
   Object? error;
@@ -35,7 +42,7 @@ class CreatePaymentUrlState extends PaymentState{
   CreatePaymentUrlState({this.error, this.isLoading, this.paymentUrl});
 }
 
-class AddTicketState extends PaymentState{
+class AddTicketState extends PaymentState {
   bool? isLoading;
   bool? isSuccess;
   Object? error;
@@ -43,7 +50,7 @@ class AddTicketState extends PaymentState{
   AddTicketState({this.error, this.isLoading, this.isSuccess});
 }
 
-class CheckTicketState extends PaymentState{
+class CheckTicketState extends PaymentState {
   bool? isLoading;
   bool? isSuccess;
   Object? error;

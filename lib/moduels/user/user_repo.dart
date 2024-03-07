@@ -8,10 +8,24 @@ class UserRepo {
   final FirebaseStorage _storage = FirebaseStorage.instance;
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  static Stream<List<Voucher>> getListVoucher() {
-    return _firestore.collection("User").doc(FirebaseAuth.instance.currentUser!.uid).collection("Vouchers").snapshots().map((response) {
+  static Stream<List<Voucher>> getListVoucherStream() {
+    return _firestore
+        .collection("User")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection("Vouchers")
+        .snapshots()
+        .map((response) {
       return response.docs.map((e) => Voucher.fromJson(e.data())).toList();
     });
+  }
+
+  Future<List<Voucher>> getListVoucher() async {
+    final response = await _firestore
+        .collection("User")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection("Vouchers")
+        .get();
+    return response.docs.map((e) => Voucher.fromJson(e.data())).toList();
   }
 
   Future<String?> uploadImageToFirebase(File imageFile) async {

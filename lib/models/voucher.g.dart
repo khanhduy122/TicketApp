@@ -7,13 +7,14 @@ part of 'voucher.dart';
 // **************************************************************************
 
 Voucher _$VoucherFromJson(Map<String, dynamic> json) => Voucher(
-      json['id'] as String,
+      id: json['id'] as String,
       title: json['title'] as String,
       expiredTime: json['expiredTime'] as int,
-      description: json['description'] as String,
+      informations: json['informations'] as String,
       priceDiscount: json['priceDiscount'] as int,
       applyInvoices: json['applyInvoices'] as int,
       startTime: json['startTime'] as int,
+      appliesToCinemas: json['appliesToCinemas'] as int,
     );
 
 Map<String, dynamic> _$VoucherToJson(Voucher instance) => <String, dynamic>{
@@ -21,7 +22,8 @@ Map<String, dynamic> _$VoucherToJson(Voucher instance) => <String, dynamic>{
       'title': instance.title,
       'expiredTime': instance.expiredTime,
       'startTime': instance.startTime,
-      'description': instance.description,
+      'informations': instance.informations,
       'priceDiscount': instance.priceDiscount,
       'applyInvoices': instance.applyInvoices,
+      'appliesToCinemas': instance.appliesToCinemas,
     };

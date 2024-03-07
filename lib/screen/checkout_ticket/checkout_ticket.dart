@@ -1,21 +1,16 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:ticket_app/components/app_colors.dart';
 import 'package:ticket_app/components/app_styles.dart';
-import 'package:ticket_app/components/dialogs/dialog_error.dart';
-import 'package:ticket_app/components/dialogs/dialog_loading.dart';
 import 'package:ticket_app/components/logger.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/models/ticket.dart';
-import 'package:ticket_app/moduels/exceptions/all_exception.dart';
-import 'package:ticket_app/moduels/payment/payment_bloc.dart';
-import 'package:ticket_app/moduels/payment/payment_event.dart';
-import 'package:ticket_app/moduels/payment/payment_state.dart';
+import 'package:ticket_app/models/voucher.dart';
 import 'package:ticket_app/moduels/seat/select_seat_bloc.dart';
 import 'package:ticket_app/moduels/seat/select_seat_event.dart';
 import 'package:ticket_app/moduels/seat/select_seat_repo.dart';
@@ -34,7 +29,6 @@ class CheckoutTicketScreen extends StatefulWidget {
 
 class _CheckoutTicketScreenState extends State<CheckoutTicketScreen>
     with WidgetsBindingObserver {
-  final PaymentBloc paymentBloc = PaymentBloc();
   String id = "";
   final StreamController countDownController = StreamController();
   final SelectSeatBloc selectSeatBloc = SelectSeatBloc();
@@ -43,6 +37,7 @@ class _CheckoutTicketScreenState extends State<CheckoutTicketScreen>
   Timer? _timer;
   final SelectSeatRepo selectSeatRepo = SelectSeatRepo();
   final service = FlutterBackgroundService();
+  Voucher? voucher;
 
   @override
   void initState() {
@@ -54,7 +49,17 @@ class _CheckoutTicketScreenState extends State<CheckoutTicketScreen>
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       currentSecond--;
       if (currentSecond == 0) {
-        _deleteTicket();
+        service.invoke("deleteTicket", {
+          "cityName": widget.ticket.cinema!.cityName,
+          "cinemaType": widget.ticket.cinema!.type.name,
+          "cinemaID": widget.ticket.cinema!.id,
+          "date":
+              "${widget.ticket.date!.day}-${widget.ticket.date!.month}-${widget.ticket.date!.year}",
+          "movieID": widget.ticket.movie!.id,
+          "showtimes":
+              "${widget.ticket.showtimes} - ${widget.ticket.cinema!.rooms!.first.id}",
+          "seats": widget.ticket.seats!.map((e) => e.name).toList()
+        });
         _timer!.cancel();
       }
       countDownController.sink.add(currentSecond);
@@ -69,9 +74,17 @@ class _CheckoutTicketScreenState extends State<CheckoutTicketScreen>
     debugLog(state.name);
     if (state == AppLifecycleState.detached) {
       print("on destry");
-      if (_timer != null) {
-        _deleteTicket();
-      }
+      service.invoke("deleteTicket", {
+        "cityName": widget.ticket.cinema!.cityName,
+        "cinemaType": widget.ticket.cinema!.type.name,
+        "cinemaID": widget.ticket.cinema!.id,
+        "date":
+            "${widget.ticket.date!.day}-${widget.ticket.date!.month}-${widget.ticket.date!.year}",
+        "movieID": widget.ticket.movie!.id,
+        "showtimes":
+            "${widget.ticket.showtimes} - ${widget.ticket.cinema!.rooms!.first.id}",
+        "seats": widget.ticket.seats!.map((e) => e.name).toList()
+      });
     }
   }
 
@@ -95,62 +108,113 @@ class _CheckoutTicketScreenState extends State<CheckoutTicketScreen>
         selectSeatBloc.add(DeleteSeatEvent(ticket: widget.ticket));
         return Future.value(true);
       },
-      child: BlocListener(
-        bloc: paymentBloc,
-        listenWhen: (previous, current) {
-          return current is GetMethodPaymentUserState;
-        },
-        listener: (context, state) {
-          _onListener(state);
-        },
-        child: Scaffold(
-          appBar: appBarWidget(
-            title: "Thanh Toán",
-            onTap: () {
-              selectSeatBloc.add(DeleteSeatEvent(ticket: widget.ticket));
-              Navigator.pop(context);
-            },
-          ),
-          body: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 20.h,
-                ),
-                _buidHeader(),
-                Divider(
-                  height: 2.h,
-                  color: AppColors.white,
-                ),
-                SizedBox(
-                  height: 20.h,
-                ),
-                _buildInformationTicket(),
-                SizedBox(
-                  height: 20.h,
-                ),
-                Divider(
-                  height: 2.h,
-                  color: AppColors.white,
-                ),
-                Container(
-                  height: MediaQuery.of(context).size.height / 9,
-                  alignment: Alignment.bottomCenter,
-                  child: ButtonWidget(
-                    title: "Thanh Toán",
-                    height: 50.h,
-                    width: 150.w,
-                    onPressed: () {
-                      paymentBloc.add(GetMethodPaymentUserEvent());
-                    },
+      child: Scaffold(
+        appBar: appBarWidget(
+          title: "Thanh Toán",
+          onTap: () {
+            selectSeatBloc.add(DeleteSeatEvent(ticket: widget.ticket));
+            Navigator.pop(context);
+          },
+        ),
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 20.h,
+              ),
+              _buidHeader(),
+              Divider(
+                height: 2.h,
+                color: AppColors.white,
+              ),
+              SizedBox(
+                height: 10.h,
+              ),
+              _buildInformationTicket(),
+              SizedBox(
+                height: 10.h,
+              ),
+              Divider(
+                height: 2.h,
+                color: AppColors.white,
+              ),
+              SizedBox(
+                height: 20.h,
+              ),
+              GestureDetector(
+                onTap: () async {
+                  final result = await Navigator.pushNamed(
+                      context, RouteName.selectVoucherScreen, arguments: {
+                    "voucherSelected": voucher,
+                    "cinemasType": widget.ticket.cinema!.type
+                  });
+                  if (result != null) {
+                    setState(() {
+                      voucher = result as Voucher;
+                      widget.ticket.price =
+                          widget.ticket.price! - voucher!.priceDiscount;
+                    });
+                  } else {
+                    setState(() {
+                      if (voucher != null) {
+                        widget.ticket.price =
+                            widget.ticket.price! + voucher!.priceDiscount;
+                      }
+
+                      voucher = null;
+                    });
+                  }
+                },
+                child: Container(
+                  height: 50.h,
+                  width: MediaQuery.of(context).size.width,
+                  decoration:
+                      BoxDecoration(border: Border.all(color: AppColors.grey)),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: 10.h,
+                      ),
+                      Text(
+                        "Chọn Voucher",
+                        style: AppStyle.subTitleStyle,
+                      ),
+                      Expanded(
+                          child: voucher != null
+                              ? Text(
+                                  "-${formatPrice(voucher!.priceDiscount)}",
+                                  style: AppStyle.subTitleStyle,
+                                  textAlign: TextAlign.end,
+                                )
+                              : Container())
+                    ],
                   ),
                 ),
-                SizedBox(
-                  height: 20.h,
+              ),
+              SizedBox(
+                height: 10.h,
+              ),
+              Container(
+                height: MediaQuery.of(context).size.height / 9,
+                alignment: Alignment.bottomCenter,
+                child: ButtonWidget(
+                  title: "Thanh Toán",
+                  height: 50.h,
+                  width: 150.w,
+                  onPressed: () {
+                    Navigator.pushNamed(context, RouteName.selectCardScreen,
+                        arguments: {
+                          "ticket": widget.ticket,
+                          "voucher": voucher
+                        });
+                  },
                 ),
-              ],
-            ),
+              ),
+              SizedBox(
+                height: 20.h,
+              ),
+            ],
           ),
         ),
       ),
@@ -253,6 +317,11 @@ class _CheckoutTicketScreenState extends State<CheckoutTicketScreen>
                   dateTime: widget.ticket.date!)),
           _buildItemInformation(title: "Ghế: ", value: formatListSeat()),
           _buildItemInformation(
+              title: "Mã Giảm giá: ",
+              value: voucher == null
+                  ? "0 VND"
+                  : "- ${formatPrice(voucher!.priceDiscount)} VND"),
+          _buildItemInformation(
               title: "Tổng tiền: ",
               value: "${formatPrice(widget.ticket.price!)} VND"),
         ],
@@ -309,44 +378,5 @@ class _CheckoutTicketScreenState extends State<CheckoutTicketScreen>
 
   String formatDate(DateTime dateTime) {
     return "${dateTime.day}-${dateTime.month}-${dateTime.year}";
-  }
-
-  void _onListener(Object? state) {
-    if (state is GetMethodPaymentUserState) {
-      if (state.isLoading == true) {
-        DialogLoading.show(context);
-      }
-
-      if (state.listCard != null) {
-        Navigator.pop(context);
-        Navigator.pushNamed(context, RouteName.selectCardScreen,
-            arguments: {"listCard": state.listCard, "ticket": widget.ticket});
-      }
-
-      if (state.error != null) {
-        if (state.error is NoInternetException) {
-          DialogError.show(
-              context: context,
-              message: "Không có kết nối internet, vui lòng kiểm tra lại!");
-          return;
-        }
-        DialogError.show(
-            context: context, message: "Đã có lỗi xảy ra, vui lòng thử lại");
-      }
-    }
-  }
-
-  void _deleteTicket() {
-    service.invoke("deleteTicket", {
-      "cityName": widget.ticket.cinema!.cityName,
-      "cinemaType": widget.ticket.cinema!.type.name,
-      "cinemaID": widget.ticket.cinema!.id,
-      "date":
-          "${widget.ticket.date!.day}-${widget.ticket.date!.month}-${widget.ticket.date!.year}",
-      "movieID": widget.ticket.movie!.id,
-      "showtimes":
-          "${widget.ticket.showtimes} - ${widget.ticket.cinema!.rooms!.first.id}",
-      "seats": widget.ticket.seats!.map((e) => e.name).toList()
-    });
   }
 }

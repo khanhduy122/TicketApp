@@ -81,7 +81,8 @@ class _SignInScreenState extends State<SignInScreen> {
                   SizedBox(height: 10.h),
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushNamed(context, RouteName.forgotPasswordScreen);
+                      Navigator.pushNamed(
+                          context, RouteName.forgotPasswordScreen);
                     },
                     child: Container(
                       alignment: Alignment.centerRight,
@@ -100,6 +101,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           BlocProvider.of<AuthBloc>(context).add(SignInEvent(
+                              context: context,
                               email: _emailTextController.text,
                               password: _passwordTextController.text));
                         }
@@ -129,15 +131,15 @@ class _SignInScreenState extends State<SignInScreen> {
                   SizedBox(height: 40.h),
                   GestureDetector(
                     onTap: () {
-                      BlocProvider.of<AuthBloc>(context).add(SignInWithGoogleEvent());
+                      BlocProvider.of<AuthBloc>(context)
+                          .add(SignInWithGoogleEvent(context: context));
                     },
                     child: Container(
                       height: 50.h,
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
                           color: AppColors.darkBackground,
-                          borderRadius: BorderRadius.circular(20.h)
-                      ),
+                          borderRadius: BorderRadius.circular(20.h)),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -195,24 +197,29 @@ class _SignInScreenState extends State<SignInScreen> {
       }
 
       if (state.signInSuccess == true) {
-        Navigator.pushNamedAndRemoveUntil(context, RouteName.mainScreen, (route) => false);
+        Navigator.pushNamedAndRemoveUntil(
+            context, RouteName.mainScreen, (route) => false);
       }
 
       if (state.error != null) {
         Navigator.pop(context);
         if (state.error is TimeOutException) {
           DialogError.show(
-              context: context, message: "Đã có lỗi xảy ra, vui lòng kiêm tra lại đường truyền");
+              context: context,
+              message: "Đã có lỗi xảy ra, vui lòng kiêm tra lại đường truyền");
         } else {
           if (state.error is UserNotFoundException) {
             DialogError.show(
-                context: context, message: "Email này chưa được đăng kí trên hệ thống");
+                context: context,
+                message: "Email này chưa được đăng kí trên hệ thống");
           } else {
             if (state.error is WrongPasswordException) {
-              DialogError.show(context: context, message: "Mật khẩu không chính xác");
+              DialogError.show(
+                  context: context, message: "Mật khẩu không chính xác");
             } else {
               DialogError.show(
-                  context: context, message: "Đã có lỗi xảy ra, vui lòng thử lại sao");
+                  context: context,
+                  message: "Đã có lỗi xảy ra, vui lòng thử lại sao");
             }
           }
         }
@@ -230,9 +237,12 @@ class _SignInScreenState extends State<SignInScreen> {
       if (state.error != null) {
         if (state.error is TimeOutException) {
           DialogError.show(
-              context: context, message: "Đã có lỗi xảy ra, vui lòng kiêm tra lại đường truyền");
+              context: context,
+              message: "Đã có lỗi xảy ra, vui lòng kiêm tra lại đường truyền");
         } else {
-          DialogError.show(context: context, message: "Đã có lỗi xảy ra, vui lòng thử lại sao");
+          DialogError.show(
+              context: context,
+              message: "Đã có lỗi xảy ra, vui lòng thử lại sao");
         }
       }
     }

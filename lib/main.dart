@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:ui';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +13,6 @@ import 'package:ticket_app/components/logger.dart';
 import 'package:ticket_app/components/routes/router.dart';
 import 'package:ticket_app/firebase_options.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
-import 'package:ticket_app/models/seat.dart';
-import 'package:ticket_app/models/ticket.dart';
 import 'package:ticket_app/moduels/auth/auth_bloc.dart';
 import 'package:ticket_app/moduels/user/user_bloc.dart';
 import 'package:ticket_app/screen/splash_screen/splash_screen.dart';

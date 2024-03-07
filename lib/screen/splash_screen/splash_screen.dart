@@ -68,9 +68,13 @@ class _SplashScreenState extends State<SplashScreen> {
         debugLog(state.error.toString());
         if (state.error is NoInternetException) {
           DialogError.show(
-              context: context,
-              message:
-                  "Không có kết nối internet, vui lòng kiểm tra lại kết nối của bạn");
+            context: context,
+            message:
+                "Không có kết nối internet, vui lòng kiểm tra lại kết nối của bạn",
+            onTap: () {
+              SystemNavigator.pop();
+            },
+          );
           return;
         }
         if (state.error is DeniedPermissionPositionException) {
@@ -86,7 +90,11 @@ class _SplashScreenState extends State<SplashScreen> {
         }
         DialogError.show(
             context: context,
-            message: "Đã có lỗi xảy ra, vui lòng thử lại sau");
+            message: "Đã có lỗi xảy ra, vui lòng thử lại sau",
+            onTap: () {
+              SystemNavigator.pop();
+            },
+          );
       }
     }
   }

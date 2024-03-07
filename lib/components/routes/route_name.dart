@@ -24,4 +24,5 @@ class RouteName {
   static const String forgotPasswordScreen = "forgotPasswordScreen";
   static const String voucherScreen = "voucherScreen";
   static const String detailVoucherScreen = "detailVoucherScreen";
+  static const String selectVoucherScreen = "selectVoucherScreen";
 }

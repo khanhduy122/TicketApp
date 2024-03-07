@@ -88,6 +88,13 @@ class _UserScreenState extends State<UserScreen> {
                     Navigator.pushNamed(context, RouteName.editProfileScreen);
                   },
                 ),
+                _itemOption(
+                  icon: AppAssets.icPayment,
+                  title: "Thanh Toán",
+                  onTap: () {
+                    Navigator.pushNamed(context, RouteName.selectCardScreen);
+                  },
+                ),
                 // isAllowChangePass
                 //     ? _itemOption(
                 //         icon: AppAssets.icPassword,
@@ -115,10 +122,14 @@ class _UserScreenState extends State<UserScreen> {
                   height: 50.h,
                   width: 250.w,
                   onPressed: () async {
-                    await DialogConfirm.show(context: context, message: "Bạn có chắc muốn đăng xuất ?").then((isConfirm) {
-                      if(isConfirm){
+                    await DialogConfirm.show(
+                            context: context,
+                            message: "Bạn có chắc muốn đăng xuất ?")
+                        .then((isConfirm) {
+                      if (isConfirm) {
                         FirebaseAuth.instance.signOut().then((value) {
-                          Navigator.pushNamedAndRemoveUntil(context, RouteName.signInScreen, (route) => false);
+                          Navigator.pushNamedAndRemoveUntil(context,
+                              RouteName.signInScreen, (route) => false);
                         });
                       }
                     });
@@ -134,45 +145,45 @@ class _UserScreenState extends State<UserScreen> {
 
   Widget _avatarProfie(BuildContext context) {
     return BlocBuilder(
-      bloc: userBloc,
-      builder: (context, snapshot) {
-        debugLog("build user profile");
-        user = FirebaseAuth.instance.currentUser;
-        return Column(
-          children: [
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, RouteName.editProfileScreen);
-              },
-              child: Container(
-                  child: user!.photoURL == null
-                      ? SizedBox(
-                          height: 100.h,
-                          width: 100.w,
-                          child: Image.asset(AppAssets.imgAvatarDefault),
-                        )
-                      : ImageNetworkWidget(
-                          url: user!.photoURL!,
-                          height: 100.h,
-                          width: 100.w,
-                          borderRadius: 50.h,
-                        )),
-            ),
-            SizedBox(
-              height: 20.h,
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, RouteName.editProfileScreen);
-              },
-              child: Text(
-                user!.displayName!,
-                style: AppStyle.titleStyle,
+        bloc: userBloc,
+        builder: (context, snapshot) {
+          debugLog("build user profile");
+          user = FirebaseAuth.instance.currentUser;
+          return Column(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, RouteName.editProfileScreen);
+                },
+                child: Container(
+                    child: user!.photoURL == null
+                        ? SizedBox(
+                            height: 100.h,
+                            width: 100.w,
+                            child: Image.asset(AppAssets.imgAvatarDefault),
+                          )
+                        : ImageNetworkWidget(
+                            url: user!.photoURL!,
+                            height: 100.h,
+                            width: 100.w,
+                            borderRadius: 50.h,
+                          )),
               ),
-            ),
-          ],
-        );
-      });
+              SizedBox(
+                height: 20.h,
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, RouteName.editProfileScreen);
+                },
+                child: Text(
+                  user!.displayName!,
+                  style: AppStyle.titleStyle,
+                ),
+              ),
+            ],
+          );
+        });
   }
 }
 

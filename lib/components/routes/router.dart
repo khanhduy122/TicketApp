@@ -26,6 +26,7 @@ import 'package:ticket_app/screen/select_seat_screen.dart/select_seat_screen.dar
 import 'package:ticket_app/screen/splash_screen/on_boarding.screen.dart';
 import 'package:ticket_app/screen/splash_screen/splash_screen.dart';
 import 'package:ticket_app/screen/voucher_screen/detaile_voucher_screen.dart';
+import 'package:ticket_app/screen/voucher_screen/select_voucher_screen.dart';
 import 'package:ticket_app/screen/voucher_screen/voucher_screen.dart';
 import 'package:ticket_app/screen/write_review_screen/write_review_screen.dart';
 
@@ -93,8 +94,8 @@ Map<String, WidgetBuilder> routes = {
     final arguments =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
     return SelectCardScreen(
-      listCard: arguments["listCard"],
       ticket: arguments["ticket"],
+      voucher: arguments["voucher"],
     );
   },
   RouteName.paymentScreen: (context) {
@@ -122,6 +123,14 @@ Map<String, WidgetBuilder> routes = {
   RouteName.detailVoucherScreen: (context) {
     return DetailVoucherScreen(
       voucher: ModalRoute.of(context)!.settings.arguments as Voucher,
+    );
+  },
+  RouteName.selectVoucherScreen: (context) {
+    final arguments =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    return SelectVoucherScreen(
+      voucherSelected: arguments["voucherSelected"],
+      cinemasType: arguments["cinemasType"],
     );
   },
 };
