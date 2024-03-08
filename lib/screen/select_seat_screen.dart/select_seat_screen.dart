@@ -1,5 +1,8 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -8,12 +11,10 @@ import 'package:ticket_app/components/app_colors.dart';
 import 'package:ticket_app/components/app_styles.dart';
 import 'package:ticket_app/components/dialogs/dialog_error.dart';
 import 'package:ticket_app/components/dialogs/dialog_loading.dart';
-import 'package:ticket_app/components/logger.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/models/enum_model.dart';
 import 'package:ticket_app/models/seat.dart';
 import 'package:ticket_app/models/ticket.dart';
-import 'package:ticket_app/moduels/auth/auth_exception.dart';
 import 'package:ticket_app/moduels/exceptions/all_exception.dart';
 import 'package:ticket_app/moduels/seat/seat_exception.dart';
 import 'package:ticket_app/moduels/seat/select_seat_bloc.dart';
@@ -33,14 +34,14 @@ class SelectSeatScreen extends StatefulWidget {
 }
 
 class _SelectSeatScreenState extends State<SelectSeatScreen> {
-
   final List<Seat> seatsSelected = [];
-  TransformationController viewTransformationController = TransformationController();
+  TransformationController viewTransformationController =
+      TransformationController();
   final StreamController detailTiketController = StreamController();
   final SelectSeatBloc seatBloc = SelectSeatBloc();
   bool isAwaitPayment = false;
 
-   @override
+  @override
   void initState() {
     super.initState();
     viewTransformationController.value = Matrix4.identity()..scale(0.5);
@@ -62,22 +63,29 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
       },
       child: Scaffold(
         backgroundColor: AppColors.seccondBackgroud,
-        appBar: appBarWidget(title: widget.ticket.movie!.name, color: AppColors.seccondBackgroud),
+        appBar: appBarWidget(
+            title: widget.ticket.movie!.name,
+            color: AppColors.seccondBackgroud),
         body: SafeArea(
-          child: Column(
-            children: [
-              SizedBox(height: 20.h,),
-              _buildHeader(),
-              SizedBox(height: 20.h,),
-              Expanded(
-                child: _buildSelectSeat()
-              ),
-              SizedBox(height: 20.h,),
-              _buildBottomBook(),
-              SizedBox(height: 20.h,),
-            ],
-          )
-        ),
+            child: Column(
+          children: [
+            SizedBox(
+              height: 20.h,
+            ),
+            _buildHeader(),
+            SizedBox(
+              height: 20.h,
+            ),
+            Expanded(child: _buildSelectSeat()),
+            SizedBox(
+              height: 20.h,
+            ),
+            _buildBottomBook(),
+            SizedBox(
+              height: 20.h,
+            ),
+          ],
+        )),
       ),
     );
   }
@@ -89,46 +97,54 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
       minScale: 0.1,
       maxScale: 1.0,
       child: StreamBuilder(
-        stream: SelectSeatRepo.getListSeatCinema(
-          cinema: widget.ticket.cinema!, 
-          movie: widget.ticket.movie!, 
-          date: formatDate(widget.ticket.date!), 
-          showtimes: "${widget.ticket.showtimes} - ${widget.ticket.cinema!.rooms![0].id}"
-        ),
-        builder: (context, snapshot) {
-          if(snapshot.connectionState == ConnectionState.waiting){
-            return  SizedBox(
-              height: MediaQuery.of(context).size.height / 1.5 * 2,
-              width: MediaQuery.of(context).size.width * 2,
-              child: const Center(
-                child: CircularProgressIndicator(color: AppColors.buttonColor,),
-              ),
-            );
-          }
-          if(snapshot.connectionState == ConnectionState.active){
-            return _buildListSeat(snapshot.data!);
-          }
-          return Container();
-        }
-      ),
+          stream: SelectSeatRepo.getListSeatCinema(
+              cinema: widget.ticket.cinema!,
+              movie: widget.ticket.movie!,
+              date: formatDate(widget.ticket.date!),
+              showtimes:
+                  "${widget.ticket.showtimes} - ${widget.ticket.cinema!.rooms![0].id}"),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return SizedBox(
+                height: MediaQuery.of(context).size.height / 1.5 * 2,
+                width: MediaQuery.of(context).size.width * 2,
+                child: const Center(
+                  child: CircularProgressIndicator(
+                    color: AppColors.buttonColor,
+                  ),
+                ),
+              );
+            }
+            if (snapshot.connectionState == ConnectionState.active) {
+              return _buildListSeat(snapshot.data!);
+            }
+            return Container();
+          }),
     );
   }
 
-  Widget _buildHeader(){
+  Widget _buildHeader() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text("${widget.ticket.cinema!.name} - ${widget.ticket.showtimes}", style: AppStyle.subTitleStyle,),
-          SizedBox(height: 30.h,),
+          Text(
+            "${widget.ticket.cinema!.name} - ${widget.ticket.showtimes}",
+            style: AppStyle.subTitleStyle,
+          ),
+          SizedBox(
+            height: 30.h,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildItemInformationSeat(color: AppColors.grey, title: "Thường"),
               _buildItemInformationSeat(color: Colors.deepPurple, title: "vip"),
-              _buildItemInformationSeat(color: AppColors.darkBackground, title: "Đã Đặt"),
-              _buildItemInformationSeat(color: AppColors.buttonColor, title: "Đang chọn")
+              _buildItemInformationSeat(
+                  color: AppColors.darkBackground, title: "Đã Đặt"),
+              _buildItemInformationSeat(
+                  color: AppColors.buttonColor, title: "Đang chọn")
             ],
           ),
         ],
@@ -136,7 +152,8 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
     );
   }
 
-  Widget _buildItemInformationSeat({required Color color, required String title}){
+  Widget _buildItemInformationSeat(
+      {required Color color, required String title}) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -144,73 +161,84 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
           height: 15.h,
           width: 15.h,
           decoration: BoxDecoration(
-            color: color,
-            borderRadius: BorderRadius.circular(3.r)
-          ),
+              color: color, borderRadius: BorderRadius.circular(3.r)),
         ),
-        SizedBox(width: 5.w,),
-        Text(title, style: AppStyle.defaultStyle,)
+        SizedBox(
+          width: 5.w,
+        ),
+        Text(
+          title,
+          style: AppStyle.defaultStyle,
+        )
       ],
     );
   }
 
-  Widget _buildBottomBook(){
+  Widget _buildBottomBook() {
     return StreamBuilder(
-      stream: detailTiketController.stream,
-      builder: (context, snapshot) {
-        return Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Column(
-                children: [
-                  Text("Số lượng: (${seatsSelected.length}) vé", style: AppStyle.defaultStyle,),
-                  SizedBox(height: 10.h,),
-                  Text("${formatPrice(getPriceListSeat(seatsSelected))} VND", style: AppStyle.defaultStyle,),
-                ],
-              ),
-              ButtonWidget(
-                title: "Đặt Vé", 
-                color: seatsSelected.isNotEmpty ? AppColors.buttonColor : AppColors.grey,
-                height: 40.h, 
-                width: 100.w, 
-                onPressed: () {
-                  _onTapBookTicket();
-                },
-              )
-            ],
-          ),
-        );
-      }
-    );
+        stream: detailTiketController.stream,
+        builder: (context, snapshot) {
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Column(
+                  children: [
+                    Text(
+                      "Số lượng: (${seatsSelected.length}) vé",
+                      style: AppStyle.defaultStyle,
+                    ),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    Text(
+                      "${formatPrice(getPriceListSeat(seatsSelected))} VND",
+                      style: AppStyle.defaultStyle,
+                    ),
+                  ],
+                ),
+                ButtonWidget(
+                  title: "Đặt Vé",
+                  color: seatsSelected.isNotEmpty
+                      ? AppColors.buttonColor
+                      : AppColors.grey,
+                  height: 40.h,
+                  width: 100.w,
+                  onPressed: () {
+                    _onTapBookTicket();
+                  },
+                )
+              ],
+            ),
+          );
+        });
   }
 
-  Widget _buildListSeat(List<Seat> seats){
+  Widget _buildListSeat(List<Seat> seats) {
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.background
-      ),
+      decoration: const BoxDecoration(color: AppColors.background),
       padding: EdgeInsets.all(200.h),
       child: Column(
         children: [
           Center(
             child: Image.asset(AppAssets.imgScreen),
           ),
-          SizedBox(height: 100.h,),
+          SizedBox(
+            height: 100.h,
+          ),
           SizedBox(
             height: widget.ticket.cinema!.rooms![0].column! * 60.h,
             width: widget.ticket.cinema!.rooms![0].row! * 60.h,
             child: GridView.builder(
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: widget.ticket.cinema!.rooms![0].row!,
-                mainAxisSpacing: 10.h,
-                crossAxisSpacing: 10.h,
-                mainAxisExtent: 50.h
-              ),
-              itemCount: seats.length, 
+                  crossAxisCount: widget.ticket.cinema!.rooms![0].row!,
+                  mainAxisSpacing: 10.h,
+                  crossAxisSpacing: 10.h,
+                  mainAxisExtent: 50.h),
+              itemCount: seats.length,
               itemBuilder: (context, index) {
                 return _buildItemSeat(seats[index]);
               },
@@ -221,48 +249,50 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
     );
   }
 
-  Widget _buildItemSeat(Seat seat){
+  Widget _buildItemSeat(Seat seat) {
     bool isSelect = false;
     for (var element in seatsSelected) {
-      if(element.name == seat.name && isAwaitPayment == false){
-        if(seat.status == 1){
+      if (element.name == seat.name && isAwaitPayment == false) {
+        if (seat.status == 1) {
           isSelect = false;
           removeSeatSelected(seat);
-          break; 
+          break;
         }
         isSelect = true;
       }
     }
     Color? color;
-    
+
     return StatefulBuilder(
       builder: (context, setState) {
-        if(seat.status == 0){
-          if(isSelect){
+        if (seat.status == 0) {
+          if (isSelect) {
             color = AppColors.buttonColor;
-          }else{
-            switch(seat.typeSeat){
-              case TypeSeat.normal : color = AppColors.grey;
+          } else {
+            switch (seat.typeSeat) {
+              case TypeSeat.normal:
+                color = AppColors.grey;
                 break;
-              case TypeSeat.vip : color = Colors.deepPurple;
-                break ;
-              case TypeSeat.sweetBox : AppColors.orange300;
-                  break;
+              case TypeSeat.vip:
+                color = Colors.deepPurple;
+                break;
+              case TypeSeat.sweetBox:
+                AppColors.orange300;
+                break;
             }
           }
-          
-        }else{
+        } else {
           isSelect = false;
           color = AppColors.darkBackground;
         }
         return GestureDetector(
           onTap: () {
-            if(seat.status == 0){
-              setState((){
+            if (seat.status == 0) {
+              setState(() {
                 isSelect = !isSelect;
-                if(isSelect){
+                if (isSelect) {
                   seatsSelected.add(seat);
-                }else{
+                } else {
                   seatsSelected.remove(seat);
                 }
                 detailTiketController.sink.add(null);
@@ -272,9 +302,8 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
           child: Container(
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: isSelect ? AppColors.buttonColor : color,
-              borderRadius: BorderRadius.circular(5.r)
-            ),
+                color: isSelect ? AppColors.buttonColor : color,
+                borderRadius: BorderRadius.circular(5.r)),
             child: Text(
               seat.name,
               style: AppStyle.defaultStyle,
@@ -285,17 +314,17 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
     );
   }
 
-  String formatDate(DateTime dateTime){
+  String formatDate(DateTime dateTime) {
     return "${dateTime.day}-${dateTime.month}-${dateTime.year}";
   }
 
-  String formatPrice(int price){
+  String formatPrice(int price) {
     String formattedNumber = NumberFormat.decimalPattern().format(price);
     return formattedNumber;
   }
 
-  void _onTapBookTicket(){
-    if(seatsSelected.isNotEmpty){
+  void _onTapBookTicket() {
+    if (seatsSelected.isNotEmpty) {
       isAwaitPayment = true;
       widget.ticket.price = getPriceListSeat(seatsSelected);
       widget.ticket.quantity = seatsSelected.length;
@@ -305,7 +334,7 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
     }
   }
 
-  int getPriceListSeat(List<Seat> seats){
+  int getPriceListSeat(List<Seat> seats) {
     int price = 0;
     for (var seat in seats) {
       price += seat.price;
@@ -313,43 +342,54 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
     return price;
   }
 
-  void removeSeatSelected(Seat seat){
+  void removeSeatSelected(Seat seat) {
     for (int i = 0; i < seatsSelected.length; i++) {
-      if(seatsSelected[i].name == seat.name){
+      if (seatsSelected[i].name == seat.name) {
         seatsSelected.removeAt(i);
         detailTiketController.sink.add("");
       }
     }
   }
 
-  void _onListener(Object? state)async{
-    if(state is SeatState){
-      if(state.isLoading == true){
+  void _onListener(Object? state) async {
+    if (state is SeatState) {
+      if (state.isLoading == true) {
         DialogLoading.show(context);
       }
-      if(state.isSuccess == true){
+      if (state.isSuccess == true) {
+        final service = FlutterBackgroundService();
+        service.startService();
         Navigator.of(context, rootNavigator: true).pop();
-        await Navigator.pushNamed(context, RouteName.checkoutTicketScreen, arguments: widget.ticket);
+        await Navigator.pushNamed(context, RouteName.checkoutTicketScreen,
+            arguments: widget.ticket);
         isAwaitPayment = false;
         seatsSelected.clear();
         detailTiketController.sink.add(null);
       }
-      if(state.error != null){
+      if (state.error != null) {
         Navigator.of(context, rootNavigator: true).pop();
         seatsSelected.clear();
         detailTiketController.sink.add(null);
         widget.ticket.seats!.clear();
-        if(state.error is NoInternetException){
-          DialogError.show(context: context, message: "Không có kết nối internet, vui lòng kiểm tra lại",);
+        if (state.error is NoInternetException) {
+          DialogError.show(
+            context: context,
+            message: "Không có kết nối internet, vui lòng kiểm tra lại",
+          );
           return;
         }
-        if(state.error is SeatReservedException){
-          DialogError.show(context: context, message: "Ghế đã được đặt, vui lòng chọn ghế khác",);
+        if (state.error is SeatReservedException) {
+          DialogError.show(
+            context: context,
+            message: "Ghế đã được đặt, vui lòng chọn ghế khác",
+          );
           return;
         }
-        DialogError.show(context: context, message: "Đã có lỗi xãy ra, vui lòng thử lại",);
+        DialogError.show(
+          context: context,
+          message: "Đã có lỗi xãy ra, vui lòng thử lại",
+        );
       }
     }
   }
-
 }

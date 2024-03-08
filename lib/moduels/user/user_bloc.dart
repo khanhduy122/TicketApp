@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ticket_app/components/net_work_info.dart';
@@ -14,14 +12,13 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
   UserBloc() : super(UserState()) {
     on<EditProfileUserEvent>((event, emit) => _editProfileUser(event, emit));
-
   }
 
   void _editProfileUser(EditProfileUserEvent event, Emitter emit) async {
     try {
       emit(EditProfileUserState(isLoading: true));
 
-      if(await NetWorkInfo.isConnectedToInternet() == false) {
+      if (await NetWorkInfo.isConnectedToInternet() == false) {
         emit(EditProfileUserState(error: NoInternetException()));
         return;
       }
@@ -35,7 +32,6 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         await _user.updatePhotoURL(photoUrl);
       }
       emit(EditProfileUserState(user: _user));
-      
     } catch (e) {
       emit(EditProfileUserState(error: e));
     }

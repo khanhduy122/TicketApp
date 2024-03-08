@@ -70,7 +70,7 @@ class _DetailVoucherScreenState extends State<DetailVoucherScreen> {
                   SizedBox(
                     height: 20.h,
                   ),
-                  DividerCustom(),
+                  const DividerCustom(),
                   SizedBox(
                     height: 20.h,
                   ),

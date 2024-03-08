@@ -48,12 +48,10 @@ void onStart(ServiceInstance service) async {
   );
   debugLog("start service");
   service.on("stopService").listen((event) {
-    print("stop");
     service.stopSelf();
   });
 
   service.on("deleteTicket").listen((event) async {
-    print(event.toString());
     try {
       for (var seat in event!["seats"]) {
         final response = await FirebaseFirestore.instance

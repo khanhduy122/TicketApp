@@ -25,6 +25,7 @@ import 'package:ticket_app/widgets/appbar_widget.dart';
 import 'package:ticket_app/widgets/button_widget.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+// ignore: must_be_immutable
 class SelectCardScreen extends StatefulWidget {
   SelectCardScreen({super.key, this.ticket, this.voucher});
 

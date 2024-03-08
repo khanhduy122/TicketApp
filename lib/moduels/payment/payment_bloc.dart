@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:ticket_app/components/logger.dart';
 import 'package:ticket_app/components/net_work_info.dart';
 import 'package:ticket_app/models/payment_card.dart';
-import 'package:ticket_app/moduels/auth/auth_exception.dart';
 import 'package:ticket_app/moduels/exceptions/all_exception.dart';
 import 'package:ticket_app/moduels/payment/payment_event.dart';
 import 'package:ticket_app/moduels/payment/payment_repo.dart';
@@ -194,7 +193,9 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   void _paymentCancle(PaymentCancleEvent event, Emitter emit) async {
     try {
       _selectSeatRepo.cancelBookSeat(ticket: event.ticket);
-    } catch (e) {}
+    } catch (e) {
+      add(PaymentCancleEvent(ticket: event.ticket));
+    }
   }
 
   void _deleteMethodPayment(

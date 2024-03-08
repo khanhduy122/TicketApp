@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,13 +5,13 @@ import 'package:intl/intl.dart';
 import 'package:ticket_app/components/app_assets.dart';
 import 'package:ticket_app/components/app_colors.dart';
 import 'package:ticket_app/components/app_styles.dart';
-import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/models/enum_model.dart';
 import 'package:ticket_app/models/voucher.dart';
 import 'package:ticket_app/widgets/appbar_widget.dart';
 import 'package:ticket_app/widgets/button_widget.dart';
 
+// ignore: must_be_immutable
 class SelectVoucherScreen extends StatefulWidget {
   SelectVoucherScreen(
       {super.key, this.voucherSelected, required this.cinemasType});

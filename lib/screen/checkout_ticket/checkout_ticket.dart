@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -18,6 +17,7 @@ import 'package:ticket_app/widgets/appbar_widget.dart';
 import 'package:ticket_app/widgets/button_widget.dart';
 import 'package:ticket_app/widgets/image_network_widget.dart';
 
+// ignore: must_be_immutable
 class CheckoutTicketScreen extends StatefulWidget {
   CheckoutTicketScreen({super.key, required this.ticket});
 
@@ -45,7 +45,6 @@ class _CheckoutTicketScreenState extends State<CheckoutTicketScreen>
     id = (Random().nextInt(99999999) + 100000000).toString() +
         DateFormat('yyyyMMddHHmmss').format(DateTime.now()).toString();
     widget.ticket.id = id;
-    service.startService();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       currentSecond--;
       if (currentSecond == 0) {
@@ -73,7 +72,6 @@ class _CheckoutTicketScreenState extends State<CheckoutTicketScreen>
     super.didChangeAppLifecycleState(state);
     debugLog(state.name);
     if (state == AppLifecycleState.detached) {
-      print("on destry");
       service.invoke("deleteTicket", {
         "cityName": widget.ticket.cinema!.cityName,
         "cinemaType": widget.ticket.cinema!.type.name,

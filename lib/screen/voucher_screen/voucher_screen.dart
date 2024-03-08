@@ -96,7 +96,7 @@ class _VoucherScreenState extends State<VoucherScreen> {
             Container(
               height: 80.h,
               width: 80.w,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                   color: AppColors.buttonPressColor,
                   image: DecorationImage(image: AssetImage(AppAssets.imgLogo))),
             ),
