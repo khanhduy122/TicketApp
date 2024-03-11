@@ -189,7 +189,13 @@ class SelectSeatRepo {
   }
 
   String formatDate(DateTime dateTime) {
-    return "${dateTime.day}-${dateTime.month}-${dateTime.year}";
+    String day = dateTime.day.toString().length == 1
+        ? "0${dateTime.day}"
+        : dateTime.day.toString();
+    String month = dateTime.month.toString().length == 1
+        ? "0${dateTime.month}"
+        : dateTime.month.toString();
+    return "$day-$month-${dateTime.year}";
   }
 
   Future<bool> isBooked({required Ticket ticket, required Seat seat}) async {

@@ -174,8 +174,15 @@ class _DetailMovieScreenState extends State<DetailMovieScreen>
                                       .read<DataAppProvider>()
                                       .cityNameCurrent;
                                   DateTime now = DateTime.now();
+                                  String day = now.day.toString().length == 1
+                                      ? "0${now.day}"
+                                      : now.day.toString();
+                                  String month =
+                                      now.month.toString().length == 1
+                                          ? "0${now.month}"
+                                          : now.month.toString();
                                   String currentDate =
-                                      "${now.day}-${now.month}-${now.year}";
+                                      "$day-$month-${now.year}";
                                   cinemaBloc.add(GetCinemasShowingMovieEvent(
                                       cityName: currentCityName,
                                       movieID: widget.movie.id!,

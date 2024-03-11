@@ -22,7 +22,10 @@ import 'package:ticket_app/widgets/appbar_widget.dart';
 import 'package:ticket_app/widgets/image_network_widget.dart';
 
 class SelectMovieScreen extends StatefulWidget {
-  const SelectMovieScreen({super.key, required this.cinema,});
+  const SelectMovieScreen({
+    super.key,
+    required this.cinema,
+  });
 
   final Cinema cinema;
 
@@ -31,10 +34,10 @@ class SelectMovieScreen extends StatefulWidget {
 }
 
 class _SelectMovieScreenState extends State<SelectMovieScreen> {
-
   int currentSelectedDayIndex = 0;
   final List<DateTime> listDateTime = [];
-  final TextEditingController _searchCityTextController = TextEditingController();
+  final TextEditingController _searchCityTextController =
+      TextEditingController();
   final CinemaBloc cinemaBloc = CinemaBloc();
 
   @override
@@ -59,23 +62,26 @@ class _SelectMovieScreenState extends State<SelectMovieScreen> {
       child: Scaffold(
         appBar: appBarWidget(title: widget.cinema.name),
         body: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Column(
-              children: [
-                SizedBox(height: 20.h,),
-                _buildSelectDay(),
-                SizedBox(height: 20.h,),
-                Expanded(child: _buildSlectMovie())
-              ],
-            ),
-          )
-        ),
+            child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 20.h,
+              ),
+              _buildSelectDay(),
+              SizedBox(
+                height: 20.h,
+              ),
+              Expanded(child: _buildSlectMovie())
+            ],
+          ),
+        )),
       ),
     );
   }
 
-  Widget _buildSelectDay(){
+  Widget _buildSelectDay() {
     return SizedBox(
       height: 60.h,
       child: ListView.builder(
@@ -83,13 +89,20 @@ class _SelectMovieScreenState extends State<SelectMovieScreen> {
         itemCount: listDateTime.length,
         itemBuilder: (context, index) {
           return ItemDayWidget(
-            day: listDateTime[index].day, 
-            isActive: index == currentSelectedDayIndex, 
+            day: listDateTime[index].day,
+            isActive: index == currentSelectedDayIndex,
             onTap: () {
               currentSelectedDayIndex = index;
               DateTime dateTime = listDateTime[index];
-              String dateSelected = "${dateTime.day}-${dateTime.month}-${dateTime.year}";
-              cinemaBloc.add(GetAllMovieReleasedCinemaEvent(cinema: widget.cinema, date: dateSelected, context: context));
+              String day = dateTime.day.toString().length == 1
+                  ? "0${dateTime.day}"
+                  : dateTime.day.toString();
+              String month = dateTime.month.toString().length == 1
+                  ? "0${dateTime.month}"
+                  : dateTime.month.toString();
+              String dateSelected = "$day-$month-${dateTime.year}";
+              cinemaBloc.add(GetAllMovieReleasedCinemaEvent(
+                  cinema: widget.cinema, date: dateSelected, context: context));
             },
           );
         },
@@ -102,18 +115,20 @@ class _SelectMovieScreenState extends State<SelectMovieScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: ListView.builder(
-            itemCount: widget.cinema.movieShowinginCinema!.length,
-            itemBuilder: (context, index) {
-              return _buildListTypeTiket(movieShowinginCinema: widget.cinema.movieShowinginCinema![index]);
-            },
-          )
-        )
+            child: ListView.builder(
+          itemCount: widget.cinema.movieShowinginCinema!.length,
+          itemBuilder: (context, index) {
+            return _buildListTypeTiket(
+                movieShowinginCinema:
+                    widget.cinema.movieShowinginCinema![index]);
+          },
+        ))
       ],
     );
   }
 
-  Widget _buildListTypeTiket({required MovieShowinginCinema movieShowinginCinema}){
+  Widget _buildListTypeTiket(
+      {required MovieShowinginCinema movieShowinginCinema}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -121,84 +136,111 @@ class _SelectMovieScreenState extends State<SelectMovieScreen> {
           movieShowinginCinema.movie.name!,
           style: AppStyle.titleStyle,
         ),
-        SizedBox(height: 20.h,),
+        SizedBox(
+          height: 20.h,
+        ),
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ImageNetworkWidget(
-              url: movieShowinginCinema.movie.thumbnail!, 
-              width: 100.w, 
+              url: movieShowinginCinema.movie.thumbnail!,
+              width: 100.w,
               height: 150.h,
             ),
-            SizedBox(width: 20.w,),
+            SizedBox(
+              width: 20.w,
+            ),
             Expanded(
               child: Column(
                 children: [
-                  movieShowinginCinema.subtitle_2D != null ? 
-                    BuildListShowtimnes(
-                      movieTimes: movieShowinginCinema.subtitle_2D!, 
-                      title: "Phim 2D Phụ Đề",
-                      onTap: (time, roomID) {
-                        _onTapItemShowTimes(time: time, roomID: roomID, movie: movieShowinginCinema.movie);
-                      },
-                    ) 
-                  : const SizedBox(),
-                  movieShowinginCinema.voice_2D != null ? 
-                    BuildListShowtimnes(
-                      movieTimes: movieShowinginCinema.voice_2D!, 
-                      title: "Phim 2D Lồng Tiếng",
-                      onTap: (time, roomID) {
-                        _onTapItemShowTimes(time: time, roomID: roomID, movie: movieShowinginCinema.movie);
-                      },
-                    ) 
-                  : const SizedBox(),
-                  movieShowinginCinema.subtitle_3D != null ? 
-                    BuildListShowtimnes(
-                      movieTimes: movieShowinginCinema.subtitle_3D!, 
-                      title: "Phim 3D Phụ Đề",
-                      onTap: (time, roomID) {
-                        _onTapItemShowTimes(time: time, roomID: roomID, movie: movieShowinginCinema.movie);
-                      },
-                    ) 
-                  : const SizedBox(),
-                  movieShowinginCinema.voice_3D != null ? 
-                    BuildListShowtimnes(
-                      movieTimes: movieShowinginCinema.voice_3D!, 
-                      title: "Phim 3D Lòng Tiếng",
-                      onTap: (time, roomID) {
-                        _onTapItemShowTimes(time: time, roomID: roomID, movie: movieShowinginCinema.movie);
-                      },
-                    ) 
-                  : const SizedBox(),
+                  movieShowinginCinema.subtitle_2D != null
+                      ? BuildListShowtimnes(
+                          movieTimes: movieShowinginCinema.subtitle_2D!,
+                          title: "Phim 2D Phụ Đề",
+                          onTap: (time, roomID) {
+                            _onTapItemShowTimes(
+                                time: time,
+                                roomID: roomID,
+                                movie: movieShowinginCinema.movie);
+                          },
+                        )
+                      : const SizedBox(),
+                  movieShowinginCinema.voice_2D != null
+                      ? BuildListShowtimnes(
+                          movieTimes: movieShowinginCinema.voice_2D!,
+                          title: "Phim 2D Lồng Tiếng",
+                          onTap: (time, roomID) {
+                            _onTapItemShowTimes(
+                                time: time,
+                                roomID: roomID,
+                                movie: movieShowinginCinema.movie);
+                          },
+                        )
+                      : const SizedBox(),
+                  movieShowinginCinema.subtitle_3D != null
+                      ? BuildListShowtimnes(
+                          movieTimes: movieShowinginCinema.subtitle_3D!,
+                          title: "Phim 3D Phụ Đề",
+                          onTap: (time, roomID) {
+                            _onTapItemShowTimes(
+                                time: time,
+                                roomID: roomID,
+                                movie: movieShowinginCinema.movie);
+                          },
+                        )
+                      : const SizedBox(),
+                  movieShowinginCinema.voice_3D != null
+                      ? BuildListShowtimnes(
+                          movieTimes: movieShowinginCinema.voice_3D!,
+                          title: "Phim 3D Lòng Tiếng",
+                          onTap: (time, roomID) {
+                            _onTapItemShowTimes(
+                                time: time,
+                                roomID: roomID,
+                                movie: movieShowinginCinema.movie);
+                          },
+                        )
+                      : const SizedBox(),
                 ],
               ),
             ),
           ],
         ),
-        SizedBox(height: 20.h,),
+        SizedBox(
+          height: 20.h,
+        ),
       ],
     );
   }
 
-  void _initDays(){
+  void _initDays() {
     DateTime now = DateTime.now();
     int currentDay = now.day;
     int currentMonth = now.month;
     int currentYear = now.year;
     listDateTime.add(DateTime(currentYear, currentMonth, currentDay));
-    for(int i = 0; i < 14; i++){
+    for (int i = 0; i < 14; i++) {
       currentDay++;
-      if(currentMonth == 4 || currentMonth == 6 || currentMonth == 9 || currentMonth == 11){
-        if(currentDay > 30){
+      if (currentMonth == 4 ||
+          currentMonth == 6 ||
+          currentMonth == 9 ||
+          currentMonth == 11) {
+        if (currentDay > 30) {
           currentDay = 1;
           currentMonth++;
         }
       }
-      if(currentMonth == 1 || currentMonth == 3 || currentMonth == 5 || currentMonth == 7 || currentMonth == 8 || currentMonth == 10 || currentMonth == 12){
-        if(currentDay > 31){
+      if (currentMonth == 1 ||
+          currentMonth == 3 ||
+          currentMonth == 5 ||
+          currentMonth == 7 ||
+          currentMonth == 8 ||
+          currentMonth == 10 ||
+          currentMonth == 12) {
+        if (currentDay > 31) {
           currentDay = 1;
           currentMonth++;
-          if(currentDay > 12){
+          if (currentDay > 12) {
             currentMonth = 1;
             currentYear++;
           }
@@ -206,15 +248,17 @@ class _SelectMovieScreenState extends State<SelectMovieScreen> {
       }
       listDateTime.add(DateTime(currentYear, currentMonth, currentDay));
     }
-    
   }
-  
-  void _onTapItemShowTimes({required String time, required String roomID, required Movie movie})async{
+
+  void _onTapItemShowTimes(
+      {required String time,
+      required String roomID,
+      required Movie movie}) async {
     Cinema cinemaTicket = widget.cinema.clone();
     debugLog(widget.cinema.rooms!.length.toString());
     Room? room;
     for (var roomTicket in cinemaTicket.rooms!) {
-      if(roomTicket.id == roomID){
+      if (roomTicket.id == roomID) {
         room = roomTicket;
         break;
       }
@@ -231,27 +275,30 @@ class _SelectMovieScreenState extends State<SelectMovieScreen> {
     Navigator.pushNamed(context, RouteName.selectSeatScreen, arguments: ticket);
   }
 
-  void _onListener(Object? state){
-    if(state is GetAllMovieReleasedCinemaState){
+  void _onListener(Object? state) {
+    if (state is GetAllMovieReleasedCinemaState) {
       if (state.isLoading == true) {
         DialogLoading.show(context);
       }
-  
+
       if (state.cinema != null) {
         Navigator.of(context, rootNavigator: true).pop();
         setState(() {
           // widget.cinema.movies = state.cinema!.movies!.sublist(0);
         });
       }
-  
-      if(state.error != null){
-        if(state.error is NoInternetException){
-          DialogError.show(context: context, message: "Không có kết nối internet, vui lòng kiểm tra lại");
-        }else{
-          DialogError.show(context: context, message: "Đã có lỗi xảy ra vui lòng thử lại sao");
+
+      if (state.error != null) {
+        if (state.error is NoInternetException) {
+          DialogError.show(
+              context: context,
+              message: "Không có kết nối internet, vui lòng kiểm tra lại");
+        } else {
+          DialogError.show(
+              context: context,
+              message: "Đã có lỗi xảy ra vui lòng thử lại sao");
         }
       }
     }
   }
-
 }

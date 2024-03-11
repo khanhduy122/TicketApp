@@ -76,28 +76,66 @@ class CinemaRepo {
 
         if (movieShowinginCinema.subtitle_2D != null) {
           final resut = movieShowinginCinema.subtitle_2D!
-              .where((element) => isValidShowtimes(element.time))
+              .where(
+                (element) => isValidShowtimes(
+                  element.time,
+                  DateTime(
+                    int.parse(date.substring(6)),
+                    int.parse(date.substring(3, 5)),
+                    int.parse(
+                      date.substring(0, 2),
+                    ),
+                  ),
+                ),
+              )
               .toList();
           movieShowinginCinema.subtitle_2D = resut.sublist(0);
         }
 
         if (movieShowinginCinema.voice_2D != null) {
           final resut = movieShowinginCinema.voice_2D!
-              .where((element) => isValidShowtimes(element.time))
+              .where((element) => isValidShowtimes(
+                    element.time,
+                    DateTime(
+                      int.parse(date.substring(6)),
+                      int.parse(date.substring(3, 5)),
+                      int.parse(
+                        date.substring(0, 2),
+                      ),
+                    ),
+                  ))
               .toList();
           movieShowinginCinema.voice_2D = resut.sublist(0);
         }
 
         if (movieShowinginCinema.subtitle_3D != null) {
           final resut = movieShowinginCinema.subtitle_3D!
-              .where((element) => isValidShowtimes(element.time))
+              .where((element) => isValidShowtimes(
+                    element.time,
+                    DateTime(
+                      int.parse(date.substring(6)),
+                      int.parse(date.substring(3, 5)),
+                      int.parse(
+                        date.substring(0, 2),
+                      ),
+                    ),
+                  ))
               .toList();
           movieShowinginCinema.subtitle_3D = resut.sublist(0);
         }
 
         if (movieShowinginCinema.voice_3D != null) {
           final resut = movieShowinginCinema.voice_3D!
-              .where((element) => isValidShowtimes(element.time))
+              .where((element) => isValidShowtimes(
+                    element.time,
+                    DateTime(
+                      int.parse(date.substring(6)),
+                      int.parse(date.substring(3, 5)),
+                      int.parse(
+                        date.substring(0, 2),
+                      ),
+                    ),
+                  ))
               .toList();
           movieShowinginCinema.voice_3D = resut.sublist(0);
         }
@@ -120,12 +158,12 @@ class CinemaRepo {
     }
   }
 
-  bool isValidShowtimes(String showtimes) {
+  bool isValidShowtimes(String showtimes, DateTime dateTime) {
     DateTime now = DateTime.now();
     DateTime showtime = DateTime(
-        now.year,
-        now.month,
-        now.day,
+        dateTime.year,
+        dateTime.month,
+        dateTime.day,
         int.parse(showtimes.substring(0, 2)),
         int.parse(showtimes.substring(3, 5)));
     return now.isBefore(showtime);
@@ -285,25 +323,61 @@ class CinemaRepo {
         if (movieShowinginCinema[0].subtitle_2D != null) {
           movieShowinginCinema[0].subtitle_2D = movieShowinginCinema[0]
               .subtitle_2D!
-              .where((element) => isValidShowtimes(element.time))
+              .where((element) => isValidShowtimes(
+                    element.time,
+                    DateTime(
+                      int.parse(date.substring(6)),
+                      int.parse(date.substring(3, 5)),
+                      int.parse(
+                        date.substring(0, 2),
+                      ),
+                    ),
+                  ))
               .toList();
         }
         if (movieShowinginCinema[0].voice_2D != null) {
           movieShowinginCinema[0].voice_2D = movieShowinginCinema[0]
               .voice_2D!
-              .where((element) => isValidShowtimes(element.time))
+              .where((element) => isValidShowtimes(
+                    element.time,
+                    DateTime(
+                      int.parse(date.substring(6)),
+                      int.parse(date.substring(3, 5)),
+                      int.parse(
+                        date.substring(0, 2),
+                      ),
+                    ),
+                  ))
               .toList();
         }
         if (movieShowinginCinema[0].subtitle_3D != null) {
           movieShowinginCinema[0].subtitle_3D = movieShowinginCinema[0]
               .subtitle_3D!
-              .where((element) => isValidShowtimes(element.time))
+              .where((element) => isValidShowtimes(
+                    element.time,
+                    DateTime(
+                      int.parse(date.substring(6)),
+                      int.parse(date.substring(3, 5)),
+                      int.parse(
+                        date.substring(0, 2),
+                      ),
+                    ),
+                  ))
               .toList();
         }
         if (movieShowinginCinema[0].voice_3D != null) {
           movieShowinginCinema[0].voice_3D = movieShowinginCinema[0]
               .voice_3D!
-              .where((element) => isValidShowtimes(element.time))
+              .where((element) => isValidShowtimes(
+                    element.time,
+                    DateTime(
+                      int.parse(date.substring(6)),
+                      int.parse(date.substring(3, 5)),
+                      int.parse(
+                        date.substring(0, 2),
+                      ),
+                    ),
+                  ))
               .toList();
         }
       }

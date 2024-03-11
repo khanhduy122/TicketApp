@@ -384,7 +384,12 @@ class _CinemaScreenState extends State<CinemaScreen> {
     return GestureDetector(
       onTap: () {
         DateTime now = DateTime.now();
-        String currentDate = "${now.day}-${now.month}-${now.year}";
+        String day =
+            now.day.toString().length == 1 ? "0${now.day}" : now.day.toString();
+        String month = now.month.toString().length == 1
+            ? "0${now.month}"
+            : now.month.toString();
+        String currentDate = "$day-$month-${now.year}";
         cinemaBloc.add(GetAllMovieReleasedCinemaEvent(
             cinema: cinema, date: currentDate, context: context));
       },

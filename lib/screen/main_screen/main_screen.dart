@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ticket_app/components/app_assets.dart';
 import 'package:ticket_app/components/app_colors.dart';
 import 'package:ticket_app/components/app_styles.dart';
+import 'package:ticket_app/components/set_data_firebase.dart';
 import 'package:ticket_app/screen/main_screen/cinema_screen.dart';
 import 'package:ticket_app/screen/main_screen/my_ticket_screen.dart';
 import 'package:ticket_app/screen/main_screen/choose_movie_screen.dart';
@@ -21,7 +22,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    // SetDataFirebase.initData(context);
+    SetDataFirebase.initData(context);
   }
 
   @override

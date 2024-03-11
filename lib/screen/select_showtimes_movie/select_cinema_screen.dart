@@ -127,8 +127,13 @@ class _SelectCinemaScreenState extends State<SelectCinemaScreen> {
             onChanged: (value) {
               _selectCity = value!;
               DateTime dateTime = listDateTime[currentSelectedDateIndex];
-              String dateSelected =
-                  "${dateTime.day}-${dateTime.month}-${dateTime.year}";
+              String day = dateTime.day.toString().length == 1
+                  ? "0${dateTime.day}"
+                  : dateTime.day.toString();
+              String month = dateTime.month.toString().length == 1
+                  ? "0${dateTime.month}"
+                  : dateTime.month.toString();
+              String dateSelected = "$day-$month-${dateTime.year}";
               cinemaBloc.add(GetCinemasShowingMovieEvent(
                   cityName: _selectCity!,
                   movieID: widget.movie.id!,
@@ -209,8 +214,13 @@ class _SelectCinemaScreenState extends State<SelectCinemaScreen> {
             onTap: () {
               currentSelectedDateIndex = index;
               DateTime dateTime = listDateTime[index];
-              String dateSelected =
-                  "${dateTime.day}-${dateTime.month}-${dateTime.year}";
+              String day = dateTime.day.toString().length == 1
+                  ? "0${dateTime.day}"
+                  : dateTime.day.toString();
+              String month = dateTime.month.toString().length == 1
+                  ? "0${dateTime.month}"
+                  : dateTime.month.toString();
+              String dateSelected = "$day-$month-${dateTime.year}";
               cinemaBloc.add(GetCinemasShowingMovieEvent(
                   cityName: _selectCity!,
                   movieID: widget.movie.id!,
