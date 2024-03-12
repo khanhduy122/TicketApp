@@ -53,8 +53,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       listener: (context, state) {
         _onListener(state);
       },
-      child: WillPopScope(
-        onWillPop: () => _onWillPop(),
+      child: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          if (didPop) {
+          return;
+        }
+        _onWillPop();
+        },
         child: GestureDetector(
           onTap: () {
             FocusScope.of(context).unfocus();
@@ -232,17 +238,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
   }
 
-  Future<bool> _onWillPop() async {
+  Future<void> _onWillPop() async {
     if (userName.trim() != user!.displayName!.trim() || imageSelected != null) {
       await DialogConfirm.show(context: context, message: "Bạn có chắc muốn hủy thay đổi ?").then((isConfirm) {
         if (isConfirm) {
           Navigator.pop(context);
-          return true;
         }
-        return false;
       });
     } 
-    return true;
   }
 
   void _onListener(Object? state){

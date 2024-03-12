@@ -91,11 +91,12 @@ Map<String, WidgetBuilder> routes = {
   },
   RouteName.searchScreen: (context) => const SearchScreen(),
   RouteName.selectCardScreen: (context) {
-    final arguments =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    Map<String, dynamic>? arguments = 
+        ModalRoute.of(context)!.settings.arguments != null 
+        ? ModalRoute.of(context)!.settings.arguments as Map<String, dynamic> : null;
     return SelectCardScreen(
-      ticket: arguments["ticket"],
-      voucher: arguments["voucher"],
+      ticket: arguments != null ? arguments["ticket"] : null,
+      voucher: arguments != null ?  arguments["voucher"] : null,
     );
   },
   RouteName.paymentScreen: (context) {

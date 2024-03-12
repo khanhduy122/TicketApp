@@ -100,11 +100,11 @@ class _CheckoutTicketScreenState extends State<CheckoutTicketScreen>
   @override
   Widget build(BuildContext context) {
     isInited = true;
-    return WillPopScope(
-      onWillPop: () {
+    return PopScope(
+      onPopInvoked: (didPop) {
         service.invoke("stopService");
         selectSeatBloc.add(DeleteSeatEvent(ticket: widget.ticket));
-        return Future.value(true);
+        debugLog("on will pop");
       },
       child: Scaffold(
         appBar: appBarWidget(

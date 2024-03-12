@@ -10,8 +10,8 @@ class PaymentSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () => Future.value(false),
+    return PopScope(
+      canPop: false,
       child: Scaffold(
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
