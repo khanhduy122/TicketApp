@@ -88,6 +88,17 @@ class _CheckoutTicketScreenState extends State<CheckoutTicketScreen>
 
   @override
   void dispose() {
+    service.invoke("deleteTicket", {
+      "cityName": widget.ticket.cinema!.cityName,
+      "cinemaType": widget.ticket.cinema!.type.name,
+      "cinemaID": widget.ticket.cinema!.id,
+      "date":
+          "${widget.ticket.date!.day}-${widget.ticket.date!.month}-${widget.ticket.date!.year}",
+      "movieID": widget.ticket.movie!.id,
+      "showtimes":
+          "${widget.ticket.showtimes} - ${widget.ticket.cinema!.rooms!.first.id}",
+      "seats": widget.ticket.seats!.map((e) => e.name).toList()
+    });
     WidgetsBinding.instance.removeObserver(this);
     if (_timer != null) {
       _timer!.cancel();

@@ -69,7 +69,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Row(
                       children: [
                         const ButtonBackWidget(),
-                        Expanded(child: Text("Create New\nYour Account", style: AppStyle.titleStyle, textAlign: TextAlign.center,)),
+                        Expanded(child: Text("Đăng Kí", style: AppStyle.titleStyle, textAlign: TextAlign.center,)),
                       ],
                     ),
                     SizedBox(height: 40.h,),
@@ -117,7 +117,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     SizedBox(height: 20.h,),
                     TextFormFieldWidget(
                       controller: _fullNameController,
-                      label: "Full Name", 
+                      label: "Tên", 
                       textInputAction: TextInputAction.next,
                       validator: (value) {
                         if(value == null || value.isEmpty){
@@ -131,7 +131,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     SizedBox(height: 20.h,),
                     TextFormFieldWidget(
                       controller: _emailController,
-                      label: "Email Adress", 
+                      label: "Địa Chỉ Email", 
                       textInputAction: TextInputAction.next,
                       validator: (value) {
                         if(value == null || value.isEmpty){
@@ -150,7 +150,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     TextFormFieldWidget(
                       controller: _passwordController,
                       obscureText: true,
-                      label: "Password", 
+                      label: "Mật Khẩu", 
                       textInputAction: TextInputAction.next,
                       validator: (value) {
                         if(value == null || value.isEmpty){
@@ -166,7 +166,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               
                     SizedBox(height: 20.h,),
                     TextFormFieldWidget(
-                      label: "Confirm Password", 
+                      label: "Xác Nhận Mật Khẩu", 
                       obscureText: true,
                       textInputAction: TextInputAction.done,
                       validator: (value) {
@@ -183,7 +183,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               
                     SizedBox(height: 40.h,),
                     ButtonWidget(
-                      title: "Sign Up", 
+                      title: "Đăng Kí", 
                       height: 60.h, 
                       width: 250.w, 
                       onPressed: (){
