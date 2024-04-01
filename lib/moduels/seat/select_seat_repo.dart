@@ -169,7 +169,7 @@ class SelectSeatRepo {
         });
 
         if (response.data()!["status"] == 0 ||
-            response.data()!["booked"] == "") {
+            (response.data()!["booked"] == "" || response.data()!["booked"] == FirebaseAuth.instance.currentUser!.uid)) {
           await bookSeat(ticket: ticket, seat: element);
           continue;
         } else {
