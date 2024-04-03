@@ -11,9 +11,7 @@ import 'package:ticket_app/components/dialogs/dialog_error.dart';
 import 'package:ticket_app/components/logger.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
-import 'package:ticket_app/moduels/auth/auth_exception.dart';
 import 'package:ticket_app/moduels/exceptions/all_exception.dart';
-import 'package:ticket_app/moduels/location/location_exception.dart';
 import 'package:ticket_app/screen/splash_screen/bloc/get_data_app_bloc.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -56,11 +54,11 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void _listenerSplash(Object? state, BuildContext context) {
     if (state is GetDataAppState) {
-      if (state.homeData != null && state.cinemasRecommended != null) {
+      if (state.homeData != null) {
         context.read<DataAppProvider>().setHomeData(homeData: state.homeData!);
         context
             .read<DataAppProvider>()
-            .setRecommendedCinema(cinemas: state.cinemasRecommended!);
+            .setRecommendedCinema(cinemas: state.cinemasRecommended);
         checkIsFirst(context);
       }
 
@@ -77,17 +75,7 @@ class _SplashScreenState extends State<SplashScreen> {
           );
           return;
         }
-        if (state.error is DeniedPermissionPositionException) {
-          DialogError.show(
-            context: context,
-            message:
-                "Chúng tôi cần quyền truy cập vào vị trí cho mốt số chức năng nêu bạn không châp nhận thì ứng dụng không thể hoạt động Đúng được",
-            onTap: () {
-              SystemNavigator.pop();
-            },
-          );
-          return;
-        }
+
         DialogError.show(
             context: context,
             message: "Đã có lỗi xảy ra, vui lòng thử lại sau",

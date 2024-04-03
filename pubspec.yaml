@@ -70,6 +70,7 @@ dependencies:
   auto_size_text: ^3.0.0
   flutter_background_service: ^5.0.5
   flutter_background_service_android: ^6.2.2
+  location: ^5.0.0
 
 dev_dependencies:
   flutter_test:

@@ -25,8 +25,7 @@ class GetDataAppBloc extends Bloc<GetDataAppEvent, GetDataAppState> {
           return;
         }
         final movies = await _getDataAppRepo.getMovieApp();
-        final cinemasRecommended =
-            await _cinemaRepo.getCinemasRecommended(event.context);
+        final cinemasRecommended = await _cinemaRepo.getCinemasRecommended(event.context);
         if (FirebaseAuth.instance.currentUser != null) {
           final voucher = await _userRepo.getListVoucher();
           event.context
@@ -34,8 +33,7 @@ class GetDataAppBloc extends Bloc<GetDataAppEvent, GetDataAppState> {
               .setListVoucher(vouchers: voucher);
           await _ticketRepo.convertTicketToExpired();
         }
-        emit(GetDataAppState(
-            cinemasRecommended: cinemasRecommended, homeData: movies));
+        emit(GetDataAppState(cinemasRecommended: cinemasRecommended, homeData: movies));
       } catch (e) {
         emit(GetDataAppState(error: e));
       }

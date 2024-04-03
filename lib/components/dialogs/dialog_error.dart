@@ -8,6 +8,7 @@ import 'package:ticket_app/widgets/button_widget.dart';
 class DialogError {
   static void show(
       {required BuildContext context,
+      String? title,
       required String message,
       Function()? onTap}) {
     showDialog(
@@ -15,8 +16,6 @@ class DialogError {
       builder: (context) {
         return SimpleDialog(backgroundColor: Colors.transparent, children: [
           Container(
-            height: 300.h,
-            width: 300.h,
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             decoration: BoxDecoration(
                 color: AppColors.background,
@@ -40,7 +39,7 @@ class DialogError {
                   height: 10.h,
                 ),
                 Text(
-                  "ERROR",
+                  title ?? "ERROR",
                   style: AppStyle.titleStyle,
                 ),
                 SizedBox(

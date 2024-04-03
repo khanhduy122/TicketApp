@@ -15,6 +15,9 @@ class SetDataFirebaseInDay {
     List<Movie> listNowShowing =
         context.read<DataAppProvider>().homeData.nowShowing.sublist(0);
     for (var cityName in cities) {
+      if(cityName == cities[0]){
+        continue;
+      }
       CinemaCity cinemaCity = await getCinemaCity(cityName);
 
       for (var cinemaCGV in cinemaCity.cgv!) {

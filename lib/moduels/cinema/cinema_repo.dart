@@ -2,53 +2,79 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:location/location.dart' as Location;
+import 'package:ticket_app/components/app_key.dart';
 import 'package:ticket_app/components/logger.dart';
+import 'package:ticket_app/components/service/cache_service.dart';
 import 'package:ticket_app/models/cinema.dart';
 import 'package:ticket_app/models/cinema_city.dart';
+import 'package:ticket_app/models/cities.dart';
 import 'package:ticket_app/models/movie_showing_in_cinema.dart';
 import 'package:ticket_app/moduels/location/location_repo.dart';
 
 class CinemaRepo {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final LocationRepo _locationRepo = LocationRepo();
+  Location.Location _location = Location.Location();
+  bool _serviceEnabled = false;
+  Location.PermissionStatus _permissionGranted = Location.PermissionStatus.denied;
 
   Future<CinemaCity> getCinemasCity(String city, BuildContext context) async {
     try {
-      Position position = await _locationRepo.determinePosition(context);
+      Position? position;
+      _serviceEnabled = await _location.serviceEnabled();
+      _permissionGranted = await _location.hasPermission();
+      
+      if(!_serviceEnabled && _permissionGranted == Location.PermissionStatus.denied){
+         position = await _locationRepo.determinePosition(context);
+      }
+     
       final res = await _firestore.collection("Cinemas").doc(city).get();
       CinemaCity cinemaCity = CinemaCity.fromJson(res.data()!);
 
       for (var element in cinemaCity.cgv!) {
-        element.distance = Geolocator.distanceBetween(
+        if(position != null){
+          element.distance = Geolocator.distanceBetween(
             position.latitude, position.longitude, element.lat, element.long);
+        }
       }
 
       for (var element in cinemaCity.galaxy!) {
-        element.distance = Geolocator.distanceBetween(
+        if(position != null){
+          element.distance = Geolocator.distanceBetween(
             position.latitude, position.longitude, element.lat, element.long);
+        }
       }
 
       for (var element in cinemaCity.lotte!) {
-        element.distance = Geolocator.distanceBetween(
+        if(position != null){
+          element.distance = Geolocator.distanceBetween(
             position.latitude, position.longitude, element.lat, element.long);
+        }
       }
 
-      cinemaCity.cgv!.sort(
-        (a, b) => a.distance!.compareTo(b.distance!),
-      );
-      cinemaCity.galaxy!.sort(
-        (a, b) => a.distance!.compareTo(b.distance!),
-      );
-      cinemaCity.lotte!.sort(
-        (a, b) => a.distance!.compareTo(b.distance!),
-      );
+      if(position != null){
+        cinemaCity.cgv!.sort(
+          (a, b) => a.distance!.compareTo(b.distance!),
+        );
+        cinemaCity.galaxy!.sort(
+          (a, b) => a.distance!.compareTo(b.distance!),
+        );
+        cinemaCity.lotte!.sort(
+          (a, b) => a.distance!.compareTo(b.distance!),
+        );
+      }
+      
 
       cinemaCity.all = cinemaCity.cgv!.sublist(0) +
           cinemaCity.galaxy!.sublist(0) +
           cinemaCity.lotte!.sublist(0);
-      cinemaCity.all!.sort(
-        (a, b) => a.distance!.compareTo(b.distance!),
-      );
+        
+      if(position != null){
+        cinemaCity.all!.sort(
+          (a, b) => a.distance!.compareTo(b.distance!),
+        );
+      }
 
       return cinemaCity;
     } catch (e) {
@@ -169,12 +195,21 @@ class CinemaRepo {
     return now.isBefore(showtime);
   }
 
-  Future<CinemaCity> getCinemasRecommended(BuildContext context) async {
+  Future<CinemaCity?> getCinemasRecommended(BuildContext context) async {
     try {
-      Position position = await _locationRepo.determinePosition(context);
+      Position? position = await _locationRepo.determinePosition(context);
+
+      if(position == null){
+        final cityName = CacheService.getData(AppKey.cityName);
+        if(cityName != null){
+          final res = await getCinemasCity(cityName, context);
+          return res;
+        }
+        cities.insert(0, '----Chọn tĩnh / thành phố----');
+        return null;
+      }
 
       String cityName = await getCurrentCity(position);
-      // String cityName = "An Giang";
 
       debugLog(cityName);
 
@@ -229,6 +264,7 @@ class CinemaRepo {
 
       if (placemarks.isNotEmpty) {
         String? cityName = placemarks[0].administrativeArea;
+        CacheService.saveData(AppKey.cityName, cityName);
         return cityName ?? "";
       } else {
         throw Exception();
@@ -244,7 +280,13 @@ class CinemaRepo {
       required String date,
       required BuildContext context}) async {
     try {
-      Position position = await _locationRepo.determinePosition(context);
+      Position? position;
+      _serviceEnabled = await _location.serviceEnabled();
+      _permissionGranted = await _location.hasPermission();
+
+      if(_serviceEnabled && _permissionGranted == Location.PermissionStatus.granted){
+        position = await _locationRepo.determinePosition(context);
+      }
 
       final res = await _firestore.collection("Cinemas").doc(city).get();
       CinemaCity cinemaCity = CinemaCity.fromJson(res.data()!);
@@ -252,22 +294,28 @@ class CinemaRepo {
       for (var element in cinemaCity.cgv!) {
         element.movieShowinginCinema = await getMovieTimeAtCinema(
             cinema: element, cityName: city, date: date, movieID: movieID);
-        element.distance = Geolocator.distanceBetween(
+        if(position != null){
+          element.distance = Geolocator.distanceBetween(
             position.latitude, position.longitude, element.lat, element.long);
+        }
       }
 
       for (var element in cinemaCity.galaxy!) {
         element.movieShowinginCinema = await getMovieTimeAtCinema(
             cinema: element, cityName: city, date: date, movieID: movieID);
-        element.distance = Geolocator.distanceBetween(
+        if(position != null){
+          element.distance = Geolocator.distanceBetween(
             position.latitude, position.longitude, element.lat, element.long);
+        }
       }
 
       for (var element in cinemaCity.lotte!) {
         element.movieShowinginCinema = await getMovieTimeAtCinema(
             cinema: element, cityName: city, date: date, movieID: movieID);
-        element.distance = Geolocator.distanceBetween(
+        if(position != null){
+          element.distance = Geolocator.distanceBetween(
             position.latitude, position.longitude, element.lat, element.long);
+        }
       }
 
       cinemaCity.cgv = cinemaCity.cgv!
@@ -280,22 +328,28 @@ class CinemaRepo {
           .where((element) => element.movieShowinginCinema!.isNotEmpty)
           .toList();
 
-      cinemaCity.cgv!.sort(
-        (a, b) => a.distance!.compareTo(b.distance!),
-      );
-      cinemaCity.galaxy!.sort(
-        (a, b) => a.distance!.compareTo(b.distance!),
-      );
-      cinemaCity.lotte!.sort(
-        (a, b) => a.distance!.compareTo(b.distance!),
-      );
+      if(position != null){
+        cinemaCity.cgv!.sort(
+          (a, b) => a.distance!.compareTo(b.distance!),
+        );
+        cinemaCity.galaxy!.sort(
+          (a, b) => a.distance!.compareTo(b.distance!),
+        );
+        cinemaCity.lotte!.sort(
+          (a, b) => a.distance!.compareTo(b.distance!),
+        );
+      }
+      
 
       cinemaCity.all = cinemaCity.cgv!.sublist(0) +
           cinemaCity.galaxy!.sublist(0) +
           cinemaCity.lotte!.sublist(0);
-      cinemaCity.all!.sort(
-        (a, b) => a.distance!.compareTo(b.distance!),
-      );
+
+      if(position != null){
+        cinemaCity.all!.sort(
+          (a, b) => a.distance!.compareTo(b.distance!),
+        );
+      }
 
       return cinemaCity;
     } catch (e) {

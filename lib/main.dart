@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:ticket_app/components/app_colors.dart';
 import 'package:ticket_app/components/logger.dart';
 import 'package:ticket_app/components/routes/router.dart';
+import 'package:ticket_app/components/service/cache_service.dart';
 import 'package:ticket_app/firebase_options.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/moduels/auth/auth_bloc.dart';
@@ -24,6 +25,8 @@ Future<void> main() async {
   );
 
   final service = FlutterBackgroundService();
+
+  CacheService.init();
 
   await service.configure(
       androidConfiguration: AndroidConfiguration(

@@ -43,6 +43,7 @@ class Cinema {
   }
 
   String getDistanceFormat(){
+    if(distance == null) return "";
     if(distance! >= 1000){
       return "${distance! ~/ 1000},${(distance! % 1000) ~/ 100 .toInt()} km";
     }else{
