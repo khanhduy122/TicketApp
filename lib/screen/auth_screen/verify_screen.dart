@@ -90,7 +90,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                     height: 20.h,
                   ),
                   Text(
-                    "Verification",
+                    "Xác Nhận",
                     style: AppStyle.titleStyle,
                   ),
                   SizedBox(
@@ -115,7 +115,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                     height: 20.h,
                   ),
                   ButtonWidget(
-                      title: "cancle",
+                      title: "Hủy",
                       height: 50.h,
                       width: 250.w,
                       onPressed: () async => await _onWillPop(context))

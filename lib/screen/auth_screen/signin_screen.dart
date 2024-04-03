@@ -56,7 +56,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     child: Image.asset(AppAssets.imgLogo, fit: BoxFit.fill),
                   ),
                   Text(
-                    "Welcome Back,\nMovie Lover!",
+                    "Chào Mừng Đến Với\nMovie Ticket",
                     style: AppStyle.titleStyle,
                   ),
                   SizedBox(height: 20.h),
@@ -65,13 +65,13 @@ class _SignInScreenState extends State<SignInScreen> {
                     validator: (value) {
                       return validatorEmail(value);
                     },
-                    label: 'Email Address',
+                    label: 'Email',
                     textInputAction: TextInputAction.next,
                   ),
                   SizedBox(height: 40.h),
                   TextFormFieldWidget(
                     controller: _passwordTextController,
-                    label: 'Password',
+                    label: 'Mật Khẩu',
                     obscureText: true,
                     validator: (value) {
                       return validatorPassword(value);
@@ -87,7 +87,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     child: Container(
                       alignment: Alignment.centerRight,
                       child: Text(
-                        "Forgot Password?",
+                        "Quên Mật Khẩu",
                         style: AppStyle.defaultStyle,
                       ),
                     ),
@@ -95,7 +95,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   SizedBox(height: 30.h),
                   Center(
                     child: ButtonWidget(
-                      title: "Login",
+                      title: "Đăng Nhập",
                       height: 60.h,
                       width: 250.w,
                       onPressed: () {
@@ -113,7 +113,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Create new account? ",
+                        "Bạn chưa có tài khoản? ",
                         style: AppStyle.defaultStyle,
                       ),
                       InkWell(
@@ -122,7 +122,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 context, RouteName.signUpScreen);
                           },
                           child: Text(
-                            "Sign Up ",
+                            "Đăng kí",
                             style: AppStyle.defaultStyle
                                 .copyWith(color: AppColors.buttonColor),
                           )),

@@ -37,7 +37,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   validator: (value) {
                     return validatorEmail(value);
                   },
-                  label: 'Email Address',
+                  label: 'Đại chỉ Email',
                   textInputAction: TextInputAction.done,
                   onChanged: (value) {
                     setState(() {
@@ -48,7 +48,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               ),
               SizedBox(height: 40.h,),
               ButtonWidget(
-                title: "Ok", 
+                title: "Xác Nhận", 
                 height: 50.h, 
                 width: 250.w, 
                 color: emailAddress.isEmpty ? Colors.grey : Colors.blue,
