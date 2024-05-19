@@ -45,7 +45,7 @@ dependencies:
   google_sign_in: ^6.1.6
   smooth_page_indicator: ^1.1.0
   carousel_slider: ^4.2.1
-  cloud_firestore: ^4.13.0
+  cloud_firestore: ^4.17.3
   json_serializable: ^6.7.1
   json_annotation: ^4.8.1
   shared_preferences: ^2.2.2
@@ -61,7 +61,6 @@ dependencies:
   permission_handler: ^11.0.1
   image_picker: ^1.0.4
   firebase_storage: ^11.5.3
-  google_geocoding_api: ^1.4.1
   qr_flutter: ^4.1.0
   tiengviet: ^1.0.0
   webview_flutter: ^4.7.0

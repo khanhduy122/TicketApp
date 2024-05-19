@@ -37,4 +37,5 @@ class AppAssets {
 
   // json
   static const String jsonLoading = "assets/jsons/loading.json";
+  static const String aniSplash = "assets/jsons/ani_splash.json";
 }

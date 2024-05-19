@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ticket_app/components/app_assets.dart';
+import 'package:ticket_app/components/const/app_assets.dart';
 import 'package:ticket_app/components/dialogs/dialog_error.dart';
 import 'package:ticket_app/components/dialogs/dialog_loading.dart';
-import 'package:ticket_app/components/app_styles.dart';
-import 'package:ticket_app/components/logger.dart';
+import 'package:ticket_app/components/const/app_styles.dart';
+import 'package:ticket_app/components/const/logger.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/moduels/auth/auth_bloc.dart';
 import 'package:ticket_app/moduels/auth/auth_event.dart';
@@ -29,7 +29,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final _formSignUpKey  = GlobalKey<FormState>();
+  final _formSignUpKey = GlobalKey<FormState>();
   late final AuthBloc _signUpBloc;
   File? imageSelected;
 
@@ -46,6 +46,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     _passwordController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,14 +66,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    SizedBox(height: 20.h,),
+                    SizedBox(
+                      height: 20.h,
+                    ),
                     Row(
                       children: [
                         const ButtonBackWidget(),
-                        Expanded(child: Text("Đăng Kí", style: AppStyle.titleStyle, textAlign: TextAlign.center,)),
+                        Expanded(
+                            child: Text(
+                          "Đăng Kí",
+                          style: AppStyle.titleStyle,
+                          textAlign: TextAlign.center,
+                        )),
                       ],
                     ),
-                    SizedBox(height: 40.h,),
+                    SizedBox(
+                      height: 40.h,
+                    ),
                     GestureDetector(
                       onTap: _onTapSelectPhoto,
                       child: SizedBox(
@@ -81,22 +91,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         child: Stack(
                           children: [
                             Center(
-                              child: imageSelected == null ? ClipRRect(
-                                borderRadius: BorderRadius.circular(45.h),
-                                child: SizedBox(
-                                  height: 90.h,
-                                  width: 90.w,
-                                  child: Image.asset(AppAssets.imgAvatarDefault, fit: BoxFit.fill,)
-                                ),
-                              ) : ClipRRect(
-                                borderRadius: BorderRadius.circular(45.h),
-                                child: SizedBox(
-                                  height: 90.h,
-                                  width: 90.w,
-                                  child: Image.file(imageSelected!, fit: BoxFit.fill,)
-                                ),
-                              )
-                            ),
+                                child: imageSelected == null
+                                    ? ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(45.h),
+                                        child: SizedBox(
+                                            height: 90.h,
+                                            width: 90.w,
+                                            child: Image.asset(
+                                              AppAssets.imgAvatarDefault,
+                                              fit: BoxFit.fill,
+                                            )),
+                                      )
+                                    : ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(45.h),
+                                        child: SizedBox(
+                                            height: 90.h,
+                                            width: 90.w,
+                                            child: Image.file(
+                                              imageSelected!,
+                                              fit: BoxFit.fill,
+                                            )),
+                                      )),
                             Positioned(
                               left: 0,
                               right: 0,
@@ -105,7 +122,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 child: SizedBox(
                                   height: 25.h,
                                   width: 25.w,
-                                  child: Image.asset(AppAssets.icAdd, fit: BoxFit.fill,),
+                                  child: Image.asset(
+                                    AppAssets.icAdd,
+                                    fit: BoxFit.fill,
+                                  ),
                                 ),
                               ),
                             )
@@ -113,88 +133,98 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                     ),
-              
-                    SizedBox(height: 20.h,),
+                    SizedBox(
+                      height: 20.h,
+                    ),
                     TextFormFieldWidget(
                       controller: _fullNameController,
-                      label: "Tên", 
+                      label: "Tên",
                       textInputAction: TextInputAction.next,
                       validator: (value) {
-                        if(value == null || value.isEmpty){
+                        if (value == null || value.isEmpty) {
                           return "Vui lòng nhập thông tin";
                         }
                         return null;
                       },
-                      
                     ),
-              
-                    SizedBox(height: 20.h,),
+                    SizedBox(
+                      height: 20.h,
+                    ),
                     TextFormFieldWidget(
                       controller: _emailController,
-                      label: "Địa Chỉ Email", 
+                      label: "Địa Chỉ Email",
                       textInputAction: TextInputAction.next,
                       validator: (value) {
-                        if(value == null || value.isEmpty){
+                        if (value == null || value.isEmpty) {
                           return "Vui lòng nhập thông tin";
-                        }else{
-                          final bool emailValid = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$').hasMatch(value);
-                          if(!emailValid){
+                        } else {
+                          final bool emailValid = RegExp(
+                                  r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$')
+                              .hasMatch(value);
+                          if (!emailValid) {
                             return "Email không hợp lệ";
                           }
                         }
                         return null;
                       },
                     ),
-              
-                    SizedBox(height: 20.h,),
+                    SizedBox(
+                      height: 20.h,
+                    ),
                     TextFormFieldWidget(
                       controller: _passwordController,
                       obscureText: true,
-                      label: "Mật Khẩu", 
+                      label: "Mật Khẩu",
                       textInputAction: TextInputAction.next,
                       validator: (value) {
-                        if(value == null || value.isEmpty){
+                        if (value == null || value.isEmpty) {
                           return "Vui lòng nhập thông tin";
-                        }else{
-                          if(value.length < 6){
+                        } else {
+                          if (value.length < 6) {
                             return "Mật khẩu phải lớn hơn 6 kí tự";
                           }
                         }
                         return null;
                       },
                     ),
-              
-                    SizedBox(height: 20.h,),
+                    SizedBox(
+                      height: 20.h,
+                    ),
                     TextFormFieldWidget(
-                      label: "Xác Nhận Mật Khẩu", 
+                      label: "Xác Nhận Mật Khẩu",
                       obscureText: true,
                       textInputAction: TextInputAction.done,
                       validator: (value) {
-                        if(value == null || value.isEmpty){
+                        if (value == null || value.isEmpty) {
                           return "Vui lòng nhập thông tin";
-                        }else{
-                          if(_passwordController.text != value){
+                        } else {
+                          if (_passwordController.text != value) {
                             return "Mật khẩu không trùng khớp";
                           }
                         }
                         return null;
                       },
                     ),
-              
-                    SizedBox(height: 40.h,),
-                    ButtonWidget(
-                      title: "Đăng Kí", 
-                      height: 60.h, 
-                      width: 250.w, 
-                      onPressed: (){
-                        if(_formSignUpKey.currentState!.validate()){
-                          _signUpBloc.add(SignUpEvent(fullName: _fullNameController.text, email: _emailController.text, password: _passwordController.text, image: imageSelected));
-                        }
-                      }
+                    SizedBox(
+                      height: 40.h,
                     ),
-                    SizedBox(height: 20.h,),
-              
-                  ], 
+                    ButtonWidget(
+                        title: "Đăng Kí",
+                        height: 60.h,
+                        width: 250.w,
+                        onPressed: () {
+                          if (_formSignUpKey.currentState!.validate()) {
+                            _signUpBloc.add(SignUpEvent(
+                                fullName: _fullNameController.text,
+                                email: _emailController.text,
+                                password: _passwordController.text,
+                                image: imageSelected));
+                          }
+                        }),
+                    SizedBox(
+                      height: 20.h,
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -205,32 +235,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   void _onListenerSignUp(Object? state, BuildContext context) {
-    if(state is SignUpState){
-      if(state.isLoading == true){
+    if (state is SignUpState) {
+      if (state.isLoading == true) {
         DialogLoading.show(context);
       }
-    
-      if(state.signUpSucces == true){
-        Navigator.pushNamedAndRemoveUntil(
-          context, 
-          RouteName.verifyScreen, 
-          (route) => route.settings.name == RouteName.signInScreen,
-          arguments: _emailController.text
-        );
+
+      if (state.signUpSucces == true) {
+        Navigator.pushNamedAndRemoveUntil(context, RouteName.verifyScreen,
+            (route) => route.settings.name == RouteName.signInScreen,
+            arguments: _emailController.text);
       }
-    
-      if(state.error != null){
+
+      if (state.error != null) {
         Navigator.pop(context);
-        if(state.error is TimeOutException){
-          DialogError.show(context: context, message: "Đã có lỗi xảy ra, vui lòng thử lại sao");
-        }else{
-          if(state.error is AccountAlreadyExistsException){
-            DialogError.show(context: context,  message: "Email đã tồn tại, vui lòng thử lại");
-          }else{
-            if(state.error is WeakPasswordException){
-              DialogError.show(context: context,  message: "Mật khẩu không đủ mạnh, hãy thử lại");
-            }else{
-              DialogError.show(context: context,  message: "Đã có lỗi xảy ra, vui lòng thử lại sao");
+        if (state.error is TimeOutException) {
+          DialogError.show(
+              context: context,
+              message: "Đã có lỗi xảy ra, vui lòng thử lại sao");
+        } else {
+          if (state.error is AccountAlreadyExistsException) {
+            DialogError.show(
+                context: context,
+                message: "Email đã tồn tại, vui lòng thử lại");
+          } else {
+            if (state.error is WeakPasswordException) {
+              DialogError.show(
+                  context: context,
+                  message: "Mật khẩu không đủ mạnh, hãy thử lại");
+            } else {
+              DialogError.show(
+                  context: context,
+                  message: "Đã có lỗi xảy ra, vui lòng thử lại sao");
             }
           }
         }
@@ -251,5 +286,4 @@ class _SignUpScreenState extends State<SignUpScreen> {
       debugLog(e.toString());
     }
   }
-
 }

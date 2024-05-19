@@ -1,7 +1,7 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ticket_app/components/app_colors.dart';
+import 'package:ticket_app/components/const/app_colors.dart';
 import 'package:ticket_app/models/movie.dart';
 import 'package:ticket_app/widgets/image_network_widget.dart';
 import 'package:video_player/video_player.dart';
@@ -16,12 +16,12 @@ class PlayVideoTrailerScreen extends StatefulWidget {
 }
 
 class _PlayVideoTrailerScreenState extends State<PlayVideoTrailerScreen> {
-
   late final VideoPlayerController _videoPlayerController;
   late final ChewieController _chewieController;
 
   Future<void> _loadVideoFormUrl() async {
-    _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(widget.movie.trailer!));
+    _videoPlayerController =
+        VideoPlayerController.networkUrl(Uri.parse(widget.movie.trailer!));
     await _videoPlayerController.initialize();
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController,
@@ -57,8 +57,9 @@ class _PlayVideoTrailerScreenState extends State<PlayVideoTrailerScreen> {
     return Scaffold(
       backgroundColor: AppColors.black,
       body: Center(
-        child: _videoPlayerController.value.isInitialized ? _buildVideoController(context) : _buildPlaceholder(context)
-      ),
+          child: _videoPlayerController.value.isInitialized
+              ? _buildVideoController(context)
+              : _buildPlaceholder(context)),
     );
   }
 
@@ -73,15 +74,14 @@ class _PlayVideoTrailerScreenState extends State<PlayVideoTrailerScreen> {
 
   SizedBox _buildPlaceholder(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height / 3, 
+      height: MediaQuery.of(context).size.height / 3,
       width: MediaQuery.of(context).size.width,
       child: Stack(
         children: [
           ImageNetworkWidget(
-            url: widget.movie.banner!, 
-            height: MediaQuery.of(context).size.height / 3, 
-            width: MediaQuery.of(context).size.width
-          ),
+              url: widget.movie.banner!,
+              height: MediaQuery.of(context).size.height / 3,
+              width: MediaQuery.of(context).size.width),
           const Center(
             child: CircularProgressIndicator(),
           )

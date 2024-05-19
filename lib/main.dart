@@ -9,8 +9,8 @@ import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-import 'package:ticket_app/components/app_colors.dart';
-import 'package:ticket_app/components/logger.dart';
+import 'package:ticket_app/components/const/app_colors.dart';
+import 'package:ticket_app/components/const/logger.dart';
 import 'package:ticket_app/components/routes/router.dart';
 import 'package:ticket_app/components/service/cache_service.dart';
 import 'package:ticket_app/firebase_options.dart';
@@ -99,7 +99,6 @@ class MyApp extends StatelessWidget {
       DeviceOrientation.portraitDown,
       DeviceOrientation.portraitUp,
     ]);
-
 
     return ScreenUtilInit(
       designSize: size,

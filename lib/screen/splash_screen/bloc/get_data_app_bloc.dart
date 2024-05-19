@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ticket_app/components/net_work_info.dart';
+import 'package:ticket_app/components/const/net_work_info.dart';
 import 'package:ticket_app/models/cinema_city.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/models/home_data.dart';
@@ -25,7 +25,8 @@ class GetDataAppBloc extends Bloc<GetDataAppEvent, GetDataAppState> {
           return;
         }
         final movies = await _getDataAppRepo.getMovieApp();
-        final cinemasRecommended = await _cinemaRepo.getCinemasRecommended(event.context);
+        final cinemasRecommended =
+            await _cinemaRepo.getCinemasRecommended(event.context);
         if (FirebaseAuth.instance.currentUser != null) {
           final voucher = await _userRepo.getListVoucher();
           event.context
@@ -33,7 +34,8 @@ class GetDataAppBloc extends Bloc<GetDataAppEvent, GetDataAppState> {
               .setListVoucher(vouchers: voucher);
           await _ticketRepo.convertTicketToExpired();
         }
-        emit(GetDataAppState(cinemasRecommended: cinemasRecommended, homeData: movies));
+        emit(GetDataAppState(
+            cinemasRecommended: cinemasRecommended, homeData: movies));
       } catch (e) {
         emit(GetDataAppState(error: e));
       }

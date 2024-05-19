@@ -5,10 +5,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ticket_app/components/app_assets.dart';
-import 'package:ticket_app/components/app_key.dart';
+import 'package:ticket_app/components/const/app_assets.dart';
+import 'package:ticket_app/components/const/app_key.dart';
+import 'package:ticket_app/components/const/logger.dart';
 import 'package:ticket_app/components/dialogs/dialog_error.dart';
-import 'package:ticket_app/components/logger.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/moduels/exceptions/all_exception.dart';
@@ -77,12 +77,12 @@ class _SplashScreenState extends State<SplashScreen> {
         }
 
         DialogError.show(
-            context: context,
-            message: "Đã có lỗi xảy ra, vui lòng thử lại sau",
-            onTap: () {
-              SystemNavigator.pop();
-            },
-          );
+          context: context,
+          message: "Đã có lỗi xảy ra, vui lòng thử lại sau",
+          onTap: () {
+            SystemNavigator.pop();
+          },
+        );
       }
     }
   }

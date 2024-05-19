@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ticket_app/components/net_work_info.dart';
+import 'package:ticket_app/components/const/net_work_info.dart';
 import 'package:ticket_app/moduels/cinema/cinema_event.dart';
 import 'package:ticket_app/moduels/cinema/cinema_repo.dart';
 import 'package:ticket_app/moduels/cinema/cinema_state.dart';

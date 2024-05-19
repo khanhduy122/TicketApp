@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ticket_app/components/net_work_info.dart';
+import 'package:ticket_app/components/const/net_work_info.dart';
 import 'package:ticket_app/models/review.dart';
 import 'package:ticket_app/moduels/exceptions/all_exception.dart';
 import 'package:ticket_app/moduels/review/review_event.dart';
@@ -25,14 +25,16 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
       List<Review> reviews = [];
       emit(GetInitReviewMovieState(isLoading: true));
 
-      if(await NetWorkInfo.isConnectedToInternet() == false) {
+      if (await NetWorkInfo.isConnectedToInternet() == false) {
         emit(GetInitReviewMovieState(error: NoInternetException()));
         return;
       }
-      
+
       switch (event.rating) {
         case 0:
-          reviews = await _reviewRepo.getAllReview(id: event.id, isLoadMore: false).timeout(
+          reviews = await _reviewRepo
+              .getAllReview(id: event.id, isLoadMore: false)
+              .timeout(
             const Duration(seconds: 10),
             onTimeout: () {
               throw Exception('Timeout');
@@ -41,7 +43,9 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
           break;
 
         case 1:
-          reviews = await _reviewRepo.getReviewWithPicture(id: event.id, isLoadMore: false).timeout(
+          reviews = await _reviewRepo
+              .getReviewWithPicture(id: event.id, isLoadMore: false)
+              .timeout(
             const Duration(seconds: 10),
             onTimeout: () {
               throw Exception('Timeout');
@@ -50,7 +54,9 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
           break;
 
         case 2:
-          reviews = await _reviewRepo.getFiveRating(id: event.id, isLoadMore: false).timeout(
+          reviews = await _reviewRepo
+              .getFiveRating(id: event.id, isLoadMore: false)
+              .timeout(
             const Duration(seconds: 10),
             onTimeout: () {
               throw Exception('Timeout');
@@ -59,7 +65,9 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
           break;
 
         case 3:
-          reviews = await _reviewRepo.getFourRating(id: event.id, isLoadMore: false).timeout(
+          reviews = await _reviewRepo
+              .getFourRating(id: event.id, isLoadMore: false)
+              .timeout(
             const Duration(seconds: 10),
             onTimeout: () {
               throw Exception('Timeout');
@@ -68,7 +76,9 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
           break;
 
         case 4:
-          reviews = await _reviewRepo.getThreeRating(id: event.id, isLoadMore: false).timeout(
+          reviews = await _reviewRepo
+              .getThreeRating(id: event.id, isLoadMore: false)
+              .timeout(
             const Duration(seconds: 10),
             onTimeout: () {
               throw Exception('Timeout');
@@ -77,7 +87,9 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
           break;
 
         case 5:
-          reviews = await _reviewRepo.getTwoRating(id: event.id, isLoadMore: false).timeout(
+          reviews = await _reviewRepo
+              .getTwoRating(id: event.id, isLoadMore: false)
+              .timeout(
             const Duration(seconds: 10),
             onTimeout: () {
               throw Exception('Timeout');
@@ -86,7 +98,9 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
           break;
 
         case 6:
-          reviews = await _reviewRepo.getOneRating(id: event.id, isLoadMore: false).timeout(
+          reviews = await _reviewRepo
+              .getOneRating(id: event.id, isLoadMore: false)
+              .timeout(
             const Duration(seconds: 10),
             onTimeout: () {
               throw Exception('Timeout');
@@ -107,14 +121,16 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
       List<Review> reviews = [];
       emit(LoadMoreReviewMovieState(isLoading: true));
 
-      if(await NetWorkInfo.isConnectedToInternet() == false) {
+      if (await NetWorkInfo.isConnectedToInternet() == false) {
         emit(LoadMoreReviewMovieState(error: NoInternetException()));
         return;
       }
 
       switch (event.rating) {
         case 0:
-          reviews = await _reviewRepo.getAllReview(id: event.id, isLoadMore: true).timeout(
+          reviews = await _reviewRepo
+              .getAllReview(id: event.id, isLoadMore: true)
+              .timeout(
             const Duration(seconds: 10),
             onTimeout: () {
               throw Exception('Timeout');
@@ -123,7 +139,9 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
           break;
 
         case 1:
-          reviews = await _reviewRepo.getReviewWithPicture(id: event.id, isLoadMore: true).timeout(
+          reviews = await _reviewRepo
+              .getReviewWithPicture(id: event.id, isLoadMore: true)
+              .timeout(
             const Duration(seconds: 10),
             onTimeout: () {
               throw Exception('Timeout');
@@ -132,7 +150,9 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
           break;
 
         case 2:
-          reviews = await _reviewRepo.getFiveRating(id: event.id, isLoadMore: true).timeout(
+          reviews = await _reviewRepo
+              .getFiveRating(id: event.id, isLoadMore: true)
+              .timeout(
             const Duration(seconds: 10),
             onTimeout: () {
               throw Exception('Timeout');
@@ -141,7 +161,9 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
           break;
 
         case 3:
-          reviews = await _reviewRepo.getFourRating(id: event.id, isLoadMore: true).timeout(
+          reviews = await _reviewRepo
+              .getFourRating(id: event.id, isLoadMore: true)
+              .timeout(
             const Duration(seconds: 10),
             onTimeout: () {
               throw Exception('Timeout');
@@ -150,7 +172,9 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
           break;
 
         case 4:
-          reviews = await _reviewRepo.getThreeRating( id: event.id, isLoadMore: true).timeout(
+          reviews = await _reviewRepo
+              .getThreeRating(id: event.id, isLoadMore: true)
+              .timeout(
             const Duration(seconds: 10),
             onTimeout: () {
               throw Exception('Timeout');
@@ -159,7 +183,9 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
           break;
 
         case 5:
-          reviews = await _reviewRepo.getTwoRating(id: event.id, isLoadMore: true).timeout(
+          reviews = await _reviewRepo
+              .getTwoRating(id: event.id, isLoadMore: true)
+              .timeout(
             const Duration(seconds: 10),
             onTimeout: () {
               throw Exception('Timeout');
@@ -168,7 +194,9 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
           break;
 
         case 6:
-          reviews = await _reviewRepo.getOneRating(id: event.id, isLoadMore: true).timeout(
+          reviews = await _reviewRepo
+              .getOneRating(id: event.id, isLoadMore: true)
+              .timeout(
             const Duration(seconds: 10),
             onTimeout: () {
               throw Exception('Timeout');
@@ -185,12 +213,18 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
   void _addReviewEvent(AddReviewEvent event, Emitter emit) async {
     emit(AddReviewState(isLoading: true));
     try {
-      if(await NetWorkInfo.isConnectedToInternet() == false) {
+      if (await NetWorkInfo.isConnectedToInternet() == false) {
         emit(AddReviewState(error: NoInternetException()));
         return;
       }
 
-      await _reviewRepo.addReview(ticket: event.ticket, rating: event.rating, contentReview: event.contentReview, images: event.images).timeout(
+      await _reviewRepo
+          .addReview(
+              ticket: event.ticket,
+              rating: event.rating,
+              contentReview: event.contentReview,
+              images: event.images)
+          .timeout(
         const Duration(seconds: 10),
         onTimeout: () {
           throw Exception('Timeout');
@@ -201,5 +235,4 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
       emit(AddReviewState(error: e));
     }
   }
-
 }

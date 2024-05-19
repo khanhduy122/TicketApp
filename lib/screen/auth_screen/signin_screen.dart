@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ticket_app/components/app_assets.dart';
-import 'package:ticket_app/components/app_colors.dart';
-import 'package:ticket_app/components/app_styles.dart';
+import 'package:ticket_app/components/const/app_assets.dart';
+import 'package:ticket_app/components/const/app_colors.dart';
+import 'package:ticket_app/components/const/app_styles.dart';
 import 'package:ticket_app/components/dialogs/dialog_error.dart';
 import 'package:ticket_app/components/dialogs/dialog_loading.dart';
 import 'package:ticket_app/components/routes/route_name.dart';

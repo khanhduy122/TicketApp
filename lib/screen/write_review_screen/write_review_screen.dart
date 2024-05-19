@@ -4,8 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ticket_app/components/app_colors.dart';
-import 'package:ticket_app/components/app_styles.dart';
+import 'package:ticket_app/components/const/app_colors.dart';
+import 'package:ticket_app/components/const/app_styles.dart';
 import 'package:ticket_app/components/dialogs/dialog_completed.dart';
 import 'package:ticket_app/components/dialogs/dialog_error.dart';
 import 'package:ticket_app/components/dialogs/dialog_loading.dart';
@@ -32,30 +32,38 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
   String contentReview = "";
   List<File> imagesSelected = [];
   ReviewBloc reviewBloc = ReviewBloc();
-  
+
   @override
   Widget build(BuildContext context) {
     return BlocListener(
       bloc: reviewBloc,
       listener: (context, state) {
-        if(state is AddReviewState){
-          if(state.isLoading == true){
+        if (state is AddReviewState) {
+          if (state.isLoading == true) {
             DialogLoading.show(context);
           }
-          if(state.isSuccess == true){
+          if (state.isSuccess == true) {
             Navigator.pop(context);
             DialogConpleted.show(
-              context: context, 
-              message: "Cảm ơn bạn đã đánh giá", onTap: () {
-              Navigator.of(context).popUntil((route) => route.settings.name == RouteName.mainScreen,);
-            });
+                context: context,
+                message: "Cảm ơn bạn đã đánh giá",
+                onTap: () {
+                  Navigator.of(context).popUntil(
+                    (route) => route.settings.name == RouteName.mainScreen,
+                  );
+                });
           }
-          if(state.error != null){
+          if (state.error != null) {
             Navigator.pop(context);
-            if(state.error is TimeOutException){
-              DialogError.show(context: context, message: "Đã có lỗi xẩy ra, vui lòng kiểm tra lại đường truyền");
-            }else{
-              DialogError.show(context: context, message: "Đã có lỗi xảy ra vui lòng thử lại sao");
+            if (state.error is TimeOutException) {
+              DialogError.show(
+                  context: context,
+                  message:
+                      "Đã có lỗi xẩy ra, vui lòng kiểm tra lại đường truyền");
+            } else {
+              DialogError.show(
+                  context: context,
+                  message: "Đã có lỗi xảy ra vui lòng thử lại sao");
             }
           }
         }
@@ -63,49 +71,61 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
       child: Scaffold(
         appBar: appBarWidget(title: widget.ticket.movie!.name!),
         body: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  SizedBox(height: 20.h,),
-                  _buildRatingBar(),
-                  SizedBox(height: 20.h,),
-                  _buildReviewField(),
-                  SizedBox(height: 20.h,),
-                  _buildButtonSelectImage(),
-                  SizedBox(height: 10.h,),
-                  _buildImageSelected(),
-                  SizedBox(height: 40.h,),
-                  ButtonWidget(
-                    title: "Đánh Giá", 
-                    height: 50.h, 
-                    width: 250.w, 
-                    color: rating == 0 ? AppColors.darkBackground : AppColors.buttonColor,
-                    onPressed: (){
-                      if(rating != 0){
+            child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 20.h,
+                ),
+                _buildRatingBar(),
+                SizedBox(
+                  height: 20.h,
+                ),
+                _buildReviewField(),
+                SizedBox(
+                  height: 20.h,
+                ),
+                _buildButtonSelectImage(),
+                SizedBox(
+                  height: 10.h,
+                ),
+                _buildImageSelected(),
+                SizedBox(
+                  height: 40.h,
+                ),
+                ButtonWidget(
+                    title: "Đánh Giá",
+                    height: 50.h,
+                    width: 250.w,
+                    color: rating == 0
+                        ? AppColors.darkBackground
+                        : AppColors.buttonColor,
+                    onPressed: () {
+                      if (rating != 0) {
                         reviewBloc.add(AddReviewEvent(
-                          contentReview: contentReview,
-                          rating: rating,
-                          images: imagesSelected,
-                          ticket: widget.ticket
-                        ));
+                            contentReview: contentReview,
+                            rating: rating,
+                            images: imagesSelected,
+                            ticket: widget.ticket));
                       }
-                    }
-                  )
-                ],
-              ),
+                    })
+              ],
             ),
-          )
-        ),
+          ),
+        )),
       ),
     );
   }
 
-  Widget _buildRatingBar(){
+  Widget _buildRatingBar() {
     return Column(
       children: [
-        Text("Đánh giá của bạn", style: AppStyle.defaultStyle.copyWith(fontSize: 14.sp),),
+        Text(
+          "Đánh giá của bạn",
+          style: AppStyle.defaultStyle.copyWith(fontSize: 14.sp),
+        ),
         RatingBar.builder(
           initialRating: 0,
           minRating: 0,
@@ -133,14 +153,13 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
       height: 250.h,
       padding: EdgeInsets.all(10.w),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.grey)
-      ),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: AppColors.grey)),
       child: TextField(
         maxLines: 100,
         onChanged: (value) {
           setState(() {
-           contentReview = value;
+            contentReview = value;
           });
         },
         style: AppStyle.defaultStyle.copyWith(fontSize: 14.sp),
@@ -157,24 +176,33 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
     return GestureDetector(
       onTap: _onTapSelectPhoto,
       child: Container(
-        height: 50.h,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: AppColors.grey)
-        ),
-        child: Row(
-          children: [
-            SizedBox(width: 10.h,),
-            Icon(Icons.add, color: AppColors.grey, size: 30.w,),
-            SizedBox(width: 10.h,),
-            Text("Thêm ảnh", style: AppStyle.defaultStyle.copyWith(fontSize: 14.sp),)
-          ],
-        )
-      ),
+          height: 50.h,
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.grey)),
+          child: Row(
+            children: [
+              SizedBox(
+                width: 10.h,
+              ),
+              Icon(
+                Icons.add,
+                color: AppColors.grey,
+                size: 30.w,
+              ),
+              SizedBox(
+                width: 10.h,
+              ),
+              Text(
+                "Thêm ảnh",
+                style: AppStyle.defaultStyle.copyWith(fontSize: 14.sp),
+              )
+            ],
+          )),
     );
   }
 
-  Widget _buildImageSelected(){
+  Widget _buildImageSelected() {
     return SizedBox(
       height: 70.h,
       child: ListView.builder(
@@ -189,11 +217,10 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                   height: 70.h,
                   width: 70.w,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    image: DecorationImage(
-                      image: FileImage(imagesSelected[index]), fit: BoxFit.cover
-                    )
-                  ),
+                      borderRadius: BorderRadius.circular(10),
+                      image: DecorationImage(
+                          image: FileImage(imagesSelected[index]),
+                          fit: BoxFit.cover)),
                 ),
                 Positioned(
                   top: 0,
@@ -204,7 +231,11 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
                         imagesSelected.removeAt(index);
                       });
                     },
-                    child: Icon(Icons.close, color: AppColors.white, size: 20.w,),
+                    child: Icon(
+                      Icons.close,
+                      color: AppColors.white,
+                      size: 20.w,
+                    ),
                   ),
                 )
               ],
@@ -228,6 +259,4 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
       imagesSelected = [];
     }
   }
-
-
 }

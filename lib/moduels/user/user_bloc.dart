@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ticket_app/components/net_work_info.dart';
+import 'package:ticket_app/components/const/net_work_info.dart';
 import 'package:ticket_app/moduels/exceptions/all_exception.dart';
 import 'package:ticket_app/moduels/user/user_event.dart';
 import 'package:ticket_app/moduels/user/user_repo.dart';

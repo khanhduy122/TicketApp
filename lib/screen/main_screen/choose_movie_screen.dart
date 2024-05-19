@@ -2,9 +2,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ticket_app/components/app_assets.dart';
-import 'package:ticket_app/components/app_colors.dart';
-import 'package:ticket_app/components/app_styles.dart';
+import 'package:ticket_app/components/const/app_assets.dart';
+import 'package:ticket_app/components/const/app_colors.dart';
+import 'package:ticket_app/components/const/app_styles.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/models/banner.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
@@ -15,7 +15,7 @@ import 'package:ticket_app/widgets/button_widget.dart';
 import 'package:ticket_app/widgets/image_network_widget.dart';
 import 'package:ticket_app/widgets/rating_widget.dart';
 
-class ChooseMovieScreen  extends StatefulWidget {
+class ChooseMovieScreen extends StatefulWidget {
   const ChooseMovieScreen({super.key});
 
   @override
@@ -23,7 +23,6 @@ class ChooseMovieScreen  extends StatefulWidget {
 }
 
 class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
-  
   late final HomeData _homeData;
 
   @override
@@ -37,30 +36,28 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
     final Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-
-              SizedBox(height: 40.h,),
-
-              _appBar(),
-
-              SizedBox(height: 20.h,),
-              
-              _banner(size),
-
-              SizedBox(height: 30.h,),
-
-              _nowPlaying(),
-
-              SizedBox(height: 30.h,),
-
-              _comingSoon()
-
-            ],
-          ),
-        )
-      ),
+          child: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 40.h,
+            ),
+            _appBar(),
+            SizedBox(
+              height: 20.h,
+            ),
+            _banner(size),
+            SizedBox(
+              height: 30.h,
+            ),
+            _nowPlaying(),
+            SizedBox(
+              height: 30.h,
+            ),
+            _comingSoon()
+          ],
+        ),
+      )),
     );
   }
 
@@ -71,51 +68,51 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
         alignment: Alignment.bottomCenter,
         children: [
           CarouselSlider(
-            items: _homeData.banners.map((e){
-              return Builder(
-                builder: (BuildContext context) {
-                  return GestureDetector(
-                    onTap: () => _onTapBanner(e),
-                    child: ImageNetworkWidget(
-                      borderRadius: 10.h,
-                      url: e.thumbnail, 
-                      height: 150.h, 
-                      width: size.width,
-                      boxFit: BoxFit.cover,
-                    ),
-                  );
-                },
-              );
-            }).toList(), 
-            options: CarouselOptions(
-              viewportFraction: 1,
-              height: 150.h,
-              autoPlay: true,
-            )
-          ), 
+              items: _homeData.banners.map((e) {
+                return Builder(
+                  builder: (BuildContext context) {
+                    return GestureDetector(
+                      onTap: () => _onTapBanner(e),
+                      child: ImageNetworkWidget(
+                        borderRadius: 10.h,
+                        url: e.thumbnail,
+                        height: 150.h,
+                        width: size.width,
+                        boxFit: BoxFit.cover,
+                      ),
+                    );
+                  },
+                );
+              }).toList(),
+              options: CarouselOptions(
+                viewportFraction: 1,
+                height: 150.h,
+                autoPlay: true,
+              )),
         ],
       ),
     );
   }
 
-  Widget _nowPlaying(){
+  Widget _nowPlaying() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("Đang Khởi Chiếu", style: AppStyle.titleStyle),
-          SizedBox(height: 20.h,),
+          SizedBox(
+            height: 20.h,
+          ),
           CarouselSlider(
-            items: _homeData.nowShowing.map((element){
+            items: _homeData.nowShowing.map((element) {
               return _buildItemNowShowing(element);
-            }).toList(), 
+            }).toList(),
             options: CarouselOptions(
-              viewportFraction: 0.7,
-              height: 470.h,
-              enlargeCenterPage: true,
-              enlargeFactor: 0.2
-            )
+                viewportFraction: 0.7,
+                height: 470.h,
+                enlargeCenterPage: true,
+                enlargeFactor: 0.2),
           ),
         ],
       ),
@@ -125,7 +122,8 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
   Widget _buildItemNowShowing(Movie movie) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, RouteName.detailMovieScreen, arguments: movie);
+        Navigator.pushNamed(context, RouteName.detailMovieScreen,
+            arguments: movie);
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -135,35 +133,45 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
               ImageNetworkWidget(
                 height: 300,
                 width: 200,
-                url: movie.thumbnail!, 
+                url: movie.thumbnail!,
                 borderRadius: 10.h,
               ),
               Positioned(
-                top: 10.h,
-                left: 10.w,
-                child: Container(
-                  height: 20.h,
-                  width: 40.w,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.h),
-                    color: movie.ban == Ban.c13 ? AppColors.orange300
-                          : movie.ban == Ban.c16 ? Colors.orange  
-                          : movie.ban == Ban.c18 ? AppColors.red : Colors.green
-                  ),
-                  child: Text(movie.getBan(), style: AppStyle.defaultStyle.copyWith(fontSize: 10.sp),),
-                )
-              ),
+                  top: 10.h,
+                  left: 10.w,
+                  child: Container(
+                    height: 20.h,
+                    width: 40.w,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.h),
+                        color: movie.ban == Ban.c13
+                            ? AppColors.orange300
+                            : movie.ban == Ban.c16
+                                ? Colors.orange
+                                : movie.ban == Ban.c18
+                                    ? AppColors.red
+                                    : Colors.green),
+                    child: Text(
+                      movie.getBan(),
+                      style: AppStyle.defaultStyle.copyWith(fontSize: 10.sp),
+                    ),
+                  )),
             ],
           ),
-          SizedBox(height: 10.h,),
-          Text(movie.name!, 
+          SizedBox(
+            height: 10.h,
+          ),
+          Text(
+            movie.name!,
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: AppStyle.titleStyle,
           ),
-          SizedBox(height: 10.h,),
+          SizedBox(
+            height: 10.h,
+          ),
           Text(
             movie.getCaterogies(),
             textAlign: TextAlign.center,
@@ -171,17 +179,24 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
             overflow: TextOverflow.ellipsis,
             style: AppStyle.defaultStyle.copyWith(fontSize: 12.sp),
           ),
-          SizedBox(height: 10.h,),
-          RatingWidget(rating: movie.rating ?? 0, total: movie.totalReview ?? 0, isCenter: true,),
+          SizedBox(
+            height: 10.h,
+          ),
+          RatingWidget(
+            rating: movie.rating ?? 0,
+            total: movie.totalReview ?? 0,
+            isCenter: true,
+          ),
           Expanded(
             child: Align(
               alignment: Alignment.bottomCenter,
               child: ButtonWidget(
-                title: "Đặt Vé", 
-                height: 40.h, 
-                width: 80.w, 
+                title: "Đặt Vé",
+                height: 40.h,
+                width: 90.w,
                 onPressed: () {
-                  Navigator.pushNamed(context, RouteName.detailMovieScreen, arguments: movie);
+                  Navigator.pushNamed(context, RouteName.detailMovieScreen,
+                      arguments: movie);
                 },
               ),
             ),
@@ -191,21 +206,27 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
     );
   }
 
-  Widget _comingSoon(){
+  Widget _comingSoon() {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text("Sắp Được Khởi Chiếu", style: AppStyle.titleStyle,),
-          SizedBox(height: 20.h,),
+          Text(
+            "Sắp Được Khởi Chiếu",
+            style: AppStyle.titleStyle,
+          ),
+          SizedBox(
+            height: 20.h,
+          ),
           SizedBox(
             height: _homeData.comingSoon.length * 170.h,
             child: ListView.builder(
               physics: const NeverScrollableScrollPhysics(),
               itemCount: _homeData.comingSoon.length,
               itemBuilder: (context, index) {
-                return _buildItemComingSoon(comingSoon: _homeData.comingSoon[index]);
+                return _buildItemComingSoon(
+                    comingSoon: _homeData.comingSoon[index]);
               },
             ),
           ),
@@ -213,7 +234,7 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
       ),
     );
   }
-  
+
   Widget _appBar() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -225,38 +246,48 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
               SizedBox(
                 height: 70.h,
                 width: 70.w,
-                child: Image.asset(AppAssets.imgLogo, fit: BoxFit.fill,),
-              ), 
+                child: Image.asset(
+                  AppAssets.imgLogo,
+                  fit: BoxFit.fill,
+                ),
+              ),
               RichText(
                 text: TextSpan(
-                  text: "Movie",
-                  style: AppStyle.titleStyle.copyWith(fontSize: 24.sp, color: AppColors.buttonColor, fontWeight: FontWeight.bold),
-                  children: [
-                    TextSpan(
-                      text: "Ticket",
-                      style: AppStyle.titleStyle.copyWith(color: AppColors.white, fontWeight: FontWeight.normal, fontSize: 24.sp)
-                    )
-                  ]
-                ),
+                    text: "Movie",
+                    style: AppStyle.titleStyle.copyWith(
+                        fontSize: 24.sp,
+                        color: AppColors.buttonColor,
+                        fontWeight: FontWeight.bold),
+                    children: [
+                      TextSpan(
+                          text: "Ticket",
+                          style: AppStyle.titleStyle.copyWith(
+                              color: AppColors.white,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 24.sp))
+                    ]),
               )
             ],
           ),
           InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, RouteName.searchScreen);
-            },
-            child: Icon(Icons.search, color: AppColors.white, size: 30.h,)
-          ),
-          
+              onTap: () {
+                Navigator.pushNamed(context, RouteName.searchScreen);
+              },
+              child: Icon(
+                Icons.search,
+                color: AppColors.white,
+                size: 30.h,
+              )),
         ],
       ),
     );
   }
 
-  Widget _buildItemComingSoon({required Movie comingSoon}){
+  Widget _buildItemComingSoon({required Movie comingSoon}) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, RouteName.detailMovieScreen, arguments: comingSoon);
+        Navigator.pushNamed(context, RouteName.detailMovieScreen,
+            arguments: comingSoon);
       },
       child: Column(
         children: [
@@ -265,77 +296,88 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
             child: Row(
               children: [
                 ImageNetworkWidget(
-                  url: comingSoon.thumbnail!, 
-                  height: 150.h, 
+                  url: comingSoon.thumbnail!,
+                  height: 150.h,
                   width: 100.w,
                   borderRadius: 10.h,
                 ),
-                SizedBox(width: 10.w,),
+                SizedBox(
+                  width: 10.w,
+                ),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        comingSoon.name!, 
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppStyle.titleStyle,
-                      ),
-                      SizedBox(height: 10.h,),
-                      Text(
-                        comingSoon.getCaterogies(),
-                        style: AppStyle.defaultStyle.copyWith(fontSize: 12.sp),
-                      ),
-                      SizedBox(height: 10.h,),
-                      Row(
-                        children: [
-                          SizedBox(
-                            height: 16.h,
-                            width: 16.w,
-                            child: Image.asset(AppAssets.icClock, fit: BoxFit.contain,),
+                    child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      comingSoon.name!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppStyle.titleStyle,
+                    ),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    Text(
+                      comingSoon.getCaterogies(),
+                      style: AppStyle.defaultStyle.copyWith(fontSize: 12.sp),
+                    ),
+                    SizedBox(
+                      height: 10.h,
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          height: 16.h,
+                          width: 16.w,
+                          child: Image.asset(
+                            AppAssets.icClock,
+                            fit: BoxFit.contain,
                           ),
-                          SizedBox(width: 10.w,),
-                          Text(
-                            "${comingSoon.duration} Phút",
-                            style: AppStyle.defaultStyle.copyWith(fontSize: 12.sp),
-                          ),
-                        ],
-                      )
-                      
-                    ],
-                  )
-                )
+                        ),
+                        SizedBox(
+                          width: 10.w,
+                        ),
+                        Text(
+                          "${comingSoon.duration} Phút",
+                          style:
+                              AppStyle.defaultStyle.copyWith(fontSize: 12.sp),
+                        ),
+                      ],
+                    )
+                  ],
+                ))
               ],
             ),
           ),
-          SizedBox(height: 20.h,),
+          SizedBox(
+            height: 20.h,
+          ),
         ],
       ),
     );
   }
 
   void _onTapBanner(BannerHome bannerHome) {
-    switch(bannerHome.type){
+    switch (bannerHome.type) {
       case 1:
         Movie? movie;
         for (var element in _homeData.nowShowing) {
-          if(element.id == bannerHome.movie!.id){
+          if (element.id == bannerHome.movie!.id) {
             movie = element;
             break;
           }
         }
-        if(movie == null){
+        if (movie == null) {
           for (var element in _homeData.comingSoon) {
-          if(element.id == bannerHome.movie!.id){
-            movie = element;
-            break;
+            if (element.id == bannerHome.movie!.id) {
+              movie = element;
+              break;
+            }
           }
         }
-        }
-        Navigator.pushNamed(context, RouteName.detailMovieScreen, arguments: movie);
+        Navigator.pushNamed(context, RouteName.detailMovieScreen,
+            arguments: movie);
         break;
     }
   }
-
-
 }

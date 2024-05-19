@@ -1,11 +1,12 @@
-import 'package:ticket_app/components/app_assets.dart';
+import 'package:ticket_app/components/const/app_assets.dart';
 
 class PaymentCard {
   String? cardNumber;
   String? token;
   String? nameBank;
 
-  PaymentCard({required this.cardNumber, required this.nameBank, required this.token});
+  PaymentCard(
+      {required this.cardNumber, required this.nameBank, required this.token});
 
   PaymentCard.fromJson(Map<String, dynamic> json) {
     cardNumber = json["vnp_card_number"];
@@ -21,12 +22,12 @@ class PaymentCard {
     };
   }
 
-  String getLogoCard(){
-    switch(nameBank){
-      case "NCB": return AppAssets.icNCB;
+  String getLogoCard() {
+    switch (nameBank) {
+      case "NCB":
+        return AppAssets.icNCB;
     }
 
     return "";
   }
-
 }

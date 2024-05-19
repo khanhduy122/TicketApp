@@ -4,9 +4,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:location/location.dart';
-import 'package:ticket_app/components/app_assets.dart';
-import 'package:ticket_app/components/app_colors.dart';
-import 'package:ticket_app/components/app_styles.dart';
+import 'package:ticket_app/components/const/app_assets.dart';
+import 'package:ticket_app/components/const/app_colors.dart';
+import 'package:ticket_app/components/const/app_styles.dart';
 import 'package:ticket_app/components/dialogs/dialog_error.dart';
 import 'package:ticket_app/components/dialogs/dialog_loading.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
@@ -31,7 +31,8 @@ class CinemaScreen extends StatefulWidget {
 class _CinemaScreenState extends State<CinemaScreen> {
   String? _selectCity;
   DateTime dateTime = DateTime.now();
-  final TextEditingController _searchCityTextController = TextEditingController();
+  final TextEditingController _searchCityTextController =
+      TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final CinemaBloc cinemaBloc = CinemaBloc();
   CinemaCity? _allReconmmedCinemas;
@@ -44,7 +45,9 @@ class _CinemaScreenState extends State<CinemaScreen> {
     _allReconmmedCinemas = context.read<DataAppProvider>().reconmmedCinemas;
     _selectCity = _allReconmmedCinemas?.name ?? cities.first;
     _recomendCinemaSelect = _allReconmmedCinemas?.all?.sublist(0);
-    context.read<DataAppProvider>().setCityNameCurrent(name: _allReconmmedCinemas?.name);
+    context
+        .read<DataAppProvider>()
+        .setCityNameCurrent(name: _allReconmmedCinemas?.name);
   }
 
   @override
@@ -109,12 +112,13 @@ class _CinemaScreenState extends State<CinemaScreen> {
             }).toList(),
             onChanged: (value) {
               context.read<DataAppProvider>().setCityNameCurrent(name: value!);
-              if(value == "----Chọn tĩnh / thành phố----"){
+              if (value == "----Chọn tĩnh / thành phố----") {
                 return;
               }
               _selectCity = value!;
               CacheService.saveData("cityName", value);
-              cinemaBloc.add(GetCinemaCityEvent(cityName: value, context: context));
+              cinemaBloc
+                  .add(GetCinemaCityEvent(cityName: value, context: context));
             },
             buttonStyleData: ButtonStyleData(
               height: 40,
@@ -265,7 +269,7 @@ class _CinemaScreenState extends State<CinemaScreen> {
   }
 
   void onSelectCinemaType(int index) {
-    if(_selectCity == cities.first){
+    if (_selectCity == cities.first) {
       setState(() {
         _currentIndexCinemaType = index;
       });
@@ -354,58 +358,34 @@ class _CinemaScreenState extends State<CinemaScreen> {
                 "Rạp Đề Xuất",
                 style: AppStyle.titleStyle,
               ),
-              (context.read<DataAppProvider>().locationPermisstion == PermissionStatus.denied || context.read<DataAppProvider>().serviceEnable == false) 
-              ? GestureDetector(
-                onTap: () {
-                  DialogError.show(
-                    context: context, 
-                    title: "Thông Báo",
-                    message: "Cho phép truy cập vào vị trí mở mục cài đặt của điện thoại để MovieTicket có thể gợi ý cho bạn rạp phim gần nhất");
-                },
-                child: Icon(
-                  Icons.error,
-                  color: AppColors.white,
-                  size: 25.h,
-                ),
-              ) : Container(),
+              (context.read<DataAppProvider>().locationPermisstion !=
+                          PermissionStatus.granted ||
+                      context.read<DataAppProvider>().serviceEnable == false)
+                  ? GestureDetector(
+                      onTap: () {
+                        DialogError.show(
+                          context: context,
+                          title: "Thông Báo",
+                          message:
+                              "Cho phép truy cập vào vị trí mở mục cài đặt của điện thoại để MovieTicket có thể gợi ý cho bạn rạp phim gần nhất",
+                          // onTap: () {},
+                        );
+                      },
+                      child: Icon(
+                        Icons.error,
+                        color: AppColors.white,
+                        size: 25.h,
+                      ),
+                    )
+                  : Container(),
             ],
           ),
           SizedBox(
             height: 20.h,
           ),
           Expanded(
-            child: _recomendCinemaSelect == null ?  
-            Center(
-              child: Column(
-                children: [
-                  Image.asset(AppAssets.imgEmpty),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  Text(
-                    "Cho phép truy cập vào vị trí mở mục cài đặt của điện thoại để MovieTicket có thể gợi ý cho bạn rạp phim gần nhất",
-                    style: AppStyle.defaultStyle,
-                    textAlign: TextAlign.center,
-                  )
-                ],
-              ),
-            )
-            : _recomendCinemaSelect!.isNotEmpty
-                ? ListView.builder(
-                    controller: _scrollController,
-                    itemCount: _recomendCinemaSelect!.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        children: [
-                          _itemCinema(_recomendCinemaSelect![index]),
-                          SizedBox(
-                            height: 20.h,
-                          )
-                        ],
-                      );
-                    },
-                  )
-                : Center(
+            child: _recomendCinemaSelect == null
+                ? Center(
                     child: Column(
                       children: [
                         Image.asset(AppAssets.imgEmpty),
@@ -413,12 +393,42 @@ class _CinemaScreenState extends State<CinemaScreen> {
                           height: 20.h,
                         ),
                         Text(
-                          "Không có rạp phim",
-                          style: AppStyle.titleStyle,
+                          "Cho phép truy cập vào vị trí mở mục cài đặt của điện thoại để MovieTicket có thể gợi ý cho bạn rạp phim gần nhất",
+                          style: AppStyle.defaultStyle,
+                          textAlign: TextAlign.center,
                         )
                       ],
                     ),
-                  ),
+                  )
+                : _recomendCinemaSelect!.isNotEmpty
+                    ? ListView.builder(
+                        controller: _scrollController,
+                        itemCount: _recomendCinemaSelect!.length,
+                        itemBuilder: (context, index) {
+                          return Column(
+                            children: [
+                              _itemCinema(_recomendCinemaSelect![index]),
+                              SizedBox(
+                                height: 20.h,
+                              )
+                            ],
+                          );
+                        },
+                      )
+                    : Center(
+                        child: Column(
+                          children: [
+                            Image.asset(AppAssets.imgEmpty),
+                            SizedBox(
+                              height: 20.h,
+                            ),
+                            Text(
+                              "Không có rạp phim",
+                              style: AppStyle.titleStyle,
+                            )
+                          ],
+                        ),
+                      ),
           )
         ],
       ),

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ticket_app/components/app_assets.dart';
-import 'package:ticket_app/components/app_colors.dart';
-import 'package:ticket_app/components/app_styles.dart';
+import 'package:ticket_app/components/const/app_assets.dart';
+import 'package:ticket_app/components/const/app_colors.dart';
+import 'package:ticket_app/components/const/app_styles.dart';
 import 'package:ticket_app/components/dialogs/dialog_error.dart';
 import 'package:ticket_app/components/dialogs/dialog_loading.dart';
-import 'package:ticket_app/components/logger.dart';
+import 'package:ticket_app/components/const/logger.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/models/movie.dart';
@@ -114,19 +114,12 @@ class _DetailMovieScreenState extends State<DetailMovieScreen>
             height: 200.h,
             width: size.width,
             decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, AppColors.background])),
-          ),
-          Positioned(
-            top: 10.h,
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back_ios),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            )
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.transparent, AppColors.background],
+              ),
+            ),
           ),
           Positioned(
             bottom: 0,
@@ -178,42 +171,71 @@ class _DetailMovieScreenState extends State<DetailMovieScreen>
                             ? ButtonWidget(
                                 title: "Đặt vé",
                                 height: 30.h,
-                                width: 80.w,
+                                width: 90.w,
                                 onPressed: () {
-                                  if(context.read<DataAppProvider>().reconmmedCinemas == null){
-                                    if(context.read<DataAppProvider>().cityNameCurrent != null){
-                                      
-                                      String currentCityName = context.read<DataAppProvider>().cityNameCurrent!;
+                                  if (context
+                                          .read<DataAppProvider>()
+                                          .reconmmedCinemas ==
+                                      null) {
+                                    if (context
+                                            .read<DataAppProvider>()
+                                            .cityNameCurrent !=
+                                        null) {
+                                      String currentCityName = context
+                                          .read<DataAppProvider>()
+                                          .cityNameCurrent!;
                                       DateTime now = DateTime.now();
-                                      String day = now.day.toString().length == 1 ? "0${now.day}" : now.day.toString();
-                                      String month = now.month.toString().length == 1 ? "0${now.month}" : now.month.toString();
-                                      String currentDate = "$day-$month-${now.year}";
-                                      cinemaBloc.add(GetCinemasShowingMovieEvent(
-                                          cityName: currentCityName,
-                                          movieID: widget.movie.id!,
-                                          date: currentDate,
-                                          context: context));
-                                    }else{
-                                      Navigator.pushNamed(context, RouteName.selectCinemaScreen,
-                                        arguments: {
-                                          "movie": widget.movie,
-                                          "cinemaCity": context.read<DataAppProvider>().reconmmedCinemas
-                                        });
+                                      String day =
+                                          now.day.toString().length == 1
+                                              ? "0${now.day}"
+                                              : now.day.toString();
+                                      String month =
+                                          now.month.toString().length == 1
+                                              ? "0${now.month}"
+                                              : now.month.toString();
+                                      String currentDate =
+                                          "$day-$month-${now.year}";
+                                      cinemaBloc.add(
+                                          GetCinemasShowingMovieEvent(
+                                              cityName: currentCityName,
+                                              movieID: widget.movie.id!,
+                                              date: currentDate,
+                                              context: context));
+                                    } else {
+                                      Navigator.pushNamed(
+                                          context, RouteName.selectCinemaScreen,
+                                          arguments: {
+                                            "movie": widget.movie,
+                                            "cinemaCity": context
+                                                .read<DataAppProvider>()
+                                                .reconmmedCinemas
+                                          });
                                     }
-                                  }else{
+                                  } else {
                                     debugLog("aaa");
-                                    String currentCityName = context.read<DataAppProvider>().reconmmedCinemas!.name ?? '';
+                                    String currentCityName = context
+                                            .read<DataAppProvider>()
+                                            .reconmmedCinemas!
+                                            .name ??
+                                        '';
                                     DateTime now = DateTime.now();
-                                    String day = now.day.toString().length == 1 ? "0${now.day}" : now.day.toString();
-                                    String month = now.month.toString().length == 1 ? "0${now.month}" : now.month.toString();
-                                    String currentDate = "$day-$month-${now.year}";
-                                    debugLog("currentCityName: $currentCityName, currentDate: $currentDate, movieID: ${widget.movie.id}");
+                                    String day = now.day.toString().length == 1
+                                        ? "0${now.day}"
+                                        : now.day.toString();
+                                    String month =
+                                        now.month.toString().length == 1
+                                            ? "0${now.month}"
+                                            : now.month.toString();
+                                    String currentDate =
+                                        "$day-$month-${now.year}";
+                                    debugLog(
+                                        "currentCityName: $currentCityName, currentDate: $currentDate, movieID: ${widget.movie.id}");
                                     cinemaBloc.add(GetCinemasShowingMovieEvent(
                                         cityName: currentCityName,
                                         movieID: widget.movie.id!,
                                         date: currentDate,
                                         context: context));
-                                    }
+                                  }
                                 },
                               )
                             : Container()
@@ -223,7 +245,21 @@ class _DetailMovieScreenState extends State<DetailMovieScreen>
                 ],
               ),
             ),
-          )
+          ),
+          Positioned(
+            top: 30.h,
+            left: 20.w,
+            child: InkWell(
+              onTap: () {
+                debugLog("back");
+                Navigator.of(context).pop();
+              },
+              child: const Icon(
+                Icons.arrow_back_ios,
+                color: AppColors.white,
+              ),
+            ),
+          ),
         ],
       ),
     );

@@ -49,8 +49,24 @@
 	<string>This app needs access to location when open.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>This app needs access to location when in the background.</string>
-	<key>NSAppTransportSecurity</key>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Replace with your permission description.</string>
+	<key>GIDClientID</key>
+	<string>825954611534-i6hal1dkhvu6nlb3o2b7ktdgdfimm2ai.apps.googleusercontent.com</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.825954611534-i6hal1dkhvu6nlb3o2b7ktdgdfimm2ai</string>
+			</array>
+		</dict>
+	</array>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>dev.flutter.background.refresh</string>
+	</array>
 </dict>
 </plist>

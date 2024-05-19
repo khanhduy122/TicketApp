@@ -1,10 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ticket_app/components/app_colors.dart';
+import 'package:ticket_app/components/const/app_colors.dart';
 
 class ImageNetworkWidget extends StatefulWidget {
-  const ImageNetworkWidget({super.key, required this.url, required this.height, required this.width, this.borderRadius, this.boxFit});
+  const ImageNetworkWidget(
+      {super.key,
+      required this.url,
+      required this.height,
+      required this.width,
+      this.borderRadius,
+      this.boxFit});
 
   final String url;
   final double height;
@@ -25,31 +31,33 @@ class _ImageNetworkWidgetState extends State<ImageNetworkWidget> {
         height: widget.height.h,
         width: widget.width.w,
         decoration: BoxDecoration(
-          borderRadius: widget.borderRadius != null ? BorderRadius.circular(widget.borderRadius!.h) : null,
+          borderRadius: widget.borderRadius != null
+              ? BorderRadius.circular(widget.borderRadius!.h)
+              : null,
           image: DecorationImage(
-              image: imageProvider,
-              fit: widget.boxFit ?? BoxFit.cover,
-            ),
+            image: imageProvider,
+            fit: widget.boxFit ?? BoxFit.cover,
+          ),
         ),
       ),
       placeholder: (_, __) => Container(
-        height: widget.height.h,
-        width: widget.width.w,
-        decoration: BoxDecoration(
-          borderRadius: widget.borderRadius != null ? BorderRadius.circular(widget.borderRadius!.h) : null,
-          color: AppColors.buttonPressColor
-        ),
-        child: const Center(child: CircularProgressIndicator())
-      ),
-      errorWidget: (_, __, ___) =>  Container(
-        height: widget.height.h,
-        width: widget.width.w,
-        decoration: BoxDecoration(
-          borderRadius: widget.borderRadius != null ? BorderRadius.circular(widget.borderRadius!.h) : null,
-          color: AppColors.buttonPressColor
-        ),
-        child: const Icon(Icons.error)
-      ),
+          height: widget.height.h,
+          width: widget.width.w,
+          decoration: BoxDecoration(
+              borderRadius: widget.borderRadius != null
+                  ? BorderRadius.circular(widget.borderRadius!.h)
+                  : null,
+              color: AppColors.buttonPressColor),
+          child: const Center(child: CircularProgressIndicator())),
+      errorWidget: (_, __, ___) => Container(
+          height: widget.height.h,
+          width: widget.width.w,
+          decoration: BoxDecoration(
+              borderRadius: widget.borderRadius != null
+                  ? BorderRadius.circular(widget.borderRadius!.h)
+                  : null,
+              color: AppColors.buttonPressColor),
+          child: const Icon(Icons.error)),
     );
   }
 }

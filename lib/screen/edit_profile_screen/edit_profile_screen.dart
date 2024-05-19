@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ticket_app/components/app_assets.dart';
-import 'package:ticket_app/components/app_colors.dart';
-import 'package:ticket_app/components/app_styles.dart';
+import 'package:ticket_app/components/const/app_assets.dart';
+import 'package:ticket_app/components/const/app_colors.dart';
+import 'package:ticket_app/components/const/app_styles.dart';
 import 'package:ticket_app/components/dialogs/dialog_confirm.dart';
 import 'package:ticket_app/components/dialogs/dialog_error.dart';
 import 'package:ticket_app/components/dialogs/dialog_loading.dart';
-import 'package:ticket_app/components/logger.dart';
+import 'package:ticket_app/components/const/logger.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/moduels/exceptions/all_exception.dart';
 import 'package:ticket_app/moduels/user/user_bloc.dart';
@@ -57,9 +57,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         canPop: false,
         onPopInvoked: (didPop) {
           if (didPop) {
-          return;
-        }
-        _onWillPop();
+            return;
+          }
+          _onWillPop();
         },
         child: GestureDetector(
           onTap: () {
@@ -105,16 +105,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   ButtonWidget _buildButtonSave() {
     return ButtonWidget(
-      title: "Cập Nhật",
-      height: 60.h,
-      width: 250.w,
-      color: (userName.trim() != user!.displayName!.trim() || imageSelected != null) ? AppColors.buttonColor : AppColors.darkBackground,
-      onPressed: () {
-        if (formKey.currentState!.validate()) {
-          userBloc.add(EditProfileUserEvent(
-              name: userName, photo: imageSelected));
-        }
-      });
+        title: "Cập Nhật",
+        height: 60.h,
+        width: 250.w,
+        color: (userName.trim() != user!.displayName!.trim() ||
+                imageSelected != null)
+            ? AppColors.buttonColor
+            : AppColors.darkBackground,
+        onPressed: () {
+          if (formKey.currentState!.validate()) {
+            userBloc.add(
+                EditProfileUserEvent(name: userName, photo: imageSelected));
+          }
+        });
   }
 
   Widget _buildTextFieldEmail() {
@@ -164,33 +167,33 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         child: Stack(
           children: [
             Center(
-                child: imageSelected != null ?
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(45.h),
-                  child: Image.file(
-                    imageSelected!,
-                    fit: BoxFit.fill,
-                    height: 90.h,
-                    width: 90.w,
-                  ),
-                ) :
-                (user!.photoURL == null)
+                child: imageSelected != null
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(45.h),
-                        child: SizedBox(
+                        child: Image.file(
+                          imageSelected!,
+                          fit: BoxFit.fill,
+                          height: 90.h,
+                          width: 90.w,
+                        ),
+                      )
+                    : (user!.photoURL == null)
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(45.h),
+                            child: SizedBox(
+                                height: 90.h,
+                                width: 90.w,
+                                child: Image.asset(
+                                  AppAssets.imgAvatarDefault,
+                                  fit: BoxFit.fill,
+                                )),
+                          )
+                        : ImageNetworkWidget(
+                            url: user!.photoURL!,
                             height: 90.h,
                             width: 90.w,
-                            child: Image.asset(
-                              AppAssets.imgAvatarDefault,
-                              fit: BoxFit.fill,
-                            )),
-                      )
-                    : ImageNetworkWidget(
-                        url: user!.photoURL!,
-                        height: 90.h,
-                        width: 90.w,
-                        borderRadius: 45.h,
-                      )),
+                            borderRadius: 45.h,
+                          )),
             Positioned(
               left: 0,
               right: 0,
@@ -228,9 +231,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Future<void> _onBackScreen() async {
     if (userName.trim() != user!.displayName!.trim() || imageSelected != null) {
-      await DialogConfirm.show(context: context, message: "Bạn có chắc muốn hủy thay đổi ?").then((isConfirm) {
+      await DialogConfirm.show(
+              context: context, message: "Bạn có chắc muốn hủy thay đổi ?")
+          .then((isConfirm) {
         if (isConfirm) {
-          Navigator.popUntil(context, (route) => route.settings.name == RouteName.mainScreen,);
+          Navigator.popUntil(
+            context,
+            (route) => route.settings.name == RouteName.mainScreen,
+          );
         }
       });
     } else {
@@ -240,40 +248,38 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Future<void> _onWillPop() async {
     if (userName.trim() != user!.displayName!.trim() || imageSelected != null) {
-      await DialogConfirm.show(context: context, message: "Bạn có chắc muốn hủy thay đổi ?").then((isConfirm) {
+      await DialogConfirm.show(
+              context: context, message: "Bạn có chắc muốn hủy thay đổi ?")
+          .then((isConfirm) {
         if (isConfirm) {
           Navigator.pop(context);
         }
       });
-    } 
+    }
   }
 
-  void _onListener(Object? state){
+  void _onListener(Object? state) {
     if (state is EditProfileUserState) {
       if (state.isLoading == true) {
         DialogLoading.show(context);
       }
 
       if (state.user != null) {
-        Navigator.popUntil(context,
-            (route) => route.settings.name == RouteName.mainScreen);
+        Navigator.popUntil(
+            context, (route) => route.settings.name == RouteName.mainScreen);
       }
 
-      if(state.error != null) {
-        if(state.error is NoInternetException){
+      if (state.error != null) {
+        if (state.error is NoInternetException) {
           DialogError.show(
-            context: context, 
-            message: "Không có kết nối internet, vui lòng kiểm tra lại!"
-          );
+              context: context,
+              message: "Không có kết nối internet, vui lòng kiểm tra lại!");
           return;
         }
 
         DialogError.show(
-          context: context, 
-          message: "Đã Có lỗi xảy ra vui lòng thử lại!"
-        );
+            context: context, message: "Đã Có lỗi xảy ra vui lòng thử lại!");
       }
     }
   }
-
 }

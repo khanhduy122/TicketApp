@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ticket_app/components/app_colors.dart';
-import 'package:ticket_app/components/app_styles.dart';
+import 'package:ticket_app/components/const/app_colors.dart';
+import 'package:ticket_app/components/const/app_styles.dart';
 
 class ButtonWidget extends StatelessWidget {
   const ButtonWidget(
@@ -33,7 +33,7 @@ class ButtonWidget extends StatelessWidget {
         ),
         child: Text(
           title,
-          style: AppStyle.textButtonStyle.copyWith(fontSize: (height / 4).sp),
+          style: AppStyle.textButtonStyle.copyWith(fontSize: 12.sp),
         ));
   }
 }

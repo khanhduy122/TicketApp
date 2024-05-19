@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:ticket_app/components/logger.dart';
+import 'package:ticket_app/components/const/logger.dart';
 import 'package:ticket_app/models/banner.dart';
 import 'package:ticket_app/models/home_data.dart';
 import 'package:ticket_app/models/movie.dart';

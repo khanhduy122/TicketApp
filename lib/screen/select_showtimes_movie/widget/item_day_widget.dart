@@ -1,11 +1,14 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ticket_app/components/app_colors.dart';
-import 'package:ticket_app/components/app_styles.dart';
+import 'package:ticket_app/components/const/app_colors.dart';
+import 'package:ticket_app/components/const/app_styles.dart';
 
 class ItemDayWidget extends StatelessWidget {
-  const ItemDayWidget({super.key, required this.onTap, required this.day, required this.isActive});
+  const ItemDayWidget(
+      {super.key,
+      required this.onTap,
+      required this.day,
+      required this.isActive});
 
   final Function() onTap;
   final int day;
@@ -22,20 +25,32 @@ class ItemDayWidget extends StatelessWidget {
             width: 50.w,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: isActive ? AppColors.buttonColor : AppColors.darkBackground,
-              borderRadius: BorderRadius.circular(10.r)
-            ),
+                color:
+                    isActive ? AppColors.buttonColor : AppColors.darkBackground,
+                borderRadius: BorderRadius.circular(10.r)),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Ngày", style: AppStyle.defaultStyle.copyWith(fontWeight: FontWeight.w500, fontSize: 12.sp),),
-                SizedBox(height: 5.h,),
-                Text(day.toString(), style: AppStyle.titleStyle.copyWith(fontWeight: FontWeight.w400),)
+                Text(
+                  "Ngày",
+                  style: AppStyle.defaultStyle
+                      .copyWith(fontWeight: FontWeight.w500, fontSize: 12.sp),
+                ),
+                SizedBox(
+                  height: 5.h,
+                ),
+                Text(
+                  day.toString(),
+                  style:
+                      AppStyle.titleStyle.copyWith(fontWeight: FontWeight.w400),
+                )
               ],
             ),
           ),
         ),
-        SizedBox(width: 10.w,)
+        SizedBox(
+          width: 10.w,
+        )
       ],
     );
   }

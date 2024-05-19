@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ticket_app/components/app_assets.dart';
-import 'package:ticket_app/components/app_colors.dart';
-import 'package:ticket_app/components/app_styles.dart';
+import 'package:ticket_app/components/const/app_assets.dart';
+import 'package:ticket_app/components/const/app_colors.dart';
+import 'package:ticket_app/components/const/app_styles.dart';
 
 class TextFormFieldWidget extends StatefulWidget {
   const TextFormFieldWidget(
@@ -60,7 +60,9 @@ class _TextFormFieldWidgetState extends State<TextFormFieldWidget> {
         hintText: widget.hint,
         hintStyle: AppStyle.defaultStyle,
         helperStyle: AppStyle.defaultStyle,
-        label: widget.label != null ? Text(widget.label ?? "", style: AppStyle.defaultStyle) : null,
+        label: widget.label != null
+            ? Text(widget.label ?? "", style: AppStyle.defaultStyle)
+            : null,
         suffixIcon: widget.obscureText != null
             ? GestureDetector(
                 onTap: () {
