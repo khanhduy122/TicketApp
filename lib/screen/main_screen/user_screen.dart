@@ -147,7 +147,6 @@ class _UserScreenState extends State<UserScreen> {
     return BlocBuilder(
         bloc: userBloc,
         builder: (context, snapshot) {
-          debugLog("build user profile");
           user = FirebaseAuth.instance.currentUser;
           return Column(
             children: [

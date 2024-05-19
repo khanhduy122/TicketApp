@@ -20,8 +20,9 @@ class _PlayVideoTrailerScreenState extends State<PlayVideoTrailerScreen> {
   late final ChewieController _chewieController;
 
   Future<void> _loadVideoFormUrl() async {
-    _videoPlayerController =
-        VideoPlayerController.networkUrl(Uri.parse(widget.movie.trailer!));
+    _videoPlayerController = VideoPlayerController.networkUrl(
+      Uri.parse(widget.movie.trailer!),
+    );
     await _videoPlayerController.initialize();
     _chewieController = ChewieController(
       videoPlayerController: _videoPlayerController,
@@ -36,6 +37,7 @@ class _PlayVideoTrailerScreenState extends State<PlayVideoTrailerScreen> {
       ),
       showOptions: false,
     );
+    _videoPlayerController.setVolume(0.8);
     setState(() {});
   }
 
@@ -56,10 +58,19 @@ class _PlayVideoTrailerScreenState extends State<PlayVideoTrailerScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.black,
-      body: Center(
-          child: _videoPlayerController.value.isInitialized
-              ? _buildVideoController(context)
-              : _buildPlaceholder(context)),
+      body: SafeArea(
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Center(
+              child: _videoPlayerController.value.isInitialized
+                  ? _buildVideoController(context)
+                  : _buildPlaceholder(context),
+            ),
+            Positioned(top: 10.h, left: 10.w, child: const BackButton()),
+          ],
+        ),
+      ),
     );
   }
 

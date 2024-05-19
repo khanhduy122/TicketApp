@@ -631,9 +631,7 @@ class _SelectCinemaScreenState extends State<SelectCinemaScreen> {
   void initListCinem() {
     _allReconmmedCinemas = widget.cinemaCity;
     _recomendCinemaSelect = _allReconmmedCinemas?.all?.sublist(0);
-    _selectCity = context.read<DataAppProvider>().reconmmedCinemas?.name ??
-        context.read<DataAppProvider>().cityNameCurrent ??
-        cities[0];
+    _selectCity = context.read<DataAppProvider>().cityNameCurrent ?? cities[0];
     _initDays();
   }
 

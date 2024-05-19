@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ticket_app/components/const/app_assets.dart';
 import 'package:ticket_app/components/const/app_colors.dart';
@@ -18,8 +20,6 @@ class DialogConfirm {
       builder: (context) {
         return SimpleDialog(backgroundColor: Colors.transparent, children: [
           Container(
-            height: 300.h,
-            width: 300.h,
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             decoration: BoxDecoration(
                 color: AppColors.background,
@@ -27,6 +27,7 @@ class DialogConfirm {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 SizedBox(
                   height: 20.h,
@@ -60,24 +61,28 @@ class DialogConfirm {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    ButtonNegativeWidget(
-                      title: titleNegative ?? "No",
-                      height: 50.h,
-                      width: 100.w,
-                      onPressed: () {
-                        Navigator.of(context).pop(false);
-                      },
+                    Expanded(
+                      child: ButtonNegativeWidget(
+                        title: titleNegative ?? "No",
+                        height: 40.h,
+                        radius: 10.r,
+                        onPressed: () {
+                          Navigator.of(context).pop(false);
+                        },
+                      ),
                     ),
                     SizedBox(
-                      width: 20.w,
+                      width: 10.w,
                     ),
-                    ButtonWidget(
-                      title: titlePositive ?? "OK",
-                      height: 50.h,
-                      width: 100.w,
-                      onPressed: () {
-                        Navigator.of(context).pop(true);
-                      },
+                    Expanded(
+                      child: ButtonWidget(
+                        title: titlePositive ?? "OK",
+                        height: 40.h,
+                        radius: 10.r,
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
+                        },
+                      ),
                     ),
                   ],
                 )

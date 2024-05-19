@@ -2,7 +2,6 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -363,8 +362,6 @@ class _SelectSeatScreenState extends State<SelectSeatScreen> {
         DialogLoading.show(context);
       }
       if (state.isSuccess == true) {
-        final service = FlutterBackgroundService();
-        service.startService();
         Navigator.of(context, rootNavigator: true).pop();
         await Navigator.pushNamed(context, RouteName.checkoutTicketScreen,
             arguments: widget.ticket);

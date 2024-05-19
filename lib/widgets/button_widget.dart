@@ -7,27 +7,31 @@ class ButtonWidget extends StatelessWidget {
   const ButtonWidget(
       {super.key,
       required this.title,
-      required this.height,
-      required this.width,
+      this.height,
+      this.width,
       required this.onPressed,
-      this.color});
+      this.color,
+      this.radius});
 
   final String title;
   final Function() onPressed;
   final Color? color;
-  final double height;
-  final double width;
+  final double? height;
+  final double? width;
+  final double? radius;
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
         onPressed: onPressed,
         style: ButtonStyle(
-          fixedSize: MaterialStateProperty.all<Size>(Size(width, height)),
+          fixedSize: MaterialStateProperty.all<Size>(
+              Size(width ?? double.infinity, height ?? 50.h)),
           backgroundColor:
               MaterialStateProperty.all<Color>(color ?? AppColors.buttonColor),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20))),
+              RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(radius ?? 20.r))),
           foregroundColor:
               MaterialStateProperty.all<Color>(AppColors.buttonPressColor),
         ),

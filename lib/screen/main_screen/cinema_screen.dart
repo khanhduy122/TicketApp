@@ -1,12 +1,18 @@
+import 'dart:io';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:location/location.dart';
+import 'package:permission_handler/permission_handler.dart'
+    as PermissionHandler;
 import 'package:ticket_app/components/const/app_assets.dart';
 import 'package:ticket_app/components/const/app_colors.dart';
 import 'package:ticket_app/components/const/app_styles.dart';
+import 'package:ticket_app/components/const/logger.dart';
+import 'package:ticket_app/components/dialogs/dialog_confirm.dart';
 import 'package:ticket_app/components/dialogs/dialog_error.dart';
 import 'package:ticket_app/components/dialogs/dialog_loading.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
@@ -362,15 +368,7 @@ class _CinemaScreenState extends State<CinemaScreen> {
                           PermissionStatus.granted ||
                       context.read<DataAppProvider>().serviceEnable == false)
                   ? GestureDetector(
-                      onTap: () {
-                        DialogError.show(
-                          context: context,
-                          title: "Thông Báo",
-                          message:
-                              "Cho phép truy cập vào vị trí mở mục cài đặt của điện thoại để MovieTicket có thể gợi ý cho bạn rạp phim gần nhất",
-                          // onTap: () {},
-                        );
-                      },
+                      onTap: () => resquestPermission(context),
                       child: Icon(
                         Icons.error,
                         color: AppColors.white,
@@ -553,6 +551,44 @@ class _CinemaScreenState extends State<CinemaScreen> {
               context: context,
               message: "Đã có lỗi xảy ra vui lòng thử lại sao");
         }
+      }
+    }
+  }
+
+  Future<void> resquestPermission(BuildContext context) async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    Location location = Location();
+
+    if (context.read<DataAppProvider>().serviceEnable == false) {
+      location.requestService();
+    }
+
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+
+      if (context.read<DataAppProvider>().locationPermisstion !=
+          PermissionStatus.granted) {
+        final result = await DialogConfirm.show(
+          context: context,
+          message:
+              'Cho phép truy cập vào vị trí mở mục cài đặt của điện thoại để MovieTicket có thể gợi ý cho bạn rạp phim gần nhất',
+          titleNegative: 'Hủy',
+          titlePositive: 'Mở Cài Đặt',
+        );
+        if (result == true) {
+          await PermissionHandler.openAppSettings();
+        }
+      }
+    } else {
+      final result = await DialogConfirm.show(
+        context: context,
+        message:
+            'Cho phép truy cập vào vị trí mở mục cài đặt của điện thoại để MovieTicket có thể gợi ý cho bạn rạp phim gần nhất',
+        titleNegative: 'Hủy',
+        titlePositive: 'Mở Cài Đặt',
+      );
+      if (result == true) {
+        await PermissionHandler.openAppSettings();
       }
     }
   }

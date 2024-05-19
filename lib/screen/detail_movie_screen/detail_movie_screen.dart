@@ -248,16 +248,9 @@ class _DetailMovieScreenState extends State<DetailMovieScreen>
           ),
           Positioned(
             top: 30.h,
-            left: 20.w,
-            child: InkWell(
-              onTap: () {
-                debugLog("back");
-                Navigator.of(context).pop();
-              },
-              child: const Icon(
-                Icons.arrow_back_ios,
-                color: AppColors.white,
-              ),
+            left: 10.w,
+            child: const BackButton(
+              color: AppColors.white,
             ),
           ),
         ],

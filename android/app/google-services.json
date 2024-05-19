@@ -38,6 +38,14 @@
           }
         },
         {
+          "client_id": "825954611534-t5rrtufunimu8mdkerafgfs6e01eht87.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.ticket_app",
+            "certificate_hash": "f4426ffda564addcd313148e7ad08354358a4153"
+          }
+        },
+        {
           "client_id": "825954611534-gbsj8l6v1l4dal5h9n0t50kficpm8afr.apps.googleusercontent.com",
           "client_type": 3
         }

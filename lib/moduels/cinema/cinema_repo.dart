@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart' as Location;
@@ -9,6 +10,7 @@ import 'package:ticket_app/components/service/cache_service.dart';
 import 'package:ticket_app/models/cinema.dart';
 import 'package:ticket_app/models/cinema_city.dart';
 import 'package:ticket_app/models/cities.dart';
+import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/models/movie_showing_in_cinema.dart';
 import 'package:ticket_app/moduels/location/location_repo.dart';
 
@@ -20,15 +22,18 @@ class CinemaRepo {
   Location.PermissionStatus _permissionGranted =
       Location.PermissionStatus.denied;
 
-  Future<CinemaCity> getCinemasCity(String city, BuildContext context) async {
+  Future<CinemaCity> getCinemasCity(String? city, BuildContext context) async {
     try {
       Position? position;
       _serviceEnabled = await _location.serviceEnabled();
       _permissionGranted = await _location.hasPermission();
 
-      if (!_serviceEnabled &&
-          _permissionGranted == Location.PermissionStatus.denied) {
+      if (_serviceEnabled &&
+          _permissionGranted == Location.PermissionStatus.granted) {
         position = await _locationRepo.determinePosition(context);
+        context.read<DataAppProvider>().serviceEnable = true;
+        context.read<DataAppProvider>().locationPermisstion =
+            Location.PermissionStatus.granted;
       }
 
       final res = await _firestore.collection("Cinemas").doc(city).get();
@@ -210,7 +215,8 @@ class CinemaRepo {
         return null;
       }
 
-      String cityName = await getCurrentCity(position);
+      // String cityName = await getCurrentCity(position);
+      String cityName = "An Giang";
 
       debugLog(cityName);
 

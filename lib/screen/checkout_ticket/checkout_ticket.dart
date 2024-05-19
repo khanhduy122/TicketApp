@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:ticket_app/components/const/app_colors.dart';
@@ -27,8 +26,7 @@ class CheckoutTicketScreen extends StatefulWidget {
   State<CheckoutTicketScreen> createState() => _CheckoutTicketScreenState();
 }
 
-class _CheckoutTicketScreenState extends State<CheckoutTicketScreen>
-    with WidgetsBindingObserver {
+class _CheckoutTicketScreenState extends State<CheckoutTicketScreen> {
   String id = "";
   final StreamController countDownController = StreamController();
   final SelectSeatBloc selectSeatBloc = SelectSeatBloc();
@@ -36,70 +34,27 @@ class _CheckoutTicketScreenState extends State<CheckoutTicketScreen>
   bool isInited = false;
   Timer? _timer;
   final SelectSeatRepo selectSeatRepo = SelectSeatRepo();
-  final service = FlutterBackgroundService();
   Voucher? voucher;
 
   @override
   void initState() {
-    WidgetsBinding.instance.addObserver(this);
     id = (Random().nextInt(99999999) + 100000000).toString() +
         DateFormat('yyyyMMddHHmmss').format(DateTime.now()).toString();
     widget.ticket.id = id;
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      currentSecond--;
-      if (currentSecond == 0) {
-        service.invoke("deleteTicket", {
-          "cityName": widget.ticket.cinema!.cityName,
-          "cinemaType": widget.ticket.cinema!.type.name,
-          "cinemaID": widget.ticket.cinema!.id,
-          "date":
-              "${widget.ticket.date!.day}-${widget.ticket.date!.month}-${widget.ticket.date!.year}",
-          "movieID": widget.ticket.movie!.id,
-          "showtimes":
-              "${widget.ticket.showtimes} - ${widget.ticket.cinema!.rooms!.first.id}",
-          "seats": widget.ticket.seats!.map((e) => e.name).toList()
-        });
-        _timer!.cancel();
-      }
-      countDownController.sink.add(currentSecond);
-    });
-
     super.initState();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) async {
-    super.didChangeAppLifecycleState(state);
-    debugLog(state.name);
-    if (state == AppLifecycleState.detached) {
-      service.invoke("deleteTicket", {
-        "cityName": widget.ticket.cinema!.cityName,
-        "cinemaType": widget.ticket.cinema!.type.name,
-        "cinemaID": widget.ticket.cinema!.id,
-        "date":
-            "${widget.ticket.date!.day}-${widget.ticket.date!.month}-${widget.ticket.date!.year}",
-        "movieID": widget.ticket.movie!.id,
-        "showtimes":
-            "${widget.ticket.showtimes} - ${widget.ticket.cinema!.rooms!.first.id}",
-        "seats": widget.ticket.seats!.map((e) => e.name).toList()
-      });
-    }
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (currentSecond > 0) {
+        currentSecond--;
+        countDownController.sink.add(currentSecond);
+      } else {
+        selectSeatBloc.add(DeleteSeatEvent(ticket: widget.ticket));
+        Navigator.pop(context);
+      }
+    });
   }
 
   @override
   void dispose() {
-    service.invoke("deleteTicket", {
-      "cityName": widget.ticket.cinema!.cityName,
-      "cinemaType": widget.ticket.cinema!.type.name,
-      "cinemaID": widget.ticket.cinema!.id,
-      "date":
-          "${widget.ticket.date!.day}-${widget.ticket.date!.month}-${widget.ticket.date!.year}",
-      "movieID": widget.ticket.movie!.id,
-      "showtimes":
-          "${widget.ticket.showtimes} - ${widget.ticket.cinema!.rooms!.first.id}",
-      "seats": widget.ticket.seats!.map((e) => e.name).toList()
-    });
-    WidgetsBinding.instance.removeObserver(this);
     if (_timer != null) {
       _timer!.cancel();
     }
@@ -113,7 +68,6 @@ class _CheckoutTicketScreenState extends State<CheckoutTicketScreen>
     isInited = true;
     return PopScope(
       onPopInvoked: (didPop) {
-        service.invoke("stopService");
         selectSeatBloc.add(DeleteSeatEvent(ticket: widget.ticket));
         debugLog("on will pop");
       },

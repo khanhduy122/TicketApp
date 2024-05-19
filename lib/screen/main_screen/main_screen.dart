@@ -23,7 +23,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    SetDataFirebaseInDay.initData(context);
+    // SetDataFirebaseInDay.initData(context);
   }
 
   @override

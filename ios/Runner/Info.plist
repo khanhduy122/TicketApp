@@ -64,9 +64,5 @@
 			</array>
 		</dict>
 	</array>
-	<key>BGTaskSchedulerPermittedIdentifiers</key>
-	<array>
-		<string>dev.flutter.background.refresh</string>
-	</array>
 </dict>
 </plist>
