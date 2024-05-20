@@ -23,7 +23,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     super.initState();
-    // SetDataFirebaseInDay.initData(context);
+    // SetDataFirebase.initData(context);
   }
 
   @override
@@ -66,6 +66,7 @@ class _MainScreenState extends State<MainScreen> {
                           ? AppAssets.icMovieActive
                           : AppAssets.icMovieUnActive,
                       fit: BoxFit.contain,
+                      color: _currentIndex == 0 ? AppColors.buttonColor : null,
                     ),
                   )),
               BottomNavigationBarItem(
@@ -78,6 +79,7 @@ class _MainScreenState extends State<MainScreen> {
                           ? AppAssets.icCinemaActive
                           : AppAssets.icCinemaUnActive,
                       fit: BoxFit.contain,
+                      color: _currentIndex == 1 ? AppColors.buttonColor : null,
                     ),
                   )),
               BottomNavigationBarItem(
@@ -90,6 +92,7 @@ class _MainScreenState extends State<MainScreen> {
                           ? AppAssets.icTicketActive
                           : AppAssets.icTicketUnActive,
                       fit: BoxFit.contain,
+                      color: _currentIndex == 2 ? AppColors.buttonColor : null,
                     ),
                   )),
               BottomNavigationBarItem(
@@ -102,6 +105,7 @@ class _MainScreenState extends State<MainScreen> {
                           ? AppAssets.icUserActive
                           : AppAssets.icUserUnActive,
                       fit: BoxFit.contain,
+                      color: _currentIndex == 3 ? AppColors.buttonColor : null,
                     ),
                   ))
             ]),
