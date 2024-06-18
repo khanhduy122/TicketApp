@@ -10,7 +10,7 @@ Cinema _$CinemaFromJson(Map<String, dynamic> json) => Cinema(
       id: json['id'] as String,
       address: json['address'] as String,
       name: json['name'] as String,
-      cityName: json['cityName'] as String,
+      cityName: json['cityName'] as String?,
       thumbnail: json['thumbnail'] as String,
       type: $enumDecode(_$CinemasTypeEnumMap, json['type']),
       lat: (json['lat'] as num).toDouble(),

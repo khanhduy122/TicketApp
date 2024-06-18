@@ -54,7 +54,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         _onListener(state);
       },
       child: PopScope(
-        canPop: false,
+        canPop: true,
         onPopInvoked: (didPop) {
           if (didPop) {
             return;
@@ -172,7 +172,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         borderRadius: BorderRadius.circular(45.h),
                         child: Image.file(
                           imageSelected!,
-                          fit: BoxFit.fill,
+                          fit: BoxFit.cover,
                           height: 90.h,
                           width: 90.w,
                         ),
@@ -242,6 +242,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         }
       });
     } else {
+      debugLog('aaa');
       Navigator.pop(context);
     }
   }

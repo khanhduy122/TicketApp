@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ticket_app/components/const/logger.dart';
 import 'package:ticket_app/models/cinema.dart';
 import 'package:ticket_app/models/cinema_city.dart';
 import 'package:ticket_app/models/cities.dart';
@@ -16,6 +17,8 @@ class SetDataFirebase {
         context.read<DataAppProvider>().homeData.nowShowing.sublist(0);
     for (var cityName in cities) {
       CinemaCity cinemaCity = await getCinemaCity(cityName);
+
+      debugLog(cityName);
 
       for (var cinemaCGV in cinemaCity.cgv!) {
         await setMovieForCinema(cinemaCGV, listNowShowing, cityName, "CGV");
@@ -69,7 +72,9 @@ class SetDataFirebase {
           },
           "subtitle_2D": [
             {
-              "time": addDurationToTime("10:0$i", movie.duration!),
+              "time": addDurationToTime(
+                  i.toString().length > 1 ? "10:$i" : "10:0$i",
+                  movie.duration!),
               "roomID": cinemas.rooms![roomRandom1].id
             },
             {
@@ -116,7 +121,7 @@ class SetDataFirebase {
             colum: cinemas.rooms![roomRandom1].column!,
             row: cinemas.rooms![roomRandom1].row!,
             showtimes:
-                "${addDurationToTime("10:0$i", movie.duration!)} - ${cinemas.rooms![roomRandom1].id}",
+                "${addDurationToTime(i.toString().length > 1 ? "10:$i" : "10:0$i", movie.duration!)} - ${cinemas.rooms![roomRandom1].id}",
             cityNam: cityName,
             cinemaID: cinemas.id,
             date: "$dayString-$monthString-$year",

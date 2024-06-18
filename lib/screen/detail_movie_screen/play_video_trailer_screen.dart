@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -29,7 +31,12 @@ class _PlayVideoTrailerScreenState extends State<PlayVideoTrailerScreen> {
       autoPlay: true,
       looping: false,
       allowMuting: false,
-      customControls: const MaterialControls(),
+      customControls: Platform.isAndroid
+          ? const MaterialControls()
+          : const CupertinoControls(
+              backgroundColor: Colors.transparent,
+              iconColor: AppColors.white,
+            ),
       materialProgressColors: ChewieProgressColors(
         playedColor: AppColors.red,
         bufferedColor: AppColors.grey,
@@ -49,9 +56,9 @@ class _PlayVideoTrailerScreenState extends State<PlayVideoTrailerScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     _videoPlayerController.dispose();
     _chewieController.dispose();
+    super.dispose();
   }
 
   @override
@@ -59,39 +66,30 @@ class _PlayVideoTrailerScreenState extends State<PlayVideoTrailerScreen> {
     return Scaffold(
       backgroundColor: AppColors.black,
       body: SafeArea(
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Center(
-              child: _videoPlayerController.value.isInitialized
-                  ? _buildVideoController(context)
-                  : _buildPlaceholder(context),
-            ),
-            Positioned(top: 10.h, left: 10.w, child: const BackButton()),
-          ],
+        child: Center(
+          child: _videoPlayerController.value.isInitialized
+              ? _buildVideoController(context)
+              : _buildPlaceholder(context),
         ),
       ),
     );
   }
 
-  SizedBox _buildVideoController(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height - 50.h,
-      child: Chewie(
-        controller: _chewieController,
-      ),
+  Widget _buildVideoController(BuildContext context) {
+    return Chewie(
+      controller: _chewieController,
     );
   }
 
   SizedBox _buildPlaceholder(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height / 3,
+      height: 0.3.sh,
       width: MediaQuery.of(context).size.width,
       child: Stack(
         children: [
           ImageNetworkWidget(
               url: widget.movie.banner!,
-              height: MediaQuery.of(context).size.height / 3,
+              height: 0.3.sh,
               width: MediaQuery.of(context).size.width),
           const Center(
             child: CircularProgressIndicator(),

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +9,7 @@ import 'package:location/location.dart' as Location;
 import 'package:ticket_app/components/const/app_key.dart';
 import 'package:ticket_app/components/const/logger.dart';
 import 'package:ticket_app/components/service/cache_service.dart';
+import 'package:ticket_app/main.dart';
 import 'package:ticket_app/models/cinema.dart';
 import 'package:ticket_app/models/cinema_city.dart';
 import 'package:ticket_app/models/cities.dart';
@@ -81,6 +84,26 @@ class CinemaRepo {
           (a, b) => a.distance!.compareTo(b.distance!),
         );
       }
+
+      // for (var element in cinemaCity.cgv!) {
+      //   debugLog(element.toJson().toString());
+      // }
+
+      // print(
+      //     '----------------------------------------------------------------------');
+
+      // for (var element in cinemaCity.lotte!) {
+      //   debugLog(element.toJson().toString());
+      // }
+
+      // print(
+      //     '----------------------------------------------------------------------');
+
+      // for (var element in cinemaCity.galaxy!) {
+      //   debugLog(element.toJson().toString());
+      // }
+
+      debugLog(prettyPrintJson(cinemaCity.toJson()));
 
       return cinemaCity;
     } catch (e) {
@@ -216,7 +239,7 @@ class CinemaRepo {
       }
 
       // String cityName = await getCurrentCity(position);
-      String cityName = "An Giang";
+      String cityName = "Thành phố Hồ Chí Minh";
 
       debugLog(cityName);
 

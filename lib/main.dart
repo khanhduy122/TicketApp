@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,6 +18,12 @@ import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/moduels/auth/auth_bloc.dart';
 import 'package:ticket_app/moduels/user/user_bloc.dart';
 import 'package:ticket_app/screen/splash_screen/splash_screen.dart';
+
+String prettyPrintJson(Object? json) {
+  const defaultIndent = '  ';
+  const jsonIndent = JsonEncoder.withIndent(defaultIndent);
+  return jsonIndent.convert(json);
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

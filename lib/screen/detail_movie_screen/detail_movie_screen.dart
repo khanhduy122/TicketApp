@@ -15,6 +15,7 @@ import 'package:ticket_app/moduels/auth/auth_exception.dart';
 import 'package:ticket_app/moduels/cinema/cinema_bloc.dart';
 import 'package:ticket_app/moduels/cinema/cinema_event.dart';
 import 'package:ticket_app/moduels/cinema/cinema_state.dart';
+import 'package:ticket_app/widgets/button_back_widget.dart';
 import 'package:ticket_app/widgets/button_widget.dart';
 import 'package:ticket_app/widgets/image_network_widget.dart';
 import 'package:ticket_app/widgets/rating_widget.dart';
@@ -246,13 +247,7 @@ class _DetailMovieScreenState extends State<DetailMovieScreen>
               ),
             ),
           ),
-          Positioned(
-            top: 30.h,
-            left: 10.w,
-            child: const BackButton(
-              color: AppColors.white,
-            ),
-          ),
+          Positioned(top: 30.h, left: 10.w, child: const ButtonBackWidget()),
         ],
       ),
     );

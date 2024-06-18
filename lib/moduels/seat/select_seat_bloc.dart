@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ticket_app/components/const/logger.dart';
 import 'package:ticket_app/components/const/net_work_info.dart';
 import 'package:ticket_app/moduels/exceptions/all_exception.dart';
 import 'package:ticket_app/moduels/seat/select_seat_event.dart';
@@ -25,6 +26,7 @@ class SelectSeatBloc extends Bloc<SeatEvent, SeatState> {
       await _selectSeatRepo.holdSeat(ticket: event.ticket);
       emit(SeatState(isSuccess: true));
     } catch (e) {
+      debugLog(e.toString());
       emit(SeatState(error: e));
     }
   }

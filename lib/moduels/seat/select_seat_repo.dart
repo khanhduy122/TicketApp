@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ticket_app/components/const/logger.dart';
 import 'package:ticket_app/models/cinema.dart';
 import 'package:ticket_app/models/movie.dart';
 import 'package:ticket_app/models/seat.dart';
@@ -35,7 +36,9 @@ class SelectSeatRepo {
 
   Future<void> holdSeat({required Ticket ticket}) async {
     List<Seat> seatsBooked = [];
+    debugLog('statr hold seat');
     for (var seat in ticket.seats!) {
+      debugLog(seat.name);
       if (await isBooked(ticket: ticket, seat: seat)) {
         seatsBooked.add(seat);
       } else {
@@ -49,8 +52,10 @@ class SelectSeatRepo {
             .collection("${ticket.showtimes} - ${ticket.cinema!.rooms![0].id}")
             .doc(seat.name)
             .update({"status": 1});
+        debugLog("chang status");
       }
     }
+    debugLog('end');
     if (seatsBooked.isEmpty) {
       return;
     }
@@ -169,7 +174,9 @@ class SelectSeatRepo {
         });
 
         if (response.data()!["status"] == 0 ||
-            (response.data()!["booked"] == "" || response.data()!["booked"] == FirebaseAuth.instance.currentUser!.uid)) {
+            (response.data()!["booked"] == "" ||
+                response.data()!["booked"] ==
+                    FirebaseAuth.instance.currentUser!.uid)) {
           await bookSeat(ticket: ticket, seat: element);
           continue;
         } else {

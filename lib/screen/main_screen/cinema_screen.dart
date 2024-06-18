@@ -275,7 +275,9 @@ class _CinemaScreenState extends State<CinemaScreen> {
   }
 
   void onSelectCinemaType(int index) {
-    if (_selectCity == cities.first) {
+    if (_selectCity == cities.first &&
+        context.read<DataAppProvider>().locationPermisstion !=
+            PermissionStatus.granted) {
       setState(() {
         _currentIndexCinemaType = index;
       });

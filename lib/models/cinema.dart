@@ -9,7 +9,7 @@ class Cinema {
   final String id;
   final String thumbnail;
   final String name;
-  final String cityName;
+  final String? cityName;
   final CinemasType type;
   List<MovieShowinginCinema>? movieShowinginCinema;
   List<Room>? rooms;
@@ -18,7 +18,17 @@ class Cinema {
   double? distance;
   final String address;
 
-  Cinema({required this.id ,required this.address, required this.name, required this.cityName, required this.thumbnail, required this.type, required this.lat, required this.long, this.rooms, this.movieShowinginCinema});
+  Cinema(
+      {required this.id,
+      required this.address,
+      required this.name,
+      required this.cityName,
+      required this.thumbnail,
+      required this.type,
+      required this.lat,
+      required this.long,
+      this.rooms,
+      this.movieShowinginCinema});
 
   factory Cinema.fromJson(Map<String, dynamic> json) => _$CinemaFromJson(json);
 
@@ -29,7 +39,8 @@ class Cinema {
       'name': name,
       'type': type.name.toString(),
       'cityName': cityName,
-      'movieShowinginCinema': movieShowinginCinema?.map((movie) => movie.toJson()).toList(),
+      'movieShowinginCinema':
+          movieShowinginCinema?.map((movie) => movie.toJson()).toList(),
       'rooms': rooms?.map((room) => room.toJson()).toList(),
       'lat': lat,
       'long': long,
@@ -38,17 +49,25 @@ class Cinema {
     };
   }
 
-  Cinema clone(){
-    return Cinema(id: id, address: address, name: name, thumbnail: thumbnail, type: type, lat: lat, long: long, rooms: rooms!.sublist(0), cityName: cityName);
+  Cinema clone() {
+    return Cinema(
+        id: id,
+        address: address,
+        name: name,
+        thumbnail: thumbnail,
+        type: type,
+        lat: lat,
+        long: long,
+        rooms: rooms!.sublist(0),
+        cityName: cityName);
   }
 
-  String getDistanceFormat(){
-    if(distance == null) return "";
-    if(distance! >= 1000){
-      return "${distance! ~/ 1000},${(distance! % 1000) ~/ 100 .toInt()} km";
-    }else{
+  String getDistanceFormat() {
+    if (distance == null) return "";
+    if (distance! >= 1000) {
+      return "${distance! ~/ 1000},${(distance! % 1000) ~/ 100.toInt()} km";
+    } else {
       return "${distance!.toInt()} m";
     }
-    
   }
 }

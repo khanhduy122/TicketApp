@@ -68,74 +68,76 @@ class _UserScreenState extends State<UserScreen> {
         }
       },
       child: Scaffold(
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 40.h,
-                ),
-                _avatarProfie(context),
-                SizedBox(
-                  height: 40.h,
-                ),
-                _itemOption(
-                  icon: AppAssets.icProfile,
-                  title: "Thông Tin",
-                  onTap: () {
-                    Navigator.pushNamed(context, RouteName.editProfileScreen);
-                  },
-                ),
-                _itemOption(
-                  icon: AppAssets.icPayment,
-                  title: "Thanh Toán",
-                  onTap: () {
-                    Navigator.pushNamed(context, RouteName.selectCardScreen);
-                  },
-                ),
-                // isAllowChangePass
-                //     ? _itemOption(
-                //         icon: AppAssets.icPassword,
-                //         title: "Thay Đổi Mật Khẩu",
-                //         onTap: () {},
-                //       )
-                //     : Container(),
-                _itemOption(
-                  icon: AppAssets.icVoucher,
-                  title: "Voucher",
-                  onTap: () {
-                    Navigator.pushNamed(context, RouteName.voucherScreen);
-                  },
-                ),
-                _itemOption(
-                  icon: AppAssets.icSuport,
-                  title: "Hổ Trợ",
-                  onTap: () {},
-                ),
-                SizedBox(
-                  height: 20.h,
-                ),
-                ButtonWidget(
-                  title: "Đăng Xuất",
-                  height: 50.h,
-                  width: 250.w,
-                  onPressed: () async {
-                    await DialogConfirm.show(
-                            context: context,
-                            message: "Bạn có chắc muốn đăng xuất ?")
-                        .then((isConfirm) {
-                      if (isConfirm) {
-                        FirebaseAuth.instance.signOut().then((value) {
-                          Navigator.pushNamedAndRemoveUntil(context,
-                              RouteName.signInScreen, (route) => false);
-                        });
-                      }
-                    });
-                  },
-                )
-              ],
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 40.h,
+                  ),
+                  _avatarProfie(context),
+                  SizedBox(
+                    height: 40.h,
+                  ),
+                  _itemOption(
+                    icon: AppAssets.icProfile,
+                    title: "Thông Tin",
+                    onTap: () {
+                      Navigator.pushNamed(context, RouteName.editProfileScreen);
+                    },
+                  ),
+                  _itemOption(
+                    icon: AppAssets.icPayment,
+                    title: "Thanh Toán",
+                    onTap: () {
+                      Navigator.pushNamed(context, RouteName.selectCardScreen);
+                    },
+                  ),
+                  // isAllowChangePass
+                  //     ? _itemOption(
+                  //         icon: AppAssets.icPassword,
+                  //         title: "Thay Đổi Mật Khẩu",
+                  //         onTap: () {},
+                  //       )
+                  //     : Container(),
+                  _itemOption(
+                    icon: AppAssets.icVoucher,
+                    title: "Voucher",
+                    onTap: () {
+                      Navigator.pushNamed(context, RouteName.voucherScreen);
+                    },
+                  ),
+                  _itemOption(
+                    icon: AppAssets.icSuport,
+                    title: "Hổ Trợ",
+                    onTap: () {},
+                  ),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  ButtonWidget(
+                    title: "Đăng Xuất",
+                    height: 50.h,
+                    width: 250.w,
+                    onPressed: () async {
+                      await DialogConfirm.show(
+                              context: context,
+                              message: "Bạn có chắc muốn đăng xuất ?")
+                          .then((isConfirm) {
+                        if (isConfirm) {
+                          FirebaseAuth.instance.signOut().then((value) {
+                            Navigator.pushNamedAndRemoveUntil(context,
+                                RouteName.signInScreen, (route) => false);
+                          });
+                        }
+                      });
+                    },
+                  )
+                ],
+              ),
             ),
           ),
         ),

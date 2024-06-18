@@ -43,7 +43,7 @@ class CinemaBloc extends Bloc<CinemaEvent, CinemaState> {
       }
 
       final response = await _cinemasRepo.getAllMovieReleasedCinema(
-          cityName: event.cinema.cityName,
+          cityName: event.cinema.cityName!,
           date: event.date,
           cinema: event.cinema);
       event.cinema.movieShowinginCinema = [];

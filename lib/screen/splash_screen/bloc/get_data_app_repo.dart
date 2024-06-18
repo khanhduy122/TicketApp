@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ticket_app/components/const/logger.dart';
+import 'package:ticket_app/main.dart';
 import 'package:ticket_app/models/banner.dart';
 import 'package:ticket_app/models/home_data.dart';
 import 'package:ticket_app/models/movie.dart';
@@ -21,6 +22,7 @@ class GetDataAppRepo {
       final nowShowing = await _firestore.collection("Now Showing").get();
       for (var element in nowShowing.docs) {
         Movie movie = Movie.fromJson(element.data());
+
         movie.reviews = await getReviewMovie(movieID: movie.id!);
         homeNowShowing.add(movie);
       }
@@ -28,6 +30,8 @@ class GetDataAppRepo {
       final comingSoon = await _firestore.collection("Coming Soon").get();
       for (var element in comingSoon.docs) {
         homeComingSoon.add(Movie.fromJson(element.data()));
+        print('----------------------------------------------');
+        debugLog(prettyPrintJson(element.data()));
       }
 
       return HomeData(
