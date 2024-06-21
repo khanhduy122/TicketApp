@@ -69,6 +69,7 @@ dependencies:
   auto_size_text: ^3.0.0
   location: ^5.0.0
   device_info_plus: ^10.1.0
+  dartz: ^0.10.1
 
 dev_dependencies:
   flutter_test:
