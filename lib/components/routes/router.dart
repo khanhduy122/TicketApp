@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/models/cinema.dart';
 import 'package:ticket_app/models/movie.dart';
+import 'package:ticket_app/models/review.dart';
 import 'package:ticket_app/models/ticket.dart';
 import 'package:ticket_app/models/voucher.dart';
 import 'package:ticket_app/screen/auth_screen/forgot_password.dart';
@@ -11,6 +12,7 @@ import 'package:ticket_app/screen/auth_screen/verify_screen.dart';
 import 'package:ticket_app/screen/checkout_ticket/checkout_ticket.dart';
 import 'package:ticket_app/screen/detail_movie_screen/all_review_screen.dart';
 import 'package:ticket_app/screen/detail_movie_screen/detail_movie_screen.dart';
+import 'package:ticket_app/screen/detail_movie_screen/open_image_screen.dart';
 import 'package:ticket_app/screen/detail_movie_screen/play_video_trailer_screen.dart';
 import 'package:ticket_app/screen/detail_ticket_screen/detail_my_ticket_screen.dart';
 import 'package:ticket_app/screen/detail_ticket_screen/detaile_ticket_expired_screen.dart';
@@ -91,12 +93,13 @@ Map<String, WidgetBuilder> routes = {
   },
   RouteName.searchScreen: (context) => const SearchScreen(),
   RouteName.selectCardScreen: (context) {
-    Map<String, dynamic>? arguments = 
-        ModalRoute.of(context)!.settings.arguments != null 
-        ? ModalRoute.of(context)!.settings.arguments as Map<String, dynamic> : null;
+    Map<String, dynamic>? arguments =
+        ModalRoute.of(context)!.settings.arguments != null
+            ? ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>
+            : null;
     return SelectCardScreen(
       ticket: arguments != null ? arguments["ticket"] : null,
-      voucher: arguments != null ?  arguments["voucher"] : null,
+      voucher: arguments != null ? arguments["voucher"] : null,
     );
   },
   RouteName.paymentScreen: (context) {
@@ -132,6 +135,14 @@ Map<String, WidgetBuilder> routes = {
     return SelectVoucherScreen(
       voucherSelected: arguments["voucherSelected"],
       cinemasType: arguments["cinemasType"],
+    );
+  },
+  RouteName.openImageScreen: (context) {
+    final arguments =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    return OpenImageScree(
+      review: arguments["review"],
+      index: arguments['index'],
     );
   },
 };

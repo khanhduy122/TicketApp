@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:ticket_app/components/const/app_assets.dart';
+import 'package:ticket_app/components/const/app_colors.dart';
 import 'package:ticket_app/components/dialogs/dialog_error.dart';
 import 'package:ticket_app/components/dialogs/dialog_loading.dart';
 import 'package:ticket_app/components/const/app_styles.dart';
@@ -29,9 +31,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final _birthDayController = TextEditingController();
   final _formSignUpKey = GlobalKey<FormState>();
   late final AuthBloc _signUpBloc;
   File? imageSelected;
+  DateTime? dateTimeSelected;
 
   @override
   void initState() {
@@ -206,6 +210,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       },
                     ),
                     SizedBox(
+                      height: 20.h,
+                    ),
+                    TextFormFieldWidget(
+                      controller: _birthDayController,
+                      readOnly: true,
+                      initValue: '01/01/1990',
+                      suffixIcon: GestureDetector(
+                        onTap: () => _onTapEditBirthDay(context),
+                        child: const Icon(
+                          Icons.calendar_month,
+                          color: AppColors.white,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
                       height: 40.h,
                     ),
                     ButtonWidget(
@@ -284,6 +303,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
       }
     } catch (e) {
       debugLog(e.toString());
+    }
+  }
+
+  void _onTapEditBirthDay(BuildContext context) async {
+    final result = await showDatePicker(
+      context: context,
+      currentDate: dateTimeSelected ?? DateTime(1900, 1, 1),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+
+    if (result != null) {
+      dateTimeSelected = result;
+      _birthDayController.text =
+          DateFormat('dd/MM/yyyy').format(dateTimeSelected!);
     }
   }
 }

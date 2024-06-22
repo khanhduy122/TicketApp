@@ -85,26 +85,6 @@ class CinemaRepo {
         );
       }
 
-      // for (var element in cinemaCity.cgv!) {
-      //   debugLog(element.toJson().toString());
-      // }
-
-      // print(
-      //     '----------------------------------------------------------------------');
-
-      // for (var element in cinemaCity.lotte!) {
-      //   debugLog(element.toJson().toString());
-      // }
-
-      // print(
-      //     '----------------------------------------------------------------------');
-
-      // for (var element in cinemaCity.galaxy!) {
-      //   debugLog(element.toJson().toString());
-      // }
-
-      debugLog(prettyPrintJson(cinemaCity.toJson()));
-
       return cinemaCity;
     } catch (e) {
       rethrow;

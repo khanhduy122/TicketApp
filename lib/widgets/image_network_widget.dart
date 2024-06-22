@@ -7,14 +7,14 @@ class ImageNetworkWidget extends StatefulWidget {
   const ImageNetworkWidget(
       {super.key,
       required this.url,
-      required this.height,
-      required this.width,
+      this.height,
+      this.width,
       this.borderRadius,
       this.boxFit});
 
   final String url;
-  final double height;
-  final double width;
+  final double? height;
+  final double? width;
   final double? borderRadius;
   final BoxFit? boxFit;
 
@@ -28,8 +28,8 @@ class _ImageNetworkWidgetState extends State<ImageNetworkWidget> {
     return CachedNetworkImage(
       imageUrl: widget.url,
       imageBuilder: (context, imageProvider) => Container(
-        height: widget.height.h,
-        width: widget.width.w,
+        height: widget.height,
+        width: widget.width,
         decoration: BoxDecoration(
           borderRadius: widget.borderRadius != null
               ? BorderRadius.circular(widget.borderRadius!.h)
@@ -41,8 +41,8 @@ class _ImageNetworkWidgetState extends State<ImageNetworkWidget> {
         ),
       ),
       placeholder: (_, __) => Container(
-          height: widget.height.h,
-          width: widget.width.w,
+          height: widget.height ?? double.infinity,
+          width: widget.width ?? double.infinity,
           decoration: BoxDecoration(
               borderRadius: widget.borderRadius != null
                   ? BorderRadius.circular(widget.borderRadius!.h)
@@ -50,8 +50,8 @@ class _ImageNetworkWidgetState extends State<ImageNetworkWidget> {
               color: AppColors.buttonPressColor),
           child: const Center(child: CircularProgressIndicator())),
       errorWidget: (_, __, ___) => Container(
-          height: widget.height.h,
-          width: widget.width.w,
+          height: widget.height ?? double.infinity,
+          width: widget.width ?? double.infinity,
           decoration: BoxDecoration(
               borderRadius: widget.borderRadius != null
                   ? BorderRadius.circular(widget.borderRadius!.h)

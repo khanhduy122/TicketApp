@@ -15,6 +15,7 @@ class TextFormFieldWidget extends StatefulWidget {
       this.controller,
       this.onChanged,
       this.validator,
+      this.suffixIcon,
       this.readOnly});
 
   final String? label;
@@ -26,6 +27,7 @@ class TextFormFieldWidget extends StatefulWidget {
   final TextEditingController? controller;
   final Function(String value)? onChanged;
   final String? Function(String? value)? validator;
+  final Widget? suffixIcon;
 
   @override
   State<TextFormFieldWidget> createState() => _TextFormFieldWidgetState();
@@ -63,26 +65,27 @@ class _TextFormFieldWidgetState extends State<TextFormFieldWidget> {
         label: widget.label != null
             ? Text(widget.label ?? "", style: AppStyle.defaultStyle)
             : null,
-        suffixIcon: widget.obscureText != null
-            ? GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isShowHidePasseword = !isShowHidePasseword;
-                  });
-                },
-                child: Container(
-                  height: 10.h,
-                  width: 10.w,
-                  margin: EdgeInsets.only(right: 10.w),
-                  child: Image.asset(
-                    isShowHidePasseword
-                        ? AppAssets.icHidePassword
-                        : AppAssets.icShowPassword,
-                    fit: BoxFit.scaleDown,
-                  ),
-                ),
-              )
-            : null,
+        suffixIcon: widget.suffixIcon ??
+            (widget.obscureText != null
+                ? GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        isShowHidePasseword = !isShowHidePasseword;
+                      });
+                    },
+                    child: Container(
+                      height: 10.h,
+                      width: 10.w,
+                      margin: EdgeInsets.only(right: 10.w),
+                      child: Image.asset(
+                        isShowHidePasseword
+                            ? AppAssets.icHidePassword
+                            : AppAssets.icShowPassword,
+                        fit: BoxFit.scaleDown,
+                      ),
+                    ),
+                  )
+                : null),
         border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
             borderSide: const BorderSide(color: AppColors.textColor)),

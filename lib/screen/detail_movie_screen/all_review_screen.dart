@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ticket_app/components/const/app_assets.dart';
@@ -337,42 +338,56 @@ class _AllReviewScreenState extends State<AllReviewScreen>
             SizedBox(
               width: 10.w,
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  review.userName,
-                  style: AppStyle.subTitleStyle,
-                ),
-                SizedBox(
-                  height: 5.h,
-                ),
-                RatingWidget(rating: review.rating),
-                SizedBox(
-                  height: 10.h,
-                ),
-                Text(
-                  review.content,
-                  style: AppStyle.defaultStyle,
-                ),
-                SizedBox(
-                  height: 10.h,
-                ),
-                (review.images != null)
-                    ? Wrap(
-                        spacing: 10.w,
-                        runSpacing: 10.h,
-                        children: [
-                          for (var image in review.images!)
-                            ImageNetworkWidget(
-                              url: image,
-                              height: 100.h,
-                              width: 100.w,
-                            )
-                        ],
-                      )
-                    : Container()
-              ],
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    review.userName,
+                    style: AppStyle.subTitleStyle,
+                  ),
+                  SizedBox(
+                    height: 5.h,
+                  ),
+                  RatingWidget(rating: review.rating),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  Text(
+                    review.content,
+                    style: AppStyle.defaultStyle,
+                  ),
+                  SizedBox(
+                    height: 10.h,
+                  ),
+                  (review.images != null)
+                      ? Wrap(
+                          spacing: 10.w,
+                          runSpacing: 10.h,
+                          children: [
+                            for (var image in review.images!)
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    RouteName.openImageScreen,
+                                    arguments: {
+                                      'review': review,
+                                      'index': review.images!.indexOf(image)
+                                    },
+                                  );
+                                },
+                                child: ImageNetworkWidget(
+                                  url: image,
+                                  height: 80.h,
+                                  width: 80.w,
+                                ),
+                              )
+                          ],
+                        )
+                      : Container()
+                ],
+              ),
             )
           ],
         ),

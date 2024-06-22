@@ -2,9 +2,11 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:ticket_app/components/const/app_assets.dart';
 import 'package:ticket_app/components/const/app_colors.dart';
 import 'package:ticket_app/components/const/app_styles.dart';
@@ -35,7 +37,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   String userName = "";
   File? imageSelected;
   final emailController = TextEditingController();
+  final birthDayController = TextEditingController();
   final formKey = GlobalKey<FormState>();
+  DateTime? dateTimeSelected;
 
   @override
   void initState() {
@@ -86,6 +90,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   SizedBox(
                     height: 20.h,
                   ),
+                  _buildTextFieldBirthDay(),
+                  SizedBox(
+                    height: 20.h,
+                  ),
                   _buildTextFieldEmail(),
                   SizedBox(
                     height: 40.h,
@@ -109,7 +117,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         height: 60.h,
         width: 250.w,
         color: (userName.trim() != user!.displayName!.trim() ||
-                imageSelected != null)
+                imageSelected != null ||
+                dateTimeSelected != null)
             ? AppColors.buttonColor
             : AppColors.darkBackground,
         onPressed: () {
@@ -154,6 +163,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             userName = value;
           });
         },
+      ),
+    );
+  }
+
+  Widget _buildTextFieldBirthDay() {
+    return TextFormFieldWidget(
+      controller: birthDayController,
+      readOnly: true,
+      initValue: '01/01/1990',
+      suffixIcon: GestureDetector(
+        onTap: () => _onTapEditBirthDay(context),
+        child: const Icon(
+          Icons.calendar_month,
+          color: AppColors.white,
+        ),
       ),
     );
   }
@@ -230,7 +254,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _onBackScreen() async {
-    if (userName.trim() != user!.displayName!.trim() || imageSelected != null) {
+    if (userName.trim() != user!.displayName!.trim() ||
+        imageSelected != null ||
+        dateTimeSelected != null) {
       await DialogConfirm.show(
               context: context, message: "Bạn có chắc muốn hủy thay đổi ?")
           .then((isConfirm) {
@@ -281,6 +307,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         DialogError.show(
             context: context, message: "Đã Có lỗi xảy ra vui lòng thử lại!");
       }
+    }
+  }
+
+  void _onTapEditBirthDay(BuildContext context) async {
+    final result = await showDatePicker(
+      context: context,
+      currentDate: dateTimeSelected ?? DateTime(1900, 1, 1),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+
+    if (result != null) {
+      dateTimeSelected = result;
+      setState(() {});
+      birthDayController.text =
+          DateFormat('dd/MM/yyyy').format(dateTimeSelected!);
     }
   }
 }

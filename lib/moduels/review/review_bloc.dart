@@ -225,7 +225,7 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
               contentReview: event.contentReview,
               images: event.images)
           .timeout(
-        const Duration(seconds: 10),
+        const Duration(seconds: 20),
         onTimeout: () {
           throw Exception('Timeout');
         },

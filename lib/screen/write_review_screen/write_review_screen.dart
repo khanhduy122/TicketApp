@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ticket_app/components/const/app_colors.dart';
 import 'package:ticket_app/components/const/app_styles.dart';
+import 'package:ticket_app/components/const/logger.dart';
 import 'package:ticket_app/components/dialogs/dialog_completed.dart';
 import 'package:ticket_app/components/dialogs/dialog_error.dart';
 import 'package:ticket_app/components/dialogs/dialog_loading.dart';
@@ -253,10 +254,13 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
       if (image.isNotEmpty) {
         setState(() {
           imagesSelected.addAll(image.map((e) => File(e.path)).toList());
+          debugLog(imagesSelected.length.toString());
         });
       }
     } catch (e) {
       imagesSelected = [];
+      setState(() {});
+      debugLog(e.toString());
     }
   }
 }
