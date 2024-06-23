@@ -11,7 +11,6 @@ import 'package:ticket_app/models/movie.dart';
 import 'package:ticket_app/models/movie_showing_in_cinema.dart';
 import 'package:ticket_app/models/room.dart';
 import 'package:ticket_app/models/ticket.dart';
-import 'package:ticket_app/moduels/auth/auth_exception.dart';
 import 'package:ticket_app/moduels/cinema/cinema_bloc.dart';
 import 'package:ticket_app/moduels/cinema/cinema_event.dart';
 import 'package:ticket_app/moduels/cinema/cinema_state.dart';

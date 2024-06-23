@@ -1,5 +1,5 @@
-
 List<String> cities = [
+  '--- chọn tính / thành phố ---',
   "An Giang",
   "Bà Rịa Vũng Tàu",
   "Bạc Liêu",

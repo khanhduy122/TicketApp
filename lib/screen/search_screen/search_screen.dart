@@ -26,9 +26,9 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     listAllMovie =
-        context.read<DataAppProvider>().homeData.nowShowing.sublist(0);
+        context.read<DataAppProvider>().homeData!.nowShowings.sublist(0);
     listAllMovie.insertAll(listAllMovie.length,
-        context.read<DataAppProvider>().homeData.comingSoon.sublist(0));
+        context.read<DataAppProvider>().homeData!.comingSoons.sublist(0));
     super.initState();
   }
 

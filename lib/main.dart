@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:provider/provider.dart';
 import 'package:ticket_app/components/const/app_colors.dart';
 import 'package:ticket_app/components/const/logger.dart';
@@ -15,7 +16,6 @@ import 'package:ticket_app/components/routes/router.dart';
 import 'package:ticket_app/components/service/cache_service.dart';
 import 'package:ticket_app/firebase_options.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
-import 'package:ticket_app/moduels/auth/auth_bloc.dart';
 import 'package:ticket_app/moduels/user/user_bloc.dart';
 import 'package:ticket_app/screen/splash_screen/splash_screen.dart';
 
@@ -51,20 +51,18 @@ class MyApp extends StatelessWidget {
       designSize: size,
       minTextAdapt: true,
       builder: (_, child) {
-        return MaterialApp(
+        return GetMaterialApp(
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             scaffoldBackgroundColor: AppColors.background,
           ),
-          routes: routes,
+          getPages: AppRoutes.routes,
+          initialRoute: AppRoutes.INITPAGE,
           builder: (_, child) {
             return ChangeNotifierProvider(
               create: (context) => DataAppProvider(),
               child: MultiBlocProvider(
                 providers: [
-                  BlocProvider(
-                    create: (context) => AuthBloc(),
-                  ),
                   BlocProvider(
                     create: (context) => UserBloc(),
                   ),
@@ -73,7 +71,6 @@ class MyApp extends StatelessWidget {
               ),
             );
           },
-          home: const SplashScreen(),
         );
       },
     );

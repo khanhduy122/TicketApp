@@ -28,7 +28,7 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
   @override
   void initState() {
     super.initState();
-    _homeData = context.read<DataAppProvider>().homeData;
+    _homeData = context.read<DataAppProvider>().homeData!;
   }
 
   @override
@@ -105,7 +105,7 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
             height: 20.h,
           ),
           CarouselSlider(
-            items: _homeData.nowShowing.map((element) {
+            items: _homeData.nowShowings.map((element) {
               return _buildItemNowShowing(element);
             }).toList(),
             options: CarouselOptions(
@@ -220,13 +220,13 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
             height: 20.h,
           ),
           SizedBox(
-            height: _homeData.comingSoon.length * 170.h,
+            height: _homeData.comingSoons.length * 170.h,
             child: ListView.builder(
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: _homeData.comingSoon.length,
+              itemCount: _homeData.comingSoons.length,
               itemBuilder: (context, index) {
                 return _buildItemComingSoon(
-                    comingSoon: _homeData.comingSoon[index]);
+                    comingSoon: _homeData.comingSoons[index]);
               },
             ),
           ),
@@ -361,15 +361,15 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
     switch (bannerHome.type) {
       case 1:
         Movie? movie;
-        for (var element in _homeData.nowShowing) {
-          if (element.id == bannerHome.movie!.id) {
+        for (var element in _homeData.nowShowings) {
+          if (element.id == bannerHome.movieId) {
             movie = element;
             break;
           }
         }
         if (movie == null) {
-          for (var element in _homeData.comingSoon) {
-            if (element.id == bannerHome.movie!.id) {
+          for (var element in _homeData.comingSoons) {
+            if (element.id == bannerHome.movieId) {
               movie = element;
               break;
             }

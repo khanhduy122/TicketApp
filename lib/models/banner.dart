@@ -1,5 +1,3 @@
-
-
 import 'package:json_annotation/json_annotation.dart';
 import 'package:ticket_app/models/movie.dart';
 import 'package:ticket_app/models/offer.dart';
@@ -10,14 +8,19 @@ part 'banner.g.dart';
 class BannerHome {
   String thumbnail;
   int type;
-  Movie? movie;
+  String? movieId;
   Voucher? voucher;
   Offer? offers;
 
+  BannerHome(
+      {required this.thumbnail,
+      required this.type,
+      this.movieId,
+      this.offers,
+      this.voucher});
 
-  BannerHome({required this.thumbnail, required this.type, this.movie, this.offers, this.voucher});
-
-  factory BannerHome.fromJson(Map<String, dynamic> json) => _$BannerHomeFromJson(json);
+  factory BannerHome.fromJson(Map<String, dynamic> json) =>
+      _$BannerHomeFromJson(json);
 
   Map<String, dynamic> toJson() => _$BannerHomeToJson(this);
 }

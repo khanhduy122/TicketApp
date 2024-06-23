@@ -32,9 +32,9 @@ class _VoucherScreenState extends State<VoucherScreen> {
                 return const Center(child: CircularProgressIndicator());
               }
               if (snapshot.connectionState == ConnectionState.active) {
-                context
-                    .read<DataAppProvider>()
-                    .setListVoucher(vouchers: snapshot.data!);
+                // context
+                //     .read<DataAppProvider>()
+                //     .setListVoucher(vouchers: snapshot.data!);
                 return _buildListVoucher(snapshot.data!);
               }
               return Container();

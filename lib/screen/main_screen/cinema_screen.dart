@@ -51,9 +51,9 @@ class _CinemaScreenState extends State<CinemaScreen> {
     _allReconmmedCinemas = context.read<DataAppProvider>().reconmmedCinemas;
     _selectCity = _allReconmmedCinemas?.name ?? cities.first;
     _recomendCinemaSelect = _allReconmmedCinemas?.all?.sublist(0);
-    context
-        .read<DataAppProvider>()
-        .setCityNameCurrent(name: _allReconmmedCinemas?.name);
+    // context
+    //     .read<DataAppProvider>()
+    //     .setCityNameCurrent(name: _allReconmmedCinemas?.name);
   }
 
   @override
@@ -117,7 +117,7 @@ class _CinemaScreenState extends State<CinemaScreen> {
               );
             }).toList(),
             onChanged: (value) {
-              context.read<DataAppProvider>().setCityNameCurrent(name: value!);
+              // context.read<DataAppProvider>().setCityNameCurrent(name: value!);
               if (value == "----Chọn tĩnh / thành phố----") {
                 return;
               }

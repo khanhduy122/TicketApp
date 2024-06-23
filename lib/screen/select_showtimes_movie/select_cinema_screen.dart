@@ -134,7 +134,7 @@ class _SelectCinemaScreenState extends State<SelectCinemaScreen> {
               }
               _selectCity = value!;
               CacheService.saveData(AppKey.cityName, value);
-              context.read<DataAppProvider>().setCityNameCurrent(name: value);
+              // context.read<DataAppProvider>().setCityNameCurrent(name: value);
               DateTime dateTime = listDateTime[currentSelectedDateIndex];
               String day = dateTime.day.toString().length == 1
                   ? "0${dateTime.day}"

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/get_navigation.dart';
 import 'package:ticket_app/components/const/app_assets.dart';
 import 'package:ticket_app/components/const/app_styles.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
@@ -48,8 +50,7 @@ class OnBoardingScreen extends StatelessWidget {
               height: 60.h,
               width: 250.w,
               onPressed: () {
-                Navigator.pushNamedAndRemoveUntil(
-                    context, RouteName.signInScreen, (route) => false);
+                Get.toNamed(RouteName.signInScreen);
               },
             )
           ],

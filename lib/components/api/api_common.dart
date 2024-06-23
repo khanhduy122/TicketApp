@@ -36,7 +36,7 @@ class ApiCommon {
         queryParameters: queryParameters,
       );
 
-      return BaseResponse(data: response.data);
+      return BaseResponse(data: response.data['data']);
     } on DioException catch (dioError) {
       debugLog("DioError: ${dioError.message}");
 
@@ -99,7 +99,7 @@ class ApiCommon {
         queryParameters: queryParameters,
       );
 
-      return BaseResponse(data: response.data);
+      return BaseResponse(data: response.data['data']);
     } on DioException catch (dioError) {
       debugLog("DioError: ${dioError.message}");
 
