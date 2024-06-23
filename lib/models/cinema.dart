@@ -6,6 +6,7 @@ part 'cinema.g.dart';
 
 @JsonSerializable()
 class Cinema {
+  @JsonKey(name: '_id')
   final String id;
   final String thumbnail;
   final String name;

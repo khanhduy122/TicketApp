@@ -7,7 +7,7 @@ part of 'cinema.dart';
 // **************************************************************************
 
 Cinema _$CinemaFromJson(Map<String, dynamic> json) => Cinema(
-      id: json['id'] as String,
+      id: json['_id'] as String,
       address: json['address'] as String,
       name: json['name'] as String,
       cityName: json['cityName'] as String?,
@@ -24,7 +24,7 @@ Cinema _$CinemaFromJson(Map<String, dynamic> json) => Cinema(
     )..distance = (json['distance'] as num?)?.toDouble();
 
 Map<String, dynamic> _$CinemaToJson(Cinema instance) => <String, dynamic>{
-      'id': instance.id,
+      '_id': instance.id,
       'thumbnail': instance.thumbnail,
       'name': instance.name,
       'cityName': instance.cityName,

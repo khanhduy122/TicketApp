@@ -26,7 +26,7 @@ class VerifyEmailController extends GetxController {
   void _checkVerifyEmail() {
     FirebaseAuth.instance.currentUser?.reload();
     if (FirebaseAuth.instance.currentUser?.emailVerified ?? false) {
-      Get.toNamed(RouteName.mainScreen);
+      Get.offAllNamed(RouteName.mainScreen);
     }
   }
 

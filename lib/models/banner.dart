@@ -6,6 +6,8 @@ part 'banner.g.dart';
 
 @JsonSerializable()
 class BannerHome {
+  @JsonKey(name: '_id')
+  String id;
   String thumbnail;
   int type;
   String? movieId;
@@ -13,7 +15,8 @@ class BannerHome {
   Offer? offers;
 
   BannerHome(
-      {required this.thumbnail,
+      {required this.id,
+      required this.thumbnail,
       required this.type,
       this.movieId,
       this.offers,

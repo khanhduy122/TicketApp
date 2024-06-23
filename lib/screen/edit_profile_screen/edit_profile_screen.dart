@@ -1,109 +1,67 @@
-import 'dart:io';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
+import 'package:get/get.dart';
 import 'package:ticket_app/components/const/app_assets.dart';
 import 'package:ticket_app/components/const/app_colors.dart';
 import 'package:ticket_app/components/const/app_styles.dart';
-import 'package:ticket_app/components/dialogs/dialog_confirm.dart';
-import 'package:ticket_app/components/dialogs/dialog_error.dart';
-import 'package:ticket_app/components/dialogs/dialog_loading.dart';
-import 'package:ticket_app/components/const/logger.dart';
-import 'package:ticket_app/components/routes/route_name.dart';
-import 'package:ticket_app/moduels/exceptions/all_exception.dart';
-import 'package:ticket_app/moduels/user/user_bloc.dart';
-import 'package:ticket_app/moduels/user/user_event.dart';
-import 'package:ticket_app/moduels/user/user_state.dart';
+import 'package:ticket_app/screen/edit_profile_screen/edit_profile_controller.dart';
 import 'package:ticket_app/widgets/button_back_widget.dart';
 import 'package:ticket_app/widgets/button_widget.dart';
 import 'package:ticket_app/widgets/image_network_widget.dart';
 import 'package:ticket_app/widgets/text_from_field_widget.dart';
 
-class EditProfileScreen extends StatefulWidget {
+class EditProfileScreen extends GetView<EditProfileController> {
   const EditProfileScreen({super.key});
 
   @override
-  State<EditProfileScreen> createState() => _EditProfileScreenState();
-}
-
-class _EditProfileScreenState extends State<EditProfileScreen> {
-  User? user;
-  late final UserBloc userBloc;
-  String userName = "";
-  File? imageSelected;
-  final emailController = TextEditingController();
-  final birthDayController = TextEditingController();
-  final formKey = GlobalKey<FormState>();
-  DateTime? dateTimeSelected;
-
-  @override
-  void initState() {
-    super.initState();
-    userBloc = BlocProvider.of<UserBloc>(context);
-    user = FirebaseAuth.instance.currentUser!;
-    userName = user!.displayName ?? "";
-    emailController.text = user!.email ?? "";
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocListener(
-      bloc: userBloc,
-      listener: (context, state) {
-        _onListener(state);
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (didPop) {
+        if (didPop) {
+          return;
+        }
+        controller.onWillPop();
       },
-      child: PopScope(
-        canPop: true,
-        onPopInvoked: (didPop) {
-          if (didPop) {
-            return;
-          }
-          _onWillPop();
+      child: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
         },
-        child: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
-          child: Scaffold(
-            body: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 40.h,
-                  ),
-                  Align(
-                      alignment: Alignment.centerLeft,
-                      child: ButtonBackWidget(
-                        onTap: () => _onBackScreen(),
-                      )),
-                  _buildAvatar(context),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  _buildTextFieldName(),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  _buildTextFieldBirthDay(),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                  _buildTextFieldEmail(),
-                  SizedBox(
-                    height: 40.h,
-                  ),
-                  _buildButtonSave(),
-                  SizedBox(
-                    height: 20.h,
-                  ),
-                ],
-              ),
+        child: Scaffold(
+          body: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: 40.h,
+                ),
+                Align(
+                    alignment: Alignment.centerLeft,
+                    child: ButtonBackWidget(
+                      onTap: () => controller.onWillPop(),
+                    )),
+                _buildAvatar(context),
+                SizedBox(
+                  height: 20.h,
+                ),
+                _buildTextFieldName(),
+                SizedBox(
+                  height: 20.h,
+                ),
+                _buildTextFieldBirthDay(),
+                SizedBox(
+                  height: 20.h,
+                ),
+                _buildTextFieldEmail(),
+                SizedBox(
+                  height: 40.h,
+                ),
+                _buildButtonSave(),
+                SizedBox(
+                  height: 20.h,
+                ),
+              ],
             ),
           ),
         ),
@@ -111,27 +69,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  ButtonWidget _buildButtonSave() {
-    return ButtonWidget(
+  Widget _buildButtonSave() {
+    return Obx(
+      () => ButtonWidget(
         title: "Cập Nhật",
         height: 60.h,
         width: 250.w,
-        color: (userName.trim() != user!.displayName!.trim() ||
-                imageSelected != null ||
-                dateTimeSelected != null)
+        color: controller.isEnableButton.value
             ? AppColors.buttonColor
             : AppColors.darkBackground,
         onPressed: () {
-          if (formKey.currentState!.validate()) {
-            userBloc.add(
-                EditProfileUserEvent(name: userName, photo: imageSelected));
-          }
-        });
+          if (!controller.isEnableButton.value) return;
+          controller.saveEdit();
+        },
+      ),
+    );
   }
 
   Widget _buildTextFieldEmail() {
     return TextField(
-      controller: emailController,
+      controller: controller.emailController,
       readOnly: true,
       style: AppStyle.defaultStyle.copyWith(color: Colors.grey[700]),
       decoration: InputDecoration(
@@ -146,34 +103,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Widget _buildTextFieldName() {
-    return Form(
-      key: formKey,
-      child: TextFormFieldWidget(
-        label: "Họ Và Tên",
-        initValue: userName,
-        textInputAction: TextInputAction.next,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return "Vui lòng nhập tên của bạn";
-          }
-          return null;
-        },
-        onChanged: (value) {
-          setState(() {
-            userName = value;
-          });
-        },
-      ),
+    return TextFormFieldWidget(
+      label: "Họ Và Tên",
+      controller: controller.nameController,
+      textInputAction: TextInputAction.next,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "Vui lòng nhập tên của bạn";
+        }
+        return null;
+      },
     );
   }
 
   Widget _buildTextFieldBirthDay() {
     return TextFormFieldWidget(
-      controller: birthDayController,
+      controller: controller.birthDayController,
       readOnly: true,
       initValue: '01/01/1990',
       suffixIcon: GestureDetector(
-        onTap: () => _onTapEditBirthDay(context),
+        onTap: () => controller.onTapEditBirthDay(),
         child: const Icon(
           Icons.calendar_month,
           color: AppColors.white,
@@ -183,146 +132,61 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Widget _buildAvatar(BuildContext context) {
-    return GestureDetector(
-      onTap: () => _onTapSelectPhoto(),
-      child: SizedBox(
-        height: 100.h,
-        width: 100.w,
-        child: Stack(
-          children: [
-            Center(
-                child: imageSelected != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(45.h),
-                        child: Image.file(
-                          imageSelected!,
-                          fit: BoxFit.cover,
-                          height: 90.h,
-                          width: 90.w,
-                        ),
-                      )
-                    : (user!.photoURL == null)
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(45.h),
-                            child: SizedBox(
-                                height: 90.h,
-                                width: 90.w,
-                                child: Image.asset(
-                                  AppAssets.imgAvatarDefault,
-                                  fit: BoxFit.fill,
-                                )),
-                          )
-                        : ImageNetworkWidget(
-                            url: user!.photoURL!,
+    return Obx(
+      () => GestureDetector(
+        onTap: () => controller.onTapSelectPhoto(),
+        child: SizedBox(
+          height: 100.h,
+          width: 100.w,
+          child: Stack(
+            children: [
+              Center(
+                  child: controller.imageSelected.value != null
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(45.h),
+                          child: Image.file(
+                            controller.imageSelected.value!,
+                            fit: BoxFit.cover,
                             height: 90.h,
                             width: 90.w,
-                            borderRadius: 45.h,
-                          )),
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Center(
-                child: SizedBox(
-                  height: 25.h,
-                  width: 25.w,
-                  child: Image.asset(
-                    AppAssets.icAdd,
-                    fit: BoxFit.fill,
+                          ),
+                        )
+                      : (controller.user.photoURL == null)
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(45.h),
+                              child: SizedBox(
+                                  height: 90.h,
+                                  width: 90.w,
+                                  child: Image.asset(
+                                    AppAssets.imgAvatarDefault,
+                                    fit: BoxFit.fill,
+                                  )),
+                            )
+                          : ImageNetworkWidget(
+                              url: controller.user.photoURL!,
+                              height: 90.h,
+                              width: 90.w,
+                              borderRadius: 45.h,
+                            )),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Center(
+                  child: SizedBox(
+                    height: 25.h,
+                    width: 25.w,
+                    child: Image.asset(
+                      AppAssets.icAdd,
+                      fit: BoxFit.fill,
+                    ),
                   ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );
-  }
-
-  void _onTapSelectPhoto() async {
-    try {
-      final ImagePicker picker = ImagePicker();
-      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-      if (image != null) {
-        setState(() {
-          imageSelected = File(image.path);
-        });
-      }
-    } catch (e) {
-      debugLog(e.toString());
-    }
-  }
-
-  Future<void> _onBackScreen() async {
-    if (userName.trim() != user!.displayName!.trim() ||
-        imageSelected != null ||
-        dateTimeSelected != null) {
-      await DialogConfirm.show(
-              context: context, message: "Bạn có chắc muốn hủy thay đổi ?")
-          .then((isConfirm) {
-        if (isConfirm) {
-          Navigator.popUntil(
-            context,
-            (route) => route.settings.name == RouteName.mainScreen,
-          );
-        }
-      });
-    } else {
-      debugLog('aaa');
-      Navigator.pop(context);
-    }
-  }
-
-  Future<void> _onWillPop() async {
-    if (userName.trim() != user!.displayName!.trim() || imageSelected != null) {
-      await DialogConfirm.show(
-              context: context, message: "Bạn có chắc muốn hủy thay đổi ?")
-          .then((isConfirm) {
-        if (isConfirm) {
-          Navigator.pop(context);
-        }
-      });
-    }
-  }
-
-  void _onListener(Object? state) {
-    if (state is EditProfileUserState) {
-      if (state.isLoading == true) {
-        DialogLoading.show(context);
-      }
-
-      if (state.user != null) {
-        Navigator.popUntil(
-            context, (route) => route.settings.name == RouteName.mainScreen);
-      }
-
-      if (state.error != null) {
-        if (state.error is NoInternetException) {
-          DialogError.show(
-              context: context,
-              message: "Không có kết nối internet, vui lòng kiểm tra lại!");
-          return;
-        }
-
-        DialogError.show(
-            context: context, message: "Đã Có lỗi xảy ra vui lòng thử lại!");
-      }
-    }
-  }
-
-  void _onTapEditBirthDay(BuildContext context) async {
-    final result = await showDatePicker(
-      context: context,
-      currentDate: dateTimeSelected ?? DateTime(1900, 1, 1),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-
-    if (result != null) {
-      dateTimeSelected = result;
-      setState(() {});
-      birthDayController.text =
-          DateFormat('dd/MM/yyyy').format(dateTimeSelected!);
-    }
   }
 }

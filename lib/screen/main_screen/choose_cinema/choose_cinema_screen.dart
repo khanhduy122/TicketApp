@@ -1,0 +1,414 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
+import 'package:ticket_app/components/const/app_assets.dart';
+import 'package:ticket_app/components/const/app_colors.dart';
+import 'package:ticket_app/components/const/app_styles.dart';
+import 'package:ticket_app/components/service/cache_service.dart';
+import 'package:ticket_app/models/cinema.dart';
+import 'package:ticket_app/models/cities.dart';
+import 'package:ticket_app/models/data_app_provider.dart';
+import 'package:ticket_app/screen/main_screen/choose_cinema/choose_cinema_controller.dart';
+import 'package:ticket_app/widgets/image_network_widget.dart';
+
+class ChooseCinemaScreen extends GetView<ChooseCinemaController> {
+  const ChooseCinemaScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+          child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 20.h,
+            ),
+            _searchCity(),
+            SizedBox(
+              height: 20.h,
+            ),
+            _selectCinemaType(),
+            SizedBox(
+              height: 20.h,
+            ),
+            _recomendCinema(context),
+          ],
+        ),
+      )),
+    );
+  }
+
+  Widget _searchCity() {
+    return Obx(
+      () => Container(
+        height: 50.h,
+        width: MediaQuery.of(Get.context!).size.width,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20.h),
+            color: AppColors.darkBackground),
+        padding: EdgeInsets.symmetric(horizontal: 10.w),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton2<String>(
+            value: controller.selectCity.value,
+            items: cities.map((element) {
+              return DropdownMenuItem(
+                value: element,
+                child: Text(
+                  element,
+                  style: AppStyle.defaultStyle,
+                ),
+              );
+            }).toList(),
+            onChanged: (value) {
+              if (value == null) return;
+              Get.context!.read<DataAppProvider>().cityNameCurrent = value;
+              if (value == "--- chọn tính / thành phố ---") {
+                return;
+              }
+              if (cities.first == '--- chọn tính / thành phố ---') {
+                cities.removeAt(0);
+              }
+              controller.selectCity.value = value;
+              CacheService.saveData("cityName", value);
+              controller.onChangeCity();
+            },
+            buttonStyleData: ButtonStyleData(
+              height: 40,
+              overlayColor:
+                  MaterialStateProperty.all<Color>(Colors.transparent),
+            ),
+            dropdownStyleData: DropdownStyleData(
+                maxHeight: MediaQuery.of(Get.context!).size.height / 2,
+                decoration:
+                    const BoxDecoration(color: AppColors.darkBackground)),
+            menuItemStyleData: MenuItemStyleData(
+                height: 40,
+                overlayColor: MaterialStateProperty.all<Color>(
+                    AppColors.buttonPressColor)),
+            dropdownSearchData: DropdownSearchData(
+              searchController: controller.searchCityTextController,
+              searchInnerWidgetHeight: 50,
+              searchInnerWidget: Container(
+                height: 50,
+                padding: const EdgeInsets.only(
+                  top: 8,
+                  bottom: 4,
+                  right: 8,
+                  left: 8,
+                ),
+                child: TextFormField(
+                  expands: true,
+                  maxLines: null,
+                  controller: controller.searchCityTextController,
+                  style: AppStyle.defaultStyle,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 8,
+                    ),
+                    hintText: '-- Tìm Kiếm Tĩnh Thành Phố --',
+                    hintStyle: AppStyle.defaultStyle,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: AppColors.white),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: AppColors.white),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ),
+              searchMatchFn: (item, searchValue) {
+                return item.value
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchValue.toLowerCase());
+              },
+            ),
+            onMenuStateChange: (isOpen) {
+              if (!isOpen) {
+                controller.searchCityTextController.clear();
+              }
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _selectCinemaType() {
+    return Obx(
+      () => SizedBox(
+        height: 80.h,
+        child: ListView(
+          scrollDirection: Axis.horizontal,
+          children: [
+            GestureDetector(
+              onTap: () {
+                controller.onSelectCinemaType(0);
+              },
+              child: Stack(
+                children: [
+                  Container(
+                    height: 50.h,
+                    width: 50.w,
+                    decoration: BoxDecoration(
+                        color: AppColors.white,
+                        borderRadius: BorderRadius.circular(10.h),
+                        border: Border.all(
+                            color: controller.currentIndexCinemaType.value == 0
+                                ? AppColors.buttonColor
+                                : AppColors.grey,
+                            width: 2.h)),
+                  ),
+                  Column(
+                    children: [
+                      Container(
+                        height: 50.h,
+                        width: 50.w,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.h),
+                            image: const DecorationImage(
+                                image: AssetImage(AppAssets.icRecommend),
+                                fit: BoxFit.scaleDown)),
+                      ),
+                      Center(
+                        child: Text(
+                          "Tất Cả",
+                          style: AppStyle.defaultStyle,
+                        ),
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              width: 20.w,
+            ),
+            _itemCinemaType(
+              title: "CGV",
+              isACtive: controller.currentIndexCinemaType.value == 1,
+              img: AppAssets.imgCGV,
+              onTap: () {
+                controller.onSelectCinemaType(1);
+              },
+            ),
+            SizedBox(
+              width: 20.w,
+            ),
+            _itemCinemaType(
+              title: "Lotte",
+              isACtive: controller.currentIndexCinemaType.value == 2,
+              img: AppAssets.imgLotte,
+              onTap: () {
+                controller.onSelectCinemaType(2);
+              },
+            ),
+            SizedBox(
+              width: 20.w,
+            ),
+            _itemCinemaType(
+              title: "Galaxy",
+              isACtive: controller.currentIndexCinemaType.value == 3,
+              img: AppAssets.imgGalaxy,
+              onTap: () {
+                controller.onSelectCinemaType(3);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _itemCinemaType(
+      {required String title,
+      required String img,
+      required bool isACtive,
+      required Function() onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            height: 50.h,
+            width: 50.w,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.h),
+                border: Border.all(
+                    color: isACtive ? AppColors.buttonColor : AppColors.grey,
+                    width: 2.h),
+                image:
+                    DecorationImage(image: AssetImage(img), fit: BoxFit.cover)),
+          ),
+          Center(
+            child: Text(
+              title,
+              style: AppStyle.defaultStyle,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _recomendCinema(BuildContext context) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Rạp Đề Xuất",
+                style: AppStyle.titleStyle,
+              ),
+              Obx(
+                () => controller.locationPermisstion.value !=
+                        PermissionStatus.granted
+                    ? GestureDetector(
+                        onTap: () => controller.resquestPermission(context),
+                        child: Icon(
+                          Icons.error,
+                          color: AppColors.white,
+                          size: 25.h,
+                        ),
+                      )
+                    : Container(),
+              )
+            ],
+          ),
+          SizedBox(
+            height: 20.h,
+          ),
+          Obx(
+            () => Expanded(
+              child: controller.currentCinemaCity.value == null
+                  ? Center(
+                      child: Column(
+                        children: [
+                          Image.asset(AppAssets.imgEmpty),
+                          SizedBox(
+                            height: 20.h,
+                          ),
+                          Text(
+                            "Cho phép truy cập vào vị trí mở mục cài đặt của điện thoại để MovieTicket có thể gợi ý cho bạn rạp phim gần nhất",
+                            style: AppStyle.defaultStyle,
+                            textAlign: TextAlign.center,
+                          )
+                        ],
+                      ),
+                    )
+                  : controller.fillterCinema.isNotEmpty
+                      ? ListView.builder(
+                          controller: controller.scrollController,
+                          itemCount: controller.fillterCinema.length,
+                          itemBuilder: (context, index) {
+                            return Column(
+                              children: [
+                                _itemCinema(controller.fillterCinema[index]),
+                                SizedBox(
+                                  height: 20.h,
+                                )
+                              ],
+                            );
+                          },
+                        )
+                      : Center(
+                          child: Column(
+                            children: [
+                              Image.asset(AppAssets.imgEmpty),
+                              SizedBox(
+                                height: 20.h,
+                              ),
+                              Text(
+                                "Không có rạp phim",
+                                style: AppStyle.titleStyle,
+                              )
+                            ],
+                          ),
+                        ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _itemCinema(Cinema cinema) {
+    return GestureDetector(
+      onTap: () {
+        // DateTime now = DateTime.now();
+        // String day =
+        //     now.day.toString().length == 1 ? "0${now.day}" : now.day.toString();
+        // String month = now.month.toString().length == 1
+        //     ? "0${now.month}"
+        //     : now.month.toString();
+        // String currentDate = "$day-$month-${now.year}";
+        // cinemaBloc.add(GetAllMovieReleasedCinemaEvent(
+        //     cinema: cinema, date: currentDate, context: context));
+      },
+      child: Row(
+        children: [
+          ImageNetworkWidget(
+            url: cinema.thumbnail,
+            height: 30.h,
+            width: 30.w,
+            borderRadius: 5.h,
+          ),
+          SizedBox(
+            width: 10.w,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(
+                  cinema.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppStyle.titleStyle.copyWith(fontSize: 14.sp),
+                ),
+                Text(
+                  cinema.address,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppStyle.defaultStyle.copyWith(fontSize: 10.sp),
+                )
+              ],
+            ),
+          ),
+          SizedBox(
+              width: 80.w,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    cinema.getDistanceFormat(),
+                    style: AppStyle.defaultStyle.copyWith(
+                        color: AppColors.buttonColor, fontSize: 10.sp),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    color: AppColors.buttonColor,
+                    size: 20.h,
+                  )
+                ],
+              )),
+        ],
+      ),
+    );
+  }
+}

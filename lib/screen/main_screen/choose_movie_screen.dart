@@ -2,6 +2,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:ticket_app/components/const/app_assets.dart';
 import 'package:ticket_app/components/const/app_colors.dart';
 import 'package:ticket_app/components/const/app_styles.dart';
@@ -122,8 +124,7 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
   Widget _buildItemNowShowing(Movie movie) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, RouteName.detailMovieScreen,
-            arguments: movie);
+        Get.toNamed(RouteName.detailMovieScreen, arguments: movie);
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -286,8 +287,7 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
   Widget _buildItemComingSoon({required Movie comingSoon}) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, RouteName.detailMovieScreen,
-            arguments: comingSoon);
+        Get.toNamed(RouteName.detailMovieScreen, arguments: comingSoon);
       },
       child: Column(
         children: [

@@ -3,10 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ticket_app/components/const/app_assets.dart';
 import 'package:ticket_app/components/const/app_colors.dart';
 import 'package:ticket_app/components/const/app_styles.dart';
-import 'package:ticket_app/screen/main_screen/cinema_screen.dart';
+import 'package:ticket_app/screen/main_screen/choose_cinema/choose_cinema_screen.dart';
 import 'package:ticket_app/screen/main_screen/my_ticket_screen.dart';
 import 'package:ticket_app/screen/main_screen/choose_movie_screen.dart';
-import 'package:ticket_app/screen/main_screen/user_screen.dart';
+import 'package:ticket_app/screen/main_screen/profile/profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -31,9 +31,9 @@ class _MainScreenState extends State<MainScreen> {
         index: _currentIndex,
         children: const [
           ChooseMovieScreen(),
-          CinemaScreen(),
+          ChooseCinemaScreen(),
           MyTicketScreen(),
-          UserScreen()
+          ProfileScreen()
         ],
       ),
       bottomNavigationBar: Theme(

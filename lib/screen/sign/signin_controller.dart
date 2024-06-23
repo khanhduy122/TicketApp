@@ -38,8 +38,7 @@ class SigninController extends GetxController {
           .catchError((error) {
         throw error;
       });
-      Get.back();
-      Get.toNamed(RouteName.mainScreen);
+      Get.offAllNamed(RouteName.mainScreen);
     } on FirebaseAuthException catch (e) {
       Get.back();
       if (e.code == 'user-not-found') {
@@ -103,8 +102,7 @@ class SigninController extends GetxController {
               const Duration(seconds: 20),
               onTimeout: () => throw TimeOutException(),
             );
-        Get.back();
-        Get.toNamed(RouteName.mainScreen);
+        Get.offAllNamed(RouteName.mainScreen);
       }
     } catch (e) {
       if (e is TimeOutException) {

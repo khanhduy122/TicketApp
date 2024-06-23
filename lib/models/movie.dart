@@ -4,11 +4,10 @@ import 'package:ticket_app/models/enum_model.dart';
 import 'package:ticket_app/models/review.dart';
 part 'movie.g.dart';
 
-
 @JsonSerializable()
 class Movie {
-
-  String? id;
+  @JsonKey(name: "_id")
+  String id;
 
   String? name;
 
@@ -66,27 +65,26 @@ class Movie {
 
   String? nation;
 
-  Movie({
-     this.id,
-     this.date,
-     this.name,
-     this.thumbnail,
-    this.banner,
-     this.categories,
-     this.ban,
-     this.actors,
-    this.totalReview,
-     this.content,
-     this.director,
-     this.duration,
-     this.languages, 
-     this.nation,
-    this.premiere,
-    this.rating,
-    this.reviews,
-     this.status,
-     this.trailer
-  });
+  Movie(
+      {required this.id,
+      this.date,
+      this.name,
+      this.thumbnail,
+      this.banner,
+      this.categories,
+      this.ban,
+      this.actors,
+      this.totalReview,
+      this.content,
+      this.director,
+      this.duration,
+      this.languages,
+      this.nation,
+      this.premiere,
+      this.rating,
+      this.reviews,
+      this.status,
+      this.trailer});
 
   factory Movie.fromJson(Map<String, dynamic> json) => _$MovieFromJson(json);
 
@@ -104,45 +102,57 @@ class Movie {
     };
   }
 
-  String getCaterogies () {
+  String getCaterogies() {
     String category = "";
 
     for (var element in categories ?? []) {
-      switch(element){
-        case Category.drama: category += "Chính Kịch, ";
-        case Category.romance: category += "Lãng Mạn, ";
-        case Category.intense: category += "Gay Cấn, ";
-        case Category.comedy: category += "Hài Hước, ";
-        case Category.science_fiction: category += "Khoa Học Viễn Tưỡng, ";
-        case Category.adventure: category += "Phiêu Lưu, ";
-        case Category.act: category += "Hành Động, "; 
-        case Category.fantasy: category += "Giả Tưởng, ";
-        case Category.mentality: category += "Tâm Lý, ";
-        case Category.criminal: category += "Tội Phạm, ";
-        case Category.horrified: category += "Kinh Dị, ";
+      switch (element) {
+        case Category.drama:
+          category += "Chính Kịch, ";
+        case Category.romance:
+          category += "Lãng Mạn, ";
+        case Category.intense:
+          category += "Gay Cấn, ";
+        case Category.comedy:
+          category += "Hài Hước, ";
+        case Category.science_fiction:
+          category += "Khoa Học Viễn Tưỡng, ";
+        case Category.adventure:
+          category += "Phiêu Lưu, ";
+        case Category.act:
+          category += "Hành Động, ";
+        case Category.fantasy:
+          category += "Giả Tưởng, ";
+        case Category.mentality:
+          category += "Tâm Lý, ";
+        case Category.criminal:
+          category += "Tội Phạm, ";
+        case Category.horrified:
+          category += "Kinh Dị, ";
       }
     }
-   
+
     return category;
   }
 
   String getLanguages() {
     String language = "";
     for (var element in languages ?? []) {
-      switch(element){
-        case Languages.subtitle : language += "Phụ Đề, ";
-        case Languages.voice: language += "Thuyết Minh, ";
+      switch (element) {
+        case Languages.subtitle:
+          language += "Phụ Đề, ";
+        case Languages.voice:
+          language += "Thuyết Minh, ";
       }
     }
-    
+
     return language.substring(0, language.length - 2);
   }
 
-  String getBan () {
-
+  String getBan() {
     String stringBan = "";
-    switch(ban ?? ""){
-      case Ban.c13: 
+    switch (ban ?? "") {
+      case Ban.c13:
         stringBan = "13+";
         break;
       case Ban.c16:

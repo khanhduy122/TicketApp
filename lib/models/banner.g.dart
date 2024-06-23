@@ -7,6 +7,7 @@ part of 'banner.dart';
 // **************************************************************************
 
 BannerHome _$BannerHomeFromJson(Map<String, dynamic> json) => BannerHome(
+      id: json['_id'] as String,
       thumbnail: json['thumbnail'] as String,
       type: json['type'] as int,
       movieId: json['movieId'] as String?,
@@ -20,6 +21,7 @@ BannerHome _$BannerHomeFromJson(Map<String, dynamic> json) => BannerHome(
 
 Map<String, dynamic> _$BannerHomeToJson(BannerHome instance) =>
     <String, dynamic>{
+      '_id': instance.id,
       'thumbnail': instance.thumbnail,
       'type': instance.type,
       'movieId': instance.movieId,
