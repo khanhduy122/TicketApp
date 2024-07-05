@@ -127,7 +127,7 @@ class SelectSeatController extends GetxController {
       price: getPriceListSeat(),
     );
 
-    var response = await Get.toNamed(
+    await Get.toNamed(
       RouteName.checkoutTicketScreen,
       arguments: ticket,
     );
