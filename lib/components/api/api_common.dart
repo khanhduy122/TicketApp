@@ -36,7 +36,13 @@ class ApiCommon {
         queryParameters: queryParameters,
       );
 
-      return BaseResponse(data: response.data['data']);
+      if (response.data['data'] != null) {
+        debugLog(response.data.toString());
+        return BaseResponse(data: response.data['data']);
+      } else {
+        debugLog(response.data.toString());
+        return BaseResponse(error: response.data['message']);
+      }
     } on DioException catch (dioError) {
       debugLog("DioError: ${dioError.message}");
 
@@ -70,7 +76,6 @@ class ApiCommon {
 
   static Future<BaseResponse> post(
       {required String url,
-      required String apiName,
       required Map<String, dynamic> data,
       Map<String, dynamic>? headers,
       Map<String, dynamic>? queryParameters}) async {
@@ -99,7 +104,17 @@ class ApiCommon {
         queryParameters: queryParameters,
       );
 
-      return BaseResponse(data: response.data['data']);
+      if (response.data['data'] != null) {
+        debugLog(response.data.toString());
+        return BaseResponse(data: response.data['data']);
+      } else {
+        debugLog(response.data.toString());
+        return BaseResponse(
+          error: AppFailure(
+            message: response.data['message'],
+          ),
+        );
+      }
     } on DioException catch (dioError) {
       debugLog("DioError: ${dioError.message}");
 

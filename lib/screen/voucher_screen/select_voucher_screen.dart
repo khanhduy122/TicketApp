@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:ticket_app/components/const/app_assets.dart';
 import 'package:ticket_app/components/const/app_colors.dart';
 import 'package:ticket_app/components/const/app_styles.dart';
-import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/models/enum_model.dart';
 import 'package:ticket_app/models/voucher.dart';
 import 'package:ticket_app/widgets/appbar_widget.dart';
@@ -40,7 +38,6 @@ class _SelectVoucherScreenState extends State<SelectVoucherScreen> {
         appliesToCinemas = 3;
         break;
     }
-    vouchers = context.read<DataAppProvider>().vouchers.sublist(0);
     vouchers.where((element) => (element.appliesToCinemas == 0 ||
         element.appliesToCinemas == appliesToCinemas));
     super.initState();
@@ -55,9 +52,9 @@ class _SelectVoucherScreenState extends State<SelectVoucherScreen> {
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
           children: [
-            Expanded(
-                child: _buildListVoucher(
-                    context.read<DataAppProvider>().vouchers)),
+            // Expanded(
+            //     child: _buildListVoucher(
+            //         context.read<DataAppProvider>().vouchers)),
             ButtonWidget(
                 title: "Ok",
                 height: 50.h,

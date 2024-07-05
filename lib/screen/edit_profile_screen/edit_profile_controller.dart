@@ -5,16 +5,22 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:ticket_app/components/api/api_common.dart';
+import 'package:ticket_app/components/api/api_const.dart';
 import 'package:ticket_app/components/const/logger.dart';
 import 'package:ticket_app/components/const/net_work_info.dart';
 import 'package:ticket_app/components/dialogs/dialog_confirm.dart';
 import 'package:ticket_app/components/dialogs/dialog_error.dart';
 import 'package:ticket_app/components/dialogs/dialog_loading.dart';
+import 'package:ticket_app/components/utils/datetime_util.dart';
 import 'package:ticket_app/components/utils/upload_file_utils.dart';
+import 'package:ticket_app/models/data_app_provider.dart';
+import 'package:ticket_app/models/user_info_model.dart';
 import 'package:ticket_app/screen/main_screen/profile/profile_controller.dart';
 
 class EditProfileController extends GetxController {
-  User user = FirebaseAuth.instance.currentUser!;
+  UserInfoModel user = Get.context!.read<DataAppProvider>().userInfoModel!;
   Rx<File?> imageSelected = Rx<File?>(null);
   final emailController = TextEditingController();
   final birthDayController = TextEditingController();
@@ -25,9 +31,9 @@ class EditProfileController extends GetxController {
 
   @override
   void onInit() {
-    emailController.text = user.email ?? '';
-    nameController.text = user.displayName ?? '';
-    birthDayController.text = '01/01/1990';
+    emailController.text = user.email;
+    nameController.text = user.displayName;
+    birthDayController.text = user.birthDay;
     nameController.addListener(() {
       checkIsChange();
     });
@@ -55,7 +61,8 @@ class EditProfileController extends GetxController {
   void onTapEditBirthDay() async {
     final result = await showDatePicker(
       context: Get.context!,
-      currentDate: dateTimeSelected ?? DateTime(1900, 1, 1),
+      currentDate:
+          dateTimeSelected ?? DateTimeUtil.stringToDateTime(user.birthDay),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
     );
@@ -105,20 +112,35 @@ class EditProfileController extends GetxController {
         return;
       }
       DialogLoading.show(Get.context!);
-
-      if (nameController.text != user.displayName) {
-        await user.updateDisplayName(nameController.text);
-        profileController.name.value = nameController.text;
-      }
-
+      String? photoUrl;
       if (imageSelected.value != null) {
-        String? photoUrl =
-            await UploadFileUtils.uploadAvata(imageSelected.value!);
-        await user.updatePhotoURL(photoUrl);
-        profileController.photoUrl.value = photoUrl;
+        photoUrl = await UploadFileUtils.uploadAvata(imageSelected.value!);
       }
+
+      final data = {
+        'uid': user.uid,
+        'email': user.email,
+        'photoUrl': photoUrl ?? user.photoUrl,
+        'displayName': nameController.text,
+        'birthDay': birthDayController.text,
+      };
+      final respose = await ApiCommon.post(
+        url: ApiConst.editProfile,
+        data: data,
+      );
       Get.back();
-      Get.until((route) => route.isFirst);
+      if (respose.data != null) {
+        user = UserInfoModel.fromJson(respose.data);
+        Get.context!.read<DataAppProvider>().userInfoModel = user;
+        profileController.photoUrl.value = user.photoUrl;
+        profileController.name.value = user.displayName;
+        Get.until((route) => route.isFirst);
+      } else {
+        DialogError.show(
+          context: Get.context!,
+          message: respose.error!.message,
+        );
+      }
     } catch (e) {
       Get.back();
       debugLog(e.toString());

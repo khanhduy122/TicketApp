@@ -1,12 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
-import 'package:ticket_app/models/cinema.dart';
-import 'package:ticket_app/models/movie.dart';
-import 'package:ticket_app/models/review.dart';
-import 'package:ticket_app/models/ticket.dart';
-import 'package:ticket_app/models/voucher.dart';
+import 'package:ticket_app/screen/checkout_ticket/checkout_ticket_binding.dart';
 import 'package:ticket_app/screen/detail_movie_screen/all_review/all_review_binding.dart';
 import 'package:ticket_app/screen/detail_movie_screen/detail_movie/detail_movie_binding.dart';
 import 'package:ticket_app/screen/edit_profile_screen/edit_profile_binding.dart';
@@ -15,13 +9,22 @@ import 'package:ticket_app/screen/forgot_password/forgot_password_screen.dart';
 import 'package:ticket_app/screen/main_screen/choose_cinema/choose_cinema_binding.dart';
 import 'package:ticket_app/screen/main_screen/main_screen.dart';
 import 'package:ticket_app/screen/main_screen/profile/profile_binding.dart';
-import 'package:ticket_app/screen/sign/signin_binding.dart';
-import 'package:ticket_app/screen/sign/signin_screen.dart';
-import 'package:ticket_app/screen/signup/signup_binding.dart';
-import 'package:ticket_app/screen/signup/signup_screen.dart';
+import 'package:ticket_app/screen/search_screen/search_screen.dart';
+import 'package:ticket_app/screen/select_card/select_card_binding.dart';
+import 'package:ticket_app/screen/select_card/select_card_screen.dart';
+import 'package:ticket_app/screen/select_cinema/select_cinema_binding.dart';
+import 'package:ticket_app/screen/select_cinema/select_cinema_screen.dart';
+import 'package:ticket_app/screen/select_movie/select_movie_binding.dart';
+import 'package:ticket_app/screen/select_movie/select_movie_screen.dart';
+import 'package:ticket_app/screen/select_seat.dart/select_seat_binding.dart';
+import 'package:ticket_app/screen/select_seat.dart/select_seat_screen.dart';
+import 'package:ticket_app/screen/sign_in/signin_binding.dart';
+import 'package:ticket_app/screen/sign_in/signin_screen.dart';
+import 'package:ticket_app/screen/sign_up/signup_binding.dart';
+import 'package:ticket_app/screen/sign_up/signup_screen.dart';
 import 'package:ticket_app/screen/verify_email/verify_email_binding.dart';
 import 'package:ticket_app/screen/verify_email/verify_email_screen.dart';
-import 'package:ticket_app/screen/checkout_ticket/checkout_ticket.dart';
+import 'package:ticket_app/screen/checkout_ticket/checkout_ticket_screen.dart';
 import 'package:ticket_app/screen/detail_movie_screen/all_review/all_review_screen.dart';
 import 'package:ticket_app/screen/detail_movie_screen/detail_movie/detail_movie_screen.dart';
 import 'package:ticket_app/screen/detail_movie_screen/open_image_screen.dart';
@@ -95,6 +98,35 @@ class AppRoutes {
           movie: Get.arguments,
         );
       },
-    )
+    ),
+    GetPage(
+      name: RouteName.selectMovieScreen,
+      page: SelectMovieScreen.new,
+      binding: SelectMovieBinding(),
+    ),
+    GetPage(
+      name: RouteName.selectCinemaScreen,
+      page: SelectCinemaScreen.new,
+      binding: SelectCinemaBinding(),
+    ),
+    GetPage(
+      name: RouteName.selectSeatScreen,
+      page: SelectSeatScreen.new,
+      binding: SelectSeatBinding(),
+    ),
+    GetPage(
+      name: RouteName.checkoutTicketScreen,
+      page: CheckoutTicketScreen.new,
+      binding: CheckoutTicketBinding(),
+    ),
+    GetPage(
+      name: RouteName.selectCardScreen,
+      page: SelectCardScreen.new,
+      binding: SelectCardBinding(),
+    ),
+    GetPage(
+      name: RouteName.searchScreen,
+      page: SearchScreen.new,
+    ),
   ];
 }

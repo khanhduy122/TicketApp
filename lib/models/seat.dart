@@ -3,7 +3,22 @@ import 'package:ticket_app/models/enum_model.dart';
 part 'seat.g.dart';
 
 @JsonSerializable()
-class Seat{
+class Seat {
+  String showtimesId;
+  List<ItemSeat> seats;
+
+  Seat({
+    required this.seats,
+    required this.showtimesId,
+  });
+
+  factory Seat.fromJson(Map<String, dynamic> json) => _$SeatFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SeatToJson(this);
+}
+
+@JsonSerializable()
+class ItemSeat {
   String name;
   int status;
   int price;
@@ -12,10 +27,16 @@ class Seat{
   TypeSeat typeSeat;
   String booked;
 
-  Seat({required this.name, required this.status, required this.typeSeat, required this.price, required this.booked, required this.index});
+  ItemSeat(
+      {required this.name,
+      required this.status,
+      required this.typeSeat,
+      required this.price,
+      required this.booked,
+      required this.index});
 
-  factory Seat.fromJson(Map<String, dynamic> json) => _$SeatFromJson(json);
+  factory ItemSeat.fromJson(Map<String, dynamic> json) =>
+      _$ItemSeatFromJson(json);
 
-  Map<String, dynamic> toJson() => _$SeatToJson(this);
-
+  Map<String, dynamic> toJson() => _$ItemSeatToJson(this);
 }

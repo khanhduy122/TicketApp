@@ -120,7 +120,6 @@ class EditProfileScreen extends GetView<EditProfileController> {
     return TextFormFieldWidget(
       controller: controller.birthDayController,
       readOnly: true,
-      initValue: '01/01/1990',
       suffixIcon: GestureDetector(
         onTap: () => controller.onTapEditBirthDay(),
         child: const Icon(
@@ -151,7 +150,7 @@ class EditProfileScreen extends GetView<EditProfileController> {
                             width: 90.w,
                           ),
                         )
-                      : (controller.user.photoURL == null)
+                      : (controller.user.photoUrl.isEmpty)
                           ? ClipRRect(
                               borderRadius: BorderRadius.circular(45.h),
                               child: SizedBox(
@@ -163,7 +162,7 @@ class EditProfileScreen extends GetView<EditProfileController> {
                                   )),
                             )
                           : ImageNetworkWidget(
-                              url: controller.user.photoURL!,
+                              url: controller.user.photoUrl,
                               height: 90.h,
                               width: 90.w,
                               borderRadius: 45.h,

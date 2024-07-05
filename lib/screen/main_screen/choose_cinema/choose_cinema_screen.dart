@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:ticket_app/components/const/app_assets.dart';
 import 'package:ticket_app/components/const/app_colors.dart';
 import 'package:ticket_app/components/const/app_styles.dart';
+import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/components/service/cache_service.dart';
 import 'package:ticket_app/models/cinema.dart';
 import 'package:ticket_app/models/cities.dart';
@@ -68,16 +69,8 @@ class ChooseCinemaScreen extends GetView<ChooseCinemaController> {
             }).toList(),
             onChanged: (value) {
               if (value == null) return;
-              Get.context!.read<DataAppProvider>().cityNameCurrent = value;
-              if (value == "--- chọn tính / thành phố ---") {
-                return;
-              }
-              if (cities.first == '--- chọn tính / thành phố ---') {
-                cities.removeAt(0);
-              }
-              controller.selectCity.value = value;
-              CacheService.saveData("cityName", value);
-              controller.onChangeCity();
+
+              controller.onChangeCity(value, controller.position);
             },
             buttonStyleData: ButtonStyleData(
               height: 40,
@@ -349,15 +342,7 @@ class ChooseCinemaScreen extends GetView<ChooseCinemaController> {
   Widget _itemCinema(Cinema cinema) {
     return GestureDetector(
       onTap: () {
-        // DateTime now = DateTime.now();
-        // String day =
-        //     now.day.toString().length == 1 ? "0${now.day}" : now.day.toString();
-        // String month = now.month.toString().length == 1
-        //     ? "0${now.month}"
-        //     : now.month.toString();
-        // String currentDate = "$day-$month-${now.year}";
-        // cinemaBloc.add(GetAllMovieReleasedCinemaEvent(
-        //     cinema: cinema, date: currentDate, context: context));
+        Get.toNamed(RouteName.selectMovieScreen, arguments: cinema);
       },
       child: Row(
         children: [

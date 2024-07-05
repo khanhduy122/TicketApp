@@ -7,6 +7,18 @@ part of 'seat.dart';
 // **************************************************************************
 
 Seat _$SeatFromJson(Map<String, dynamic> json) => Seat(
+      seats: (json['seats'] as List<dynamic>)
+          .map((e) => ItemSeat.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      showtimesId: json['showtimesId'] as String,
+    );
+
+Map<String, dynamic> _$SeatToJson(Seat instance) => <String, dynamic>{
+      'showtimesId': instance.showtimesId,
+      'seats': instance.seats,
+    };
+
+ItemSeat _$ItemSeatFromJson(Map<String, dynamic> json) => ItemSeat(
       name: json['name'] as String,
       status: json['status'] as int,
       typeSeat: $enumDecode(_$TypeSeatEnumMap, json['type']),
@@ -15,7 +27,7 @@ Seat _$SeatFromJson(Map<String, dynamic> json) => Seat(
       index: json['index'] as int,
     );
 
-Map<String, dynamic> _$SeatToJson(Seat instance) => <String, dynamic>{
+Map<String, dynamic> _$ItemSeatToJson(ItemSeat instance) => <String, dynamic>{
       'name': instance.name,
       'status': instance.status,
       'price': instance.price,

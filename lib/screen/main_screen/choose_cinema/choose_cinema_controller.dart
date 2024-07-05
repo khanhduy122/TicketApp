@@ -1,12 +1,13 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:ticket_app/components/const/app_key.dart';
+import 'package:ticket_app/components/api/api_common.dart';
+import 'package:ticket_app/components/api/api_const.dart';
+import 'package:ticket_app/components/const/logger.dart';
 import 'package:ticket_app/components/dialogs/dialog_confirm.dart';
+import 'package:ticket_app/components/dialogs/dialog_error.dart';
 import 'package:ticket_app/components/dialogs/dialog_loading.dart';
 import 'package:ticket_app/components/service/cache_service.dart';
 import 'package:ticket_app/components/utils/loaction_util.dart';
@@ -20,29 +21,20 @@ class ChooseCinemaController extends GetxController {
   DateTime dateTime = DateTime.now();
   final searchCityTextController = TextEditingController();
   final ScrollController scrollController = ScrollController();
-  List<CinemaCity> allCinemaCity =
-      Get.context!.read<DataAppProvider>().allCinemaCity ?? [];
   Rx<CinemaCity?> currentCinemaCity =
-      Get.context!.read<DataAppProvider>().reconmmedCinemas.obs;
+      Get.context!.read<DataAppProvider>().reconmmedCinemaCity.obs;
   RxList<Cinema> fillterCinema = <Cinema>[].obs;
   RxInt currentIndexCinemaType = 0.obs;
   Rx<PermissionStatus> locationPermisstion = PermissionStatus.denied.obs;
+  Position? position;
 
   @override
   void onInit() {
     checkLocationPermission();
-    if (Get.context!.read<DataAppProvider>().cityNameCurrent == null) {
-      if (CacheService.getData(AppKey.cityName) != null) {
-        selectCity.value = CacheService.getData(AppKey.cityName);
-        currentCinemaCity.value = allCinemaCity.firstWhere(
-          (element) => element.name == selectCity.value,
-        );
-      } else {
-        selectCity.value = cities.first;
-      }
-    } else {
-      selectCity.value = Get.context!.read<DataAppProvider>().cityNameCurrent!;
-    }
+    selectCity.value =
+        Get.context!.read<DataAppProvider>().cityNameCurrent ?? cities[0];
+    currentCinemaCity.value =
+        Get.context!.read<DataAppProvider>().reconmmedCinemaCity;
     if (currentCinemaCity.value != null) {
       fillterCinema.value = currentCinemaCity.value!.all.sublist(0);
     }
@@ -58,6 +50,10 @@ class ChooseCinemaController extends GetxController {
 
   Future<void> checkLocationPermission() async {
     locationPermisstion.value = await Permission.location.status;
+    if (locationPermisstion.value == PermissionStatus.granted) {
+      position = await Geolocator.getCurrentPosition();
+    }
+    debugLog(locationPermisstion.string);
   }
 
   void onSelectCinemaType(int index) {
@@ -115,21 +111,70 @@ class ChooseCinemaController extends GetxController {
     locationPermisstion.value = await Permission.location.request();
     if (locationPermisstion.value == PermissionStatus.granted) {
       DialogLoading.show(Get.context!);
-      final position = await Geolocator.getCurrentPosition();
-      final currentCityName = await LocationUtil.getCurrentCity(position);
+      position = await Geolocator.getCurrentPosition();
+      final currentCityName = await LocationUtil.getCurrentCity(position!);
       if (currentCityName != null) {
         selectCity.value = currentCityName;
-        for (var cinemaCity in allCinemaCity) {
-          getDistance(cinemaCity, position);
+        final cinemaCityResponse = await getCinemaCity(
+          currentCityname: currentCityName,
+          position: position,
+        );
+
+        if (cinemaCityResponse != null) {
+          Get.context!.read<DataAppProvider>().reconmmedCinemaCity =
+              currentCinemaCity.value =
+                  Get.context!.read<DataAppProvider>().reconmmedCinemaCity;
+          fillterCinema.value = currentCinemaCity.value!.all.sublist(0);
         }
-        Get.context!.read<DataAppProvider>().reconmmedCinemas = allCinemaCity
-            .firstWhere((element) => element.name == currentCityName);
-        currentCinemaCity.value =
-            Get.context!.read<DataAppProvider>().reconmmedCinemas;
-        fillterCinema.value = currentCinemaCity.value!.all.sublist(0);
       }
       Get.back();
     }
+  }
+
+  Future<CinemaCity?> getCinemaCity({
+    required String? currentCityname,
+    required Position? position,
+  }) async {
+    if (currentCityname == null) return null;
+    DialogLoading.show(Get.context!);
+    final cinemaCityResponse = await ApiCommon.get(
+      url: ApiConst.cinemaCityUrl,
+      queryParameters: {
+        "cityName": currentCityname,
+      },
+    );
+
+    if (cinemaCityResponse.data != null) {
+      final cinemaCityRecomemed = CinemaCity.fromJson(cinemaCityResponse.data);
+      if (position != null) {
+        getDistance(cinemaCityRecomemed, position);
+        sortCinemaCity(cinemaCityRecomemed);
+      }
+      Get.back();
+      return cinemaCityRecomemed;
+    } else {
+      Get.back();
+      DialogError.show(
+        context: Get.context!,
+        message: cinemaCityResponse.error!.message,
+      );
+      return null;
+    }
+  }
+
+  void sortCinemaCity(CinemaCity cinemaCity) {
+    cinemaCity.cgv.sort(
+      (a, b) => a.distance!.compareTo(b.distance!),
+    );
+    cinemaCity.galaxy.sort(
+      (a, b) => a.distance!.compareTo(b.distance!),
+    );
+    cinemaCity.lotte.sort(
+      (a, b) => a.distance!.compareTo(b.distance!),
+    );
+    cinemaCity.all.sort(
+      (a, b) => a.distance!.compareTo(b.distance!),
+    );
   }
 
   void getDistance(CinemaCity cinemaCity, Position position) async {
@@ -162,9 +207,22 @@ class ChooseCinemaController extends GetxController {
         cinemaCity.galaxy.sublist(0);
   }
 
-  void onChangeCity() {
-    currentCinemaCity.value =
-        allCinemaCity.firstWhere((element) => element.name == selectCity.value);
+  void onChangeCity(String cityName, Position? position) async {
+    if (cityName == "--- chọn tính / thành phố ---") {
+      return;
+    }
+
+    final response =
+        await getCinemaCity(currentCityname: cityName, position: position);
+    if (response == null) return;
+
+    if (cities.first == '--- chọn tính / thành phố ---') {
+      Get.context!.read<DataAppProvider>().cityNameCurrent = cityName;
+      cities.removeAt(0);
+    }
+    selectCity.value = cityName;
+    CacheService.saveData("cityName", cityName);
+    currentCinemaCity.value = response;
     currentIndexCinemaType.value = 0;
     fillterCinema.value = currentCinemaCity.value!.all.sublist(0);
   }

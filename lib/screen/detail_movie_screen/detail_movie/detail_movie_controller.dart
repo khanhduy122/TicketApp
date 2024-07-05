@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ticket_app/components/api/api_common.dart';
 import 'package:ticket_app/components/api/api_const.dart';
+import 'package:ticket_app/components/const/logger.dart';
 import 'package:ticket_app/components/const/net_work_info.dart';
 import 'package:ticket_app/models/movie.dart';
 import 'package:ticket_app/models/review.dart';
@@ -43,6 +44,7 @@ class DetailMovieController extends GetxController
         url: ApiConst.allReview,
         queryParameters: {
           "movieId": movie.id,
+          'index': 0,
           "page": 1,
         },
       );
@@ -58,6 +60,7 @@ class DetailMovieController extends GetxController
       }
     } catch (e) {
       isLoading.value = false;
+      debugLog(e.toString());
       messageFaild.value = 'Đã có lỗi xảy ra, vui lòng thử lại';
     }
   }

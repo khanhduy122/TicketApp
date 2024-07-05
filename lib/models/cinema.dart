@@ -1,6 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:ticket_app/models/enum_model.dart';
-import 'package:ticket_app/models/movie_showing_in_cinema.dart';
 import 'package:ticket_app/models/room.dart';
 part 'cinema.g.dart';
 
@@ -12,24 +11,23 @@ class Cinema {
   final String name;
   final String? cityName;
   final CinemasType type;
-  List<MovieShowinginCinema>? movieShowinginCinema;
   List<Room>? rooms;
   final double lat;
   final double long;
   double? distance;
   final String address;
 
-  Cinema(
-      {required this.id,
-      required this.address,
-      required this.name,
-      required this.cityName,
-      required this.thumbnail,
-      required this.type,
-      required this.lat,
-      required this.long,
-      this.rooms,
-      this.movieShowinginCinema});
+  Cinema({
+    required this.id,
+    required this.address,
+    required this.name,
+    required this.cityName,
+    required this.thumbnail,
+    required this.type,
+    required this.lat,
+    required this.long,
+    this.rooms,
+  });
 
   factory Cinema.fromJson(Map<String, dynamic> json) => _$CinemaFromJson(json);
 
@@ -40,8 +38,6 @@ class Cinema {
       'name': name,
       'type': type.name.toString(),
       'cityName': cityName,
-      'movieShowinginCinema':
-          movieShowinginCinema?.map((movie) => movie.toJson()).toList(),
       'rooms': rooms?.map((room) => room.toJson()).toList(),
       'lat': lat,
       'long': long,

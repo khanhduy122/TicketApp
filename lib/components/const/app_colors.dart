@@ -13,4 +13,5 @@ class AppColors {
   static const Color rating = Colors.amber;
   static const Color grey = Color(0xFFABADBD);
   static const Color seccondBackgroud = Color(0xFF051138);
+  static const Color purple = Colors.deepPurple;
 }

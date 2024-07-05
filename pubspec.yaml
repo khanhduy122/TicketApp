@@ -71,6 +71,7 @@ dependencies:
   device_info_plus: ^10.1.0
   dartz: ^0.10.1
   get: ^4.6.6
+  scrollable_positioned_list: ^0.3.8
 
 dev_dependencies:
   flutter_test:

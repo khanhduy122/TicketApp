@@ -9,6 +9,12 @@ class PaymentCard {
       {required this.cardNumber, required this.nameBank, required this.token});
 
   PaymentCard.fromJson(Map<String, dynamic> json) {
+    cardNumber = json["cardNumber"];
+    token = json["token"];
+    nameBank = json["nameBank"];
+  }
+
+  PaymentCard.fromVnpParam(Map<String, dynamic> json) {
     cardNumber = json["vnp_card_number"];
     token = json["vnp_token"];
     nameBank = json["vnp_bank_code"];
@@ -16,9 +22,9 @@ class PaymentCard {
 
   Map<String, dynamic> toJson() {
     return {
-      "vnp_card_number": cardNumber,
-      "vnp_token": token,
-      "vnp_bank_code": nameBank,
+      "cardNumber": cardNumber,
+      "token": token,
+      "nameBank": nameBank,
     };
   }
 

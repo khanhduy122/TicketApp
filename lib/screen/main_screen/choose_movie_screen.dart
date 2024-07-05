@@ -272,7 +272,7 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
           ),
           InkWell(
               onTap: () {
-                Navigator.pushNamed(context, RouteName.searchScreen);
+                Get.toNamed(RouteName.searchScreen);
               },
               child: Icon(
                 Icons.search,

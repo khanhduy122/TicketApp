@@ -104,14 +104,14 @@ class ProfileScreen extends GetView<ProfileController> {
               Get.toNamed(RouteName.editProfileScreen);
             },
             child: Container(
-                child: controller.photoUrl.value == null
+                child: controller.photoUrl.value.isEmpty
                     ? SizedBox(
                         height: 100.h,
                         width: 100.w,
                         child: Image.asset(AppAssets.imgAvatarDefault),
                       )
                     : ImageNetworkWidget(
-                        url: controller.photoUrl.value!,
+                        url: controller.photoUrl.value,
                         height: 100.h,
                         width: 100.w,
                         borderRadius: 50.h,
@@ -125,7 +125,7 @@ class ProfileScreen extends GetView<ProfileController> {
               Get.toNamed(RouteName.editProfileScreen);
             },
             child: Text(
-              controller.name.value ?? '',
+              controller.name.value,
               style: AppStyle.titleStyle,
             ),
           ),

@@ -10,7 +10,6 @@ import 'package:ticket_app/components/const/logger.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/models/review.dart';
-import 'package:ticket_app/moduels/cinema/cinema_event.dart';
 import 'package:ticket_app/screen/detail_movie_screen/detail_movie/detail_movie_controller.dart';
 import 'package:ticket_app/widgets/button_back_widget.dart';
 import 'package:ticket_app/widgets/button_widget.dart';
@@ -114,7 +113,12 @@ class DetailMovieScreen extends GetView<DetailMovieController> {
                                 title: "Đặt vé",
                                 height: 30.h,
                                 width: 90.w,
-                                onPressed: () {},
+                                onPressed: () {
+                                  Get.toNamed(
+                                    RouteName.selectCinemaScreen,
+                                    arguments: controller.movie,
+                                  );
+                                },
                               )
                             : Container()
                       ],

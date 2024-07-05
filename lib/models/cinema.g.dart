@@ -18,9 +18,6 @@ Cinema _$CinemaFromJson(Map<String, dynamic> json) => Cinema(
       rooms: (json['rooms'] as List<dynamic>?)
           ?.map((e) => Room.fromJson(e as Map<String, dynamic>))
           .toList(),
-      movieShowinginCinema: (json['movieShowinginCinema'] as List<dynamic>?)
-          ?.map((e) => MovieShowinginCinema.fromJson(e as Map<String, dynamic>))
-          .toList(),
     )..distance = (json['distance'] as num?)?.toDouble();
 
 Map<String, dynamic> _$CinemaToJson(Cinema instance) => <String, dynamic>{
@@ -29,7 +26,6 @@ Map<String, dynamic> _$CinemaToJson(Cinema instance) => <String, dynamic>{
       'name': instance.name,
       'cityName': instance.cityName,
       'type': _$CinemasTypeEnumMap[instance.type]!,
-      'movieShowinginCinema': instance.movieShowinginCinema,
       'rooms': instance.rooms,
       'lat': instance.lat,
       'long': instance.long,

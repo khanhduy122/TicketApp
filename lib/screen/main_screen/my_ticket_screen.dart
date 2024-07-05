@@ -6,7 +6,6 @@ import 'package:ticket_app/components/const/app_colors.dart';
 import 'package:ticket_app/components/const/app_styles.dart';
 import 'package:ticket_app/components/routes/route_name.dart';
 import 'package:ticket_app/models/ticket.dart';
-import 'package:ticket_app/moduels/ticket/ticket_repo.dart';
 import 'package:ticket_app/widgets/image_network_widget.dart';
 
 class MyTicketScreen extends StatefulWidget {
@@ -63,8 +62,10 @@ class _VoucherScreenState extends State<MyTicketScreen>
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
                   child: TabBarView(controller: _tabController, children: [
-                    tabViewNewTicket(),
-                    tabViewExpiredTicket(),
+                    Container(),
+                    Container()
+                    // tabViewNewTicket(),
+                    // tabViewExpiredTicket(),
                   ]),
                 ),
               )
@@ -75,51 +76,51 @@ class _VoucherScreenState extends State<MyTicketScreen>
     );
   }
 
-  Widget tabViewNewTicket() {
-    return StreamBuilder(
-        stream: TicketRepo.getNewTickets(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (snapshot.connectionState == ConnectionState.active) {
-            return Column(
-              children: [
-                SizedBox(
-                  height: 40.h,
-                ),
-                _buildListMyTicket(snapshot.data ?? []),
-              ],
-            );
-          }
-          return Container();
-        });
-  }
+  // Widget tabViewNewTicket() {
+  //   return StreamBuilder(
+  //       stream: TicketRepo.getNewTickets(),
+  //       builder: (context, snapshot) {
+  //         if (snapshot.connectionState == ConnectionState.waiting) {
+  //           return const Center(
+  //             child: CircularProgressIndicator(),
+  //           );
+  //         }
+  //         if (snapshot.connectionState == ConnectionState.active) {
+  //           return Column(
+  //             children: [
+  //               SizedBox(
+  //                 height: 40.h,
+  //               ),
+  //               _buildListMyTicket(snapshot.data ?? []),
+  //             ],
+  //           );
+  //         }
+  //         return Container();
+  //       });
+  // }
 
-  Widget tabViewExpiredTicket() {
-    return StreamBuilder(
-        stream: TicketRepo.getExpiredTickets(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (snapshot.connectionState == ConnectionState.active) {
-            return Column(
-              children: [
-                SizedBox(
-                  height: 40.h,
-                ),
-                _buildListMyTicket(snapshot.data ?? []),
-              ],
-            );
-          }
-          return Container();
-        });
-  }
+  // Widget tabViewExpiredTicket() {
+  //   return StreamBuilder(
+  //       stream: TicketRepo.getExpiredTickets(),
+  //       builder: (context, snapshot) {
+  //         if (snapshot.connectionState == ConnectionState.waiting) {
+  //           return const Center(
+  //             child: CircularProgressIndicator(),
+  //           );
+  //         }
+  //         if (snapshot.connectionState == ConnectionState.active) {
+  //           return Column(
+  //             children: [
+  //               SizedBox(
+  //                 height: 40.h,
+  //               ),
+  //               _buildListMyTicket(snapshot.data ?? []),
+  //             ],
+  //           );
+  //         }
+  //         return Container();
+  //       });
+  // }
 
   Widget _buildListMyTicket(List<Ticket> tickets) {
     if (tickets.isEmpty) {

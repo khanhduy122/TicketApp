@@ -18,5 +18,6 @@ AppBar appBarWidget({String? title, Color? color, Function()? onTap}) {
           ),
     elevation: 0,
     backgroundColor: color ?? AppColors.background,
+    surfaceTintColor: color ?? AppColors.background,
   );
 }

@@ -7,7 +7,7 @@ import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ticket_app/models/payment_card.dart';
 import 'package:ticket_app/models/ticket.dart';
-import 'package:ticket_app/components/vn_pay/api_key.dart';
+import 'package:ticket_app/components/vn_pay/vnp_key.dart';
 import 'package:ticket_app/models/voucher.dart';
 
 class PaymentRepo {
@@ -66,38 +66,6 @@ class PaymentRepo {
       return listCard;
     } catch (e) {
       return [];
-    }
-  }
-
-  Future<String> getIpAddress() async {
-    try {
-      List<NetworkInterface> interfaces = await NetworkInterface.list();
-      for (var interface in interfaces) {
-        for (var address in interface.addresses) {
-          return address.address;
-        }
-      }
-      return "";
-    } catch (e) {
-      return "";
-    }
-  }
-
-  String hmacSHA512(String data) {
-    try {
-      List<int> hmacKeyBytes = utf8.encode(ApiKey.hashSecret);
-      final Hmac hmacSha512 = Hmac(sha512, hmacKeyBytes);
-      Uint8List dataBytes = Uint8List.fromList(utf8.encode(data));
-      List<int> result = hmacSha512.convert(dataBytes).bytes;
-
-      StringBuffer sb = StringBuffer();
-      for (int byte in result) {
-        sb.write(byte.toRadixString(16).padLeft(2, '0'));
-      }
-
-      return sb.toString();
-    } catch (ex) {
-      return '';
     }
   }
 }
