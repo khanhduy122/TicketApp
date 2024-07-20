@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ticket_app/components/const/app_styles.dart';
+import 'package:ticket_app/core/const/app_styles.dart';
 import 'package:ticket_app/models/showtimes.dart';
 import 'package:ticket_app/widgets/item_time_widget.dart';
 

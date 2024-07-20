@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ticket_app/components/const/app_assets.dart';
-import 'package:ticket_app/components/const/app_styles.dart';
-import 'package:ticket_app/components/routes/route_name.dart';
+import 'package:get/get.dart';
+import 'package:ticket_app/core/const/app_assets.dart';
+import 'package:ticket_app/core/const/app_styles.dart';
+import 'package:ticket_app/core/routes/route_name.dart';
 import 'package:ticket_app/widgets/button_widget.dart';
 
 class PaymentSuccessScreen extends StatelessWidget {
@@ -34,8 +35,7 @@ class PaymentSuccessScreen extends StatelessWidget {
               height: 60.h,
               width: 250.w,
               onPressed: () {
-                Navigator.popUntil(context,
-                    (route) => route.settings.name == RouteName.mainScreen);
+                Get.until((route) => route.isFirst);
               }),
           SizedBox(
             height: 10.h,

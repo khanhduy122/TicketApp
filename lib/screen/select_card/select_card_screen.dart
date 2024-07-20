@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:ticket_app/components/const/app_colors.dart';
-import 'package:ticket_app/components/const/app_styles.dart';
+import 'package:ticket_app/core/const/app_colors.dart';
+import 'package:ticket_app/core/const/app_styles.dart';
 import 'package:ticket_app/models/payment_card.dart';
 import 'package:ticket_app/screen/select_card/select_card_controller.dart';
 import 'package:ticket_app/widgets/appbar_widget.dart';
@@ -25,7 +25,7 @@ class SelectCardScreen extends GetView<SelectCardController> {
   Widget _buildWebView() {
     return Scaffold(
       appBar: appBarWidget(
-        title: 'Thêm phương thức thanh toán',
+        title: controller.titleWebView.value,
         onTap: () {
           controller.isShowWebview.value = false;
         },
@@ -68,15 +68,16 @@ class SelectCardScreen extends GetView<SelectCardController> {
               SizedBox(
                 height: 20.h,
               ),
-              ButtonWidget(
-                title: "Thanh Toán",
-                height: 50.h,
-                color: controller.currentIndex.value == 1000
-                    ? AppColors.darkBackground
-                    : AppColors.buttonColor,
-                width: MediaQuery.of(context).size.width,
-                onPressed: () => controller.onTapPayment(),
-              )
+              if (controller.ticket != null)
+                ButtonWidget(
+                  title: "Thanh Toán",
+                  height: 50.h,
+                  color: controller.currentIndex.value == 1000
+                      ? AppColors.darkBackground
+                      : AppColors.buttonColor,
+                  width: MediaQuery.of(context).size.width,
+                  onPressed: () => controller.onTapPayment(),
+                )
             ],
           ),
         ),
@@ -122,7 +123,7 @@ class SelectCardScreen extends GetView<SelectCardController> {
       required Function() onTap}) {
     return GestureDetector(
       onTap: onTap,
-      onLongPress: () {},
+      onLongPress: () => controller.deleteCard(card),
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 5.h),
         decoration: BoxDecoration(
@@ -147,14 +148,15 @@ class SelectCardScreen extends GetView<SelectCardController> {
                 style: AppStyle.defaultStyle,
               ),
             ),
-            Radio(
-              fillColor:
-                  MaterialStateProperty.all<Color>(AppColors.buttonColor),
-              activeColor: AppColors.buttonColor,
-              value: isSelected,
-              groupValue: true,
-              onChanged: (value) {},
-            )
+            if (controller.ticket != null)
+              Radio(
+                fillColor:
+                    MaterialStateProperty.all<Color>(AppColors.buttonColor),
+                activeColor: AppColors.buttonColor,
+                value: isSelected,
+                groupValue: true,
+                onChanged: (value) {},
+              )
           ],
         ),
       ),

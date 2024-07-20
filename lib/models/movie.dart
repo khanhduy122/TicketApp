@@ -23,8 +23,6 @@ class Movie {
 
   double? rating;
 
-  String? premiere;
-
   int? duration;
 
   List<Languages>? languages;
@@ -80,7 +78,6 @@ class Movie {
       this.duration,
       this.languages,
       this.nation,
-      this.premiere,
       this.rating,
       this.reviews,
       this.status,
@@ -88,19 +85,32 @@ class Movie {
 
   factory Movie.fromJson(Map<String, dynamic> json) => _$MovieFromJson(json);
 
-  Map<String, dynamic> toJson() => _$MovieToJson(this);
-
-  Map<String, dynamic> toJsonFirebase() {
-    return {
-      'id': id,
-      'name': name,
-      'thumbnail': thumbnail,
-      'categories': categories?.map((category) => category.name).toList(),
-      'rating': rating,
-      'duration': duration,
-      'total_review': totalReview,
-    };
-  }
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        '_id': id,
+        'name': name,
+        'thumbnail': thumbnail,
+        'banner': banner,
+        'categories': categories?.map((e) => _$CategoryEnumMap[e]!).toList(),
+        'ban': _$BanEnumMap[ban],
+        'date': date,
+        'rating': rating,
+        'duration': duration,
+        'languages': languages?.map((e) => _$LanguagesEnumMap[e]!).toList(),
+        'content': content,
+        'total_review': totalReview,
+        'total_one_rating': totalOneRating,
+        'total_two_rating': totalTwoRating,
+        'total_three_rating': totalThreeRating,
+        'total_four_rating': totalFourRating,
+        'total_five_rating': totalFiveRating,
+        'total_rating_picture': totalRatingWithPicture,
+        'actor': actors!.map((e) => e.toJson()).toList(),
+        'director': director,
+        'trailer': trailer,
+        'reviews': reviews,
+        'status': status,
+        'nation': nation,
+      };
 
   String getCaterogies() {
     String category = "";

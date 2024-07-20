@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
-import 'package:ticket_app/components/api/api_common.dart';
-import 'package:ticket_app/components/api/api_const.dart';
-import 'package:ticket_app/components/const/logger.dart';
-import 'package:ticket_app/components/const/net_work_info.dart';
-import 'package:ticket_app/components/dialogs/dialog_error.dart';
+import 'package:ticket_app/core/api/api_common.dart';
+import 'package:ticket_app/core/api/api_const.dart';
+import 'package:ticket_app/core/const/logger.dart';
+import 'package:ticket_app/core/const/net_work_info.dart';
+import 'package:ticket_app/core/dialogs/dialog_error.dart';
 import 'package:ticket_app/models/movie.dart';
 import 'package:ticket_app/models/review.dart';
 

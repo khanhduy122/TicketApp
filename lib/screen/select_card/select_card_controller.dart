@@ -5,28 +5,34 @@ import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:ticket_app/components/api/api_common.dart';
-import 'package:ticket_app/components/api/api_const.dart';
-import 'package:ticket_app/components/const/app_colors.dart';
-import 'package:ticket_app/components/const/logger.dart';
-import 'package:ticket_app/components/const/net_work_info.dart';
-import 'package:ticket_app/components/dialogs/dialog_error.dart';
-import 'package:ticket_app/components/dialogs/dialog_loading.dart';
-import 'package:ticket_app/components/vn_pay/vnp_key.dart';
+import 'package:ticket_app/core/api/api_common.dart';
+import 'package:ticket_app/core/api/api_const.dart';
+import 'package:ticket_app/core/const/app_colors.dart';
+import 'package:ticket_app/core/const/logger.dart';
+import 'package:ticket_app/core/const/net_work_info.dart';
+import 'package:ticket_app/core/dialogs/dialog_confirm.dart';
+import 'package:ticket_app/core/dialogs/dialog_error.dart';
+import 'package:ticket_app/core/dialogs/dialog_loading.dart';
+import 'package:ticket_app/core/routes/route_name.dart';
+import 'package:ticket_app/core/service/notification_service.dart';
+import 'package:ticket_app/core/vn_pay/vnp_key.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/models/payment_card.dart';
 import 'package:ticket_app/models/ticket.dart';
 import 'package:ticket_app/models/user_info_model.dart';
+import 'package:ticket_app/screen/main_screen/ticket/my_ticket_controller.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class SelectCardController extends GetxController {
-  final ticket = Get.arguments as Ticket;
+  Ticket? ticket;
   Rx<int> currentIndex = 1000.obs;
   final WebViewController webViewController = WebViewController();
   UserInfoModel user = Get.context!.read<DataAppProvider>().userInfoModel!;
+  final myTicketController = Get.find<MyTicketController>();
   RxList<PaymentCard> listCard = Get.context!
       .read<DataAppProvider>()
       .userInfoModel!
@@ -36,9 +42,13 @@ class SelectCardController extends GetxController {
   RxBool isShowWebview = false.obs;
   RxBool isLoadingWebView = false.obs;
   RxBool isLoadingListCard = false.obs;
+  RxString titleWebView = "".obs;
 
   @override
   void onInit() {
+    if (Get.arguments != null) {
+      ticket = Get.arguments as Ticket;
+    }
     webViewController
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(AppColors.background)
@@ -48,12 +58,21 @@ class SelectCardController extends GetxController {
             _onChangeUrl(change.url ?? "");
           },
           onPageFinished: (url) {
+            debugLog("onPageFinished");
             isLoadingWebView.value = false;
-            debugLog('onPageFinished');
+          },
+          onWebResourceError: (error) {
+            debugLog(error.errorCode.toString());
           },
         ),
       );
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    webViewController.clearCache();
+    super.onClose();
   }
 
   void _handleErrorCreateToken(String errorCode) {
@@ -83,9 +102,37 @@ class SelectCardController extends GetxController {
 
   void _handlePaymentResult(String responseCode) {
     if (responseCode == "00") {
-      // paymentBloc
-      //     .add(AddTicketEvent(ticket: widget.ticket!, voucher: widget.voucher));
-      debugLog("add ticket");
+      bookSeat();
+
+      final now = DateTime.now();
+      List<String> times = ticket!.showtimes!.time.split(" - ");
+
+      DateTime startTimeExpired = DateFormat("HH:mm").parse(times[0]);
+      int day = ticket!.date!.day;
+      int month = ticket!.date!.month;
+      int year = ticket!.date!.year;
+
+      final endDateTime = DateTime(
+        year,
+        month,
+        day,
+        startTimeExpired.hour - 1,
+        startTimeExpired.minute,
+      );
+
+      final dateTimeSchedule = endDateTime.difference(now);
+
+      if (dateTimeSchedule.inHours >= 1 && dateTimeSchedule.inMinutes > 0) {
+        NotificationService.schedulingNotification(
+          dateTimeSchedule,
+          ticket!,
+        );
+      } else {
+        NotificationService.schedulingNotification(
+          const Duration(minutes: 30),
+          ticket!,
+        );
+      }
     } else {
       _handleErrorPayment(responseCode);
     }
@@ -114,10 +161,7 @@ class SelectCardController extends GetxController {
         );
         break;
       case "24":
-        // widget.ticket!.id =
-        //     (Random().nextInt(99999999) + 100000000).toString() +
-        //         DateFormat('yyyyMMddHHmmss').format(DateTime.now()).toString();
-        // paymentBloc.add(PaymentCancleEvent(ticket: widget.ticket!));
+        ticket!.ticketId = DateTime.now().microsecondsSinceEpoch.toString();
         break;
     }
   }
@@ -162,7 +206,6 @@ class SelectCardController extends GetxController {
         hashDataBuffer.write(key);
         hashDataBuffer.write('=');
         hashDataBuffer.write(Uri.encodeComponent(value).toString());
-        debugLog(value.toString());
         hashDataBuffer.write('&');
       });
       String hashData =
@@ -172,8 +215,9 @@ class SelectCardController extends GetxController {
 
       String createTokenUrl =
           "${VpnKey.domainCreateToken}?$query&vnp_secure_hash=$vnpSecureHash";
-      debugLog(createTokenUrl);
+      titleWebView.value = "Thêm Phương Thức Thanh Toán";
       webViewController.loadRequest(Uri.parse(createTokenUrl));
+      debugLog(createTokenUrl);
     } catch (e) {
       isShowWebview.value = false;
       DialogError.show(
@@ -218,11 +262,16 @@ class SelectCardController extends GetxController {
   void _onChangeUrl(String url) {
     if (url.contains("vnp_response_code")) {
       final params = Uri.parse(url).queryParameters;
-      if (params["vnp_response_code"] == '00') {
-        PaymentCard card = PaymentCard.fromVnpParam(params);
-        addPaymentCard(card);
+
+      if (params["vnp_txn_desc"] == "Taomoitoken") {
+        if (params["vnp_response_code"] == '00') {
+          PaymentCard card = PaymentCard.fromVnpParam(params);
+          addPaymentCard(card);
+        } else {
+          _handleErrorCreateToken(params["vnp_response_code"]!);
+        }
       } else {
-        _handleErrorCreateToken(params["vnp_response_code"]!);
+        _handlePaymentResult(params["vnp_response_code"] as String);
       }
       isShowWebview.value = false;
     }
@@ -240,9 +289,13 @@ class SelectCardController extends GetxController {
     );
     isLoadingListCard.value = false;
     if (response.data != null) {
-      user = UserInfoModel.fromJson(response.data);
-      Get.context!.read<DataAppProvider>().userInfoModel = user;
-      listCard.value = user.paymentCards.sublist(0);
+      List<PaymentCard> listCardResponse = [];
+      for (var element in response.data) {
+        listCardResponse.add(PaymentCard.fromJson(element));
+      }
+      Get.context!.read<DataAppProvider>().userInfoModel!.paymentCards =
+          listCardResponse.sublist(0);
+      listCard.value = listCardResponse.sublist(0);
       return true;
     } else {
       DialogError.show(
@@ -254,7 +307,8 @@ class SelectCardController extends GetxController {
   }
 
   Future<void> onTapPayment() async {
-    if (currentIndex.value == null) return;
+    if (currentIndex.value == 1000) return;
+    if (!await checkSeat()) return;
     if (!await NetWorkInfo.isConnectedToInternet()) {
       DialogError.show(
         context: Get.context!,
@@ -269,12 +323,12 @@ class SelectCardController extends GetxController {
       "vnp_version": VpnKey.version,
       "vnp_command": "token_pay",
       "vnp_tmn_code": VpnKey.tmnCode,
-      "vnp_txn_ref": ticket.id,
+      "vnp_txn_ref": ticket!.ticketId,
       "vnp_app_user_id": FirebaseAuth.instance.currentUser!.uid,
-      "vnp_token": listCard[currentIndex.value!].token,
-      "vnp_amount": (ticket.price! * 100).toString(),
+      "vnp_token": listCard[currentIndex.value].token,
+      "vnp_amount": (ticket!.price! * 100).toString(),
       "vnp_curr_code": "VND",
-      "vnp_txn_desc": "ThanhToan${ticket.id}",
+      "vnp_txn_desc": "ThanhToan${ticket!.ticketId}",
       "vnp_create_date":
           DateFormat('yyyyMMddHHmmss').format(DateTime.now()).toString(),
       "vnp_ip_addr": '123.123.123.123',
@@ -303,7 +357,79 @@ class SelectCardController extends GetxController {
 
     String paymentUrl =
         "${VpnKey.domainPayment}?$query&vnp_secure_hash=$vnpSecureHash";
+    titleWebView.value = "Thanh Toán";
     webViewController.loadRequest(Uri.parse(paymentUrl));
-    debugLog(paymentUrl);
+  }
+
+  Future<void> deleteCard(PaymentCard card) async {
+    final result = await DialogConfirm.show(
+      context: Get.context!,
+      message: 'Bạn có chắc muốn xóa liên kết thẻ thanh toán ?',
+    );
+
+    if (!result) return;
+    DialogLoading.show(Get.context!);
+    final response = await ApiCommon.post(
+      url: ApiConst.deleteCard,
+      data: {
+        "id": card.id,
+        "uid": user.uid,
+      },
+    );
+
+    if (response.data != null) {
+      Get.back();
+      listCard.remove(card);
+      Get.context!
+          .read<DataAppProvider>()
+          .userInfoModel!
+          .paymentCards
+          .remove(card);
+    } else {
+      Get.back();
+      DialogError.show(context: Get.context!, message: response.error!.message);
+    }
+  }
+
+  Future<bool> bookSeat() async {
+    DialogLoading.show(Get.context!);
+    final response = await ApiCommon.post(
+      url: ApiConst.bookSeat,
+      data: ticket!.toJson(),
+    );
+
+    if (response.data != null) {
+      myTicketController.getListTicket();
+      Get.back();
+      Get.toNamed(RouteName.paymentSuccessScreen);
+      return true;
+    } else {
+      Get.back();
+      DialogError.show(context: Get.context!, message: response.error!.message);
+      return false;
+    }
+  }
+
+  Future<bool> checkSeat() async {
+    DialogLoading.show(Get.context!);
+    final response = await ApiCommon.post(
+      url: ApiConst.checkSeat,
+      data: ticket!.toJson(),
+    );
+
+    if (response.data != null) {
+      Get.back();
+      if (!response.data) {
+        DialogError.show(
+          context: Get.context!,
+          message: "Ghế đã được đặt, vui lòng chọn lại",
+        );
+      }
+      return response.data;
+    } else {
+      Get.back();
+      DialogError.show(context: Get.context!, message: response.error!.message);
+      return false;
+    }
   }
 }

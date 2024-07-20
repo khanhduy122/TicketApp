@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:ticket_app/components/dialogs/dialog_completed.dart';
-import 'package:ticket_app/components/routes/route_name.dart';
+import 'package:ticket_app/core/dialogs/dialog_completed.dart';
+import 'package:ticket_app/core/routes/route_name.dart';
 import 'package:ticket_app/screen/forgot_password/forgot_password_controller.dart';
 import 'package:ticket_app/widgets/appbar_widget.dart';
 import 'package:ticket_app/widgets/button_widget.dart';

@@ -3,120 +3,68 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ticket_app/components/const/app_colors.dart';
-import 'package:ticket_app/components/const/app_styles.dart';
-import 'package:ticket_app/components/const/logger.dart';
-import 'package:ticket_app/components/dialogs/dialog_completed.dart';
-import 'package:ticket_app/components/dialogs/dialog_error.dart';
-import 'package:ticket_app/components/dialogs/dialog_loading.dart';
-import 'package:ticket_app/components/exceptions/exception.dart';
-import 'package:ticket_app/components/routes/route_name.dart';
+import 'package:ticket_app/core/const/app_colors.dart';
+import 'package:ticket_app/core/const/app_styles.dart';
+import 'package:ticket_app/core/const/logger.dart';
+import 'package:ticket_app/core/dialogs/dialog_completed.dart';
+import 'package:ticket_app/core/dialogs/dialog_error.dart';
+import 'package:ticket_app/core/dialogs/dialog_loading.dart';
+import 'package:ticket_app/core/exceptions/exception.dart';
+import 'package:ticket_app/core/routes/route_name.dart';
 import 'package:ticket_app/models/ticket.dart';
-import 'package:ticket_app/moduels/review/review_bloc.dart';
-import 'package:ticket_app/moduels/review/review_event.dart';
-import 'package:ticket_app/moduels/review/review_state.dart';
+import 'package:ticket_app/screen/write_review_screen/write_review_controller.dart';
 import 'package:ticket_app/widgets/appbar_widget.dart';
 import 'package:ticket_app/widgets/button_widget.dart';
 
-class WriteReviewScreen extends StatefulWidget {
-  const WriteReviewScreen({super.key, required this.ticket});
-
-  final Ticket ticket;
-
-  @override
-  State<WriteReviewScreen> createState() => _WriteReviewScreenState();
-}
-
-class _WriteReviewScreenState extends State<WriteReviewScreen> {
-  int rating = 0;
-  String contentReview = "";
-  List<File> imagesSelected = [];
-  ReviewBloc reviewBloc = ReviewBloc();
+class WriteReviewScreen extends GetView<WriteReviewController> {
+  const WriteReviewScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener(
-      bloc: reviewBloc,
-      listener: (context, state) {
-        if (state is AddReviewState) {
-          if (state.isLoading == true) {
-            DialogLoading.show(context);
-          }
-          if (state.isSuccess == true) {
-            Navigator.pop(context);
-            DialogConpleted.show(
-                context: context,
-                message: "Cảm ơn bạn đã đánh giá",
-                onTap: () {
-                  Navigator.of(context).popUntil(
-                    (route) => route.settings.name == RouteName.mainScreen,
-                  );
-                });
-          }
-          if (state.error != null) {
-            Navigator.pop(context);
-            if (state.error is TimeOutException) {
-              DialogError.show(
-                  context: context,
-                  message:
-                      "Đã có lỗi xẩy ra, vui lòng kiểm tra lại đường truyền");
-            } else {
-              DialogError.show(
-                  context: context,
-                  message: "Đã có lỗi xảy ra vui lòng thử lại sao");
-            }
-          }
-        }
-      },
-      child: Scaffold(
-        appBar: appBarWidget(title: widget.ticket.movie!.name!),
-        body: SafeArea(
-            child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 20.h,
+    return Scaffold(
+      appBar: appBarWidget(title: controller.ticket.movie!.name!),
+      body: SafeArea(
+          child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                height: 20.h,
+              ),
+              _buildRatingBar(),
+              SizedBox(
+                height: 20.h,
+              ),
+              _buildReviewField(),
+              SizedBox(
+                height: 20.h,
+              ),
+              _buildButtonSelectImage(),
+              SizedBox(
+                height: 10.h,
+              ),
+              _buildImageSelected(),
+              SizedBox(
+                height: 40.h,
+              ),
+              Obx(
+                () => ButtonWidget(
+                  title: "Đánh Giá",
+                  height: 50.h,
+                  width: 250.w,
+                  color: controller.rating.value == 0
+                      ? AppColors.darkBackground
+                      : AppColors.buttonColor,
+                  onPressed: () => controller.addReview(),
                 ),
-                _buildRatingBar(),
-                SizedBox(
-                  height: 20.h,
-                ),
-                _buildReviewField(),
-                SizedBox(
-                  height: 20.h,
-                ),
-                _buildButtonSelectImage(),
-                SizedBox(
-                  height: 10.h,
-                ),
-                _buildImageSelected(),
-                SizedBox(
-                  height: 40.h,
-                ),
-                ButtonWidget(
-                    title: "Đánh Giá",
-                    height: 50.h,
-                    width: 250.w,
-                    color: rating == 0
-                        ? AppColors.darkBackground
-                        : AppColors.buttonColor,
-                    onPressed: () {
-                      if (rating != 0) {
-                        reviewBloc.add(AddReviewEvent(
-                            contentReview: contentReview,
-                            rating: rating,
-                            images: imagesSelected,
-                            ticket: widget.ticket));
-                      }
-                    })
-              ],
-            ),
+              )
+            ],
           ),
-        )),
-      ),
+        ),
+      )),
     );
   }
 
@@ -140,9 +88,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
           ),
           unratedColor: AppColors.grey,
           onRatingUpdate: (ratingChange) {
-            setState(() {
-              rating = ratingChange.toInt();
-            });
+            controller.rating.value = ratingChange.toInt();
           },
         ),
       ],
@@ -159,9 +105,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
       child: TextField(
         maxLines: 100,
         onChanged: (value) {
-          setState(() {
-            contentReview = value;
-          });
+          controller.contentReview = value;
         },
         style: AppStyle.defaultStyle.copyWith(fontSize: 14.sp),
         decoration: InputDecoration(
@@ -175,7 +119,7 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
 
   Widget _buildButtonSelectImage() {
     return GestureDetector(
-      onTap: _onTapSelectPhoto,
+      onTap: () => controller.onTapSelectPhoto(),
       child: Container(
           height: 50.h,
           decoration: BoxDecoration(
@@ -204,63 +148,46 @@ class _WriteReviewScreenState extends State<WriteReviewScreen> {
   }
 
   Widget _buildImageSelected() {
-    return SizedBox(
-      height: 70.h,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: imagesSelected.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: EdgeInsets.only(right: 10.w),
-            child: Stack(
-              children: [
-                Container(
-                  height: 70.h,
-                  width: 70.w,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      image: DecorationImage(
-                          image: FileImage(imagesSelected[index]),
-                          fit: BoxFit.cover)),
-                ),
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        imagesSelected.removeAt(index);
-                      });
-                    },
-                    child: Icon(
-                      Icons.close,
-                      color: AppColors.white,
-                      size: 20.w,
-                    ),
+    return Obx(
+      () => SizedBox(
+        height: 70.h,
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: controller.imagesSelected.length,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: EdgeInsets.only(right: 10.w),
+              child: Stack(
+                children: [
+                  Container(
+                    height: 70.h,
+                    width: 70.w,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        image: DecorationImage(
+                            image: FileImage(controller.imagesSelected[index]),
+                            fit: BoxFit.cover)),
                   ),
-                )
-              ],
-            ),
-          );
-        },
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: GestureDetector(
+                      onTap: () {
+                        controller.imagesSelected.removeAt(index);
+                      },
+                      child: Icon(
+                        Icons.close,
+                        color: AppColors.white,
+                        size: 20.w,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
-  }
-
-  void _onTapSelectPhoto() async {
-    try {
-      final ImagePicker picker = ImagePicker();
-      final List<XFile> image = await picker.pickMultiImage();
-      if (image.isNotEmpty) {
-        setState(() {
-          imagesSelected.addAll(image.map((e) => File(e.path)).toList());
-          debugLog(imagesSelected.length.toString());
-        });
-      }
-    } catch (e) {
-      imagesSelected = [];
-      setState(() {});
-      debugLog(e.toString());
-    }
   }
 }

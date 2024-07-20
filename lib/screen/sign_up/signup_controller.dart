@@ -6,13 +6,13 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:ticket_app/components/const/logger.dart';
-import 'package:ticket_app/components/dialogs/dialog_confirm.dart';
-import 'package:ticket_app/components/dialogs/dialog_error.dart';
-import 'package:ticket_app/components/dialogs/dialog_loading.dart';
-import 'package:ticket_app/components/exceptions/exception.dart';
-import 'package:ticket_app/components/routes/route_name.dart';
-import 'package:ticket_app/components/utils/upload_file_utils.dart';
+import 'package:ticket_app/core/const/logger.dart';
+import 'package:ticket_app/core/dialogs/dialog_confirm.dart';
+import 'package:ticket_app/core/dialogs/dialog_error.dart';
+import 'package:ticket_app/core/dialogs/dialog_loading.dart';
+import 'package:ticket_app/core/exceptions/exception.dart';
+import 'package:ticket_app/core/routes/route_name.dart';
+import 'package:ticket_app/core/utils/upload_file_utils.dart';
 
 class SignupController extends GetxController {
   final TextEditingController fullNameController = TextEditingController();
@@ -112,7 +112,7 @@ class SignupController extends GetxController {
 
       if (imageSelected.value != null) {
         final photoUrl =
-            await UploadFileUtils.uploadAvata(imageSelected.value!);
+            await UploadFileUtils.uploadAvatar(imageSelected.value!);
         user.updatePhotoURL(photoUrl);
       }
       user.updateDisplayName(fullNameController.text);

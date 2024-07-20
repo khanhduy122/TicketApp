@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:ticket_app/components/utils/datetime_util.dart';
+import 'package:ticket_app/core/utils/datetime_util.dart';
 import 'package:ticket_app/models/cinema.dart';
+import 'package:ticket_app/models/enum_model.dart';
 import 'package:ticket_app/models/movie.dart';
 part 'showtimes.g.dart';
 
@@ -10,28 +11,30 @@ class Showtimes {
   Cinema? cinema;
   List<Time> times;
   DateTime dateTime;
+  MovieType type;
 
   Showtimes({
     required this.times,
     required this.dateTime,
+    required this.type,
     this.cinema,
     this.movie,
   });
 
   static Showtimes fromJson(Map<String, dynamic> json) => Showtimes(
-        times: (json['times'] as List<dynamic>)
-            .map((e) => Time.fromJson(e as Map<String, dynamic>))
-            .toList(),
-        cinema: json['cinema'] == null
-            ? null
-            : Cinema.fromJson(json['cinema'] as Map<String, dynamic>),
-        movie: json['movie'] == null
-            ? null
-            : Movie.fromJson(json['movie'] as Map<String, dynamic>),
-        dateTime: DateTimeUtil.stringToDateTime(
-          json['date'],
-        ),
-      );
+      times: (json['times'] as List<dynamic>)
+          .map((e) => Time.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      cinema: json['cinema'] == null
+          ? null
+          : Cinema.fromJson(json['cinema'] as Map<String, dynamic>),
+      movie: json['movie'] == null
+          ? null
+          : Movie.fromJson(json['movie'] as Map<String, dynamic>),
+      dateTime: DateTimeUtil.stringToDateTime(
+        json['date'],
+      ),
+      type: stringToMovieType(json['type']));
 
   Map<String, dynamic> toJson() => _$ShowtimesToJson(this);
 }

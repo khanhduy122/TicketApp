@@ -14,7 +14,7 @@ Review _$ReviewFromJson(Map<String, dynamic> json) => Review(
       images:
           (json['images'] as List<dynamic>?)?.map((e) => e as String).toList(),
       rating: (json['rating'] as num).toDouble(),
-      timestamp: json['timestamp'] as int,
+      timestamp: (json['timestamp'] as num).toInt(),
     );
 
 Map<String, dynamic> _$ReviewToJson(Review instance) => <String, dynamic>{

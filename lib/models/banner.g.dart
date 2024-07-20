@@ -9,7 +9,7 @@ part of 'banner.dart';
 BannerHome _$BannerHomeFromJson(Map<String, dynamic> json) => BannerHome(
       id: json['_id'] as String,
       thumbnail: json['thumbnail'] as String,
-      type: json['type'] as int,
+      type: (json['type'] as num).toInt(),
       movieId: json['movieId'] as String?,
       offers: json['offers'] == null
           ? null

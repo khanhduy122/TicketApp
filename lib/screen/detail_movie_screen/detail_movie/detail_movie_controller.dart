@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ticket_app/components/api/api_common.dart';
-import 'package:ticket_app/components/api/api_const.dart';
-import 'package:ticket_app/components/const/logger.dart';
-import 'package:ticket_app/components/const/net_work_info.dart';
+import 'package:provider/provider.dart';
+import 'package:ticket_app/core/api/api_common.dart';
+import 'package:ticket_app/core/api/api_const.dart';
+import 'package:ticket_app/core/const/logger.dart';
+import 'package:ticket_app/core/const/net_work_info.dart';
+import 'package:ticket_app/core/dialogs/dialog_error.dart';
+import 'package:ticket_app/core/routes/route_name.dart';
+import 'package:ticket_app/core/utils/datetime_util.dart';
+import 'package:ticket_app/models/data_app_provider.dart';
+import 'package:ticket_app/models/enum_model.dart';
 import 'package:ticket_app/models/movie.dart';
 import 'package:ticket_app/models/review.dart';
 
@@ -13,14 +19,15 @@ class DetailMovieController extends GetxController
   RxBool isLoading = false.obs;
   RxString messageFaild = ''.obs;
   final movie = Get.arguments as Movie;
-  late final TabController tabController = TabController(
-    length: 2,
-    vsync: this,
-  );
+  late final TabController tabController;
 
   @override
   void onInit() {
     getReviewMovie();
+    tabController = TabController(
+      length: 2,
+      vsync: this,
+    );
     super.onInit();
   }
 
@@ -63,5 +70,47 @@ class DetailMovieController extends GetxController
       debugLog(e.toString());
       messageFaild.value = 'Đã có lỗi xảy ra, vui lòng thử lại';
     }
+  }
+
+  void onTapBookTicket() {
+    final birthday =
+        Get.context!.read<DataAppProvider>().userInfoModel!.birthDay;
+    final dateTimeBirtday = DateTimeUtil.stringToDateTime(birthday);
+    final yearNow = DateTime.now().year;
+    final ageUser = yearNow - dateTimeBirtday.year;
+
+    switch (movie.ban!) {
+      case Ban.c13:
+        if (ageUser < 13) {
+          DialogError.show(
+            context: Get.context!,
+            message: "Bạn không đủ tuổi để có thể xem phim này",
+          );
+          return;
+        }
+
+      case Ban.c16:
+        if (ageUser < 16) {
+          DialogError.show(
+            context: Get.context!,
+            message: "Bạn không đủ tuổi để có thể xem phim này",
+          );
+        }
+        return;
+      case Ban.c18:
+        if (ageUser < 18) {
+          DialogError.show(
+            context: Get.context!,
+            message: "Bạn không đủ tuổi để có thể xem phim này",
+          );
+          return;
+        }
+      case Ban.p:
+    }
+
+    Get.toNamed(
+      RouteName.selectCinemaScreen,
+      arguments: movie,
+    );
   }
 }

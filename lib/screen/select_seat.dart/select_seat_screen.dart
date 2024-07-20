@@ -2,9 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:ticket_app/components/const/app_assets.dart';
-import 'package:ticket_app/components/const/app_colors.dart';
-import 'package:ticket_app/components/const/app_styles.dart';
+import 'package:ticket_app/core/const/app_assets.dart';
+import 'package:ticket_app/core/const/app_colors.dart';
+import 'package:ticket_app/core/const/app_styles.dart';
 import 'package:ticket_app/models/seat.dart';
 import 'package:ticket_app/screen/select_seat.dart/select_seat_controller.dart';
 import 'package:ticket_app/widgets/appbar_widget.dart';
@@ -53,7 +53,7 @@ class SelectSeatScreen extends GetView<SelectSeatController> {
               constrained: false,
               minScale: 0.1,
               maxScale: 1.0,
-              child: _buildListSeat(controller.listSeat),
+              child: _buildListSeat(),
             ),
     );
   }
@@ -155,7 +155,7 @@ class SelectSeatScreen extends GetView<SelectSeatController> {
     );
   }
 
-  Widget _buildListSeat(List<ItemSeat> seats) {
+  Widget _buildListSeat() {
     return Container(
       decoration: const BoxDecoration(color: AppColors.background),
       padding: EdgeInsets.all(200.h),
@@ -167,21 +167,24 @@ class SelectSeatScreen extends GetView<SelectSeatController> {
           SizedBox(
             height: 100.h,
           ),
-          SizedBox(
-            height: controller.room.column! * 60.h,
-            width: controller.room.row! * 60.h,
-            child: GridView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: controller.room.row!,
-                mainAxisSpacing: 10.h,
-                crossAxisSpacing: 10.h,
-                mainAxisExtent: 50.h,
+          Obx(
+            () => SizedBox(
+              height: controller.room.column! * 60.h,
+              width: controller.room.row! * 60.h,
+              child: GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: controller.room.row!,
+                  mainAxisSpacing: 10.h,
+                  crossAxisSpacing: 10.h,
+                  mainAxisExtent: 50.h,
+                ),
+                itemCount: controller.listSeat.length,
+                itemBuilder: (context, index) {
+                  final seat = controller.listSeat[index];
+                  return _buildItemSeat(seat);
+                },
               ),
-              itemCount: seats.length,
-              itemBuilder: (context, index) {
-                return _buildItemSeat(seats[index]);
-              },
             ),
           )
         ],

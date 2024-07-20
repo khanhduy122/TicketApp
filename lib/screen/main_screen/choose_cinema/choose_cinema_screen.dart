@@ -1,15 +1,16 @@
+import 'dart:math';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:provider/provider.dart';
-import 'package:ticket_app/components/const/app_assets.dart';
-import 'package:ticket_app/components/const/app_colors.dart';
-import 'package:ticket_app/components/const/app_styles.dart';
-import 'package:ticket_app/components/routes/route_name.dart';
-import 'package:ticket_app/components/service/cache_service.dart';
+import 'package:rotated_corner_decoration/rotated_corner_decoration.dart';
+import 'package:ticket_app/core/const/app_assets.dart';
+import 'package:ticket_app/core/const/app_colors.dart';
+import 'package:ticket_app/core/const/app_styles.dart';
+import 'package:ticket_app/core/routes/route_name.dart';
 import 'package:ticket_app/models/cinema.dart';
 import 'package:ticket_app/models/cities.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
@@ -192,6 +193,12 @@ class ChooseCinemaScreen extends GetView<ChooseCinemaController> {
               title: "CGV",
               isACtive: controller.currentIndexCinemaType.value == 1,
               img: AppAssets.imgCGV,
+              prices: Get.context!
+                  .read<DataAppProvider>()
+                  .ticketPrices!
+                  .cgv
+                  .ticket2D
+                  .normal,
               onTap: () {
                 controller.onSelectCinemaType(1);
               },
@@ -202,6 +209,13 @@ class ChooseCinemaScreen extends GetView<ChooseCinemaController> {
             _itemCinemaType(
               title: "Lotte",
               isACtive: controller.currentIndexCinemaType.value == 2,
+              prices: Get.context!
+                  .read<DataAppProvider>()
+                  .ticketPrices!
+                  .lotte
+                  .ticket2D
+                  .before5pm
+                  .normal,
               img: AppAssets.imgLotte,
               onTap: () {
                 controller.onSelectCinemaType(2);
@@ -213,6 +227,12 @@ class ChooseCinemaScreen extends GetView<ChooseCinemaController> {
             _itemCinemaType(
               title: "Galaxy",
               isACtive: controller.currentIndexCinemaType.value == 3,
+              prices: Get.context!
+                  .read<DataAppProvider>()
+                  .ticketPrices!
+                  .galaxy
+                  .ticket2D
+                  .before5pm,
               img: AppAssets.imgGalaxy,
               onTap: () {
                 controller.onSelectCinemaType(3);
@@ -224,25 +244,45 @@ class ChooseCinemaScreen extends GetView<ChooseCinemaController> {
     );
   }
 
-  Widget _itemCinemaType(
-      {required String title,
-      required String img,
-      required bool isACtive,
-      required Function() onTap}) {
+  Widget _itemCinemaType({
+    required String title,
+    required String img,
+    required bool isACtive,
+    required int prices,
+    required Function() onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
         children: [
           Container(
             height: 50.h,
-            width: 50.w,
+            width: 50.h,
+            foregroundDecoration: RotatedCornerDecoration.withColor(
+              color: AppColors.buttonColor,
+              badgeSize: const Size(35, 35),
+              badgeCornerRadius: Radius.circular(10.h),
+              badgePosition: BadgePosition.topEnd,
+              textSpan: TextSpan(
+                text: controller.formatPrice(prices),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 10.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.h),
-                border: Border.all(
-                    color: isACtive ? AppColors.buttonColor : AppColors.grey,
-                    width: 2.h),
-                image:
-                    DecorationImage(image: AssetImage(img), fit: BoxFit.cover)),
+              borderRadius: BorderRadius.circular(10.h),
+              border: Border.all(
+                color: isACtive ? AppColors.buttonColor : AppColors.grey,
+                width: 2.h,
+              ),
+              image: DecorationImage(
+                image: AssetImage(img),
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
           Center(
             child: Text(

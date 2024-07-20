@@ -8,12 +8,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:provider/provider.dart';
-import 'package:ticket_app/components/const/app_colors.dart';
-import 'package:ticket_app/components/routes/router.dart';
-import 'package:ticket_app/components/service/cache_service.dart';
+import 'package:ticket_app/core/const/app_colors.dart';
+import 'package:ticket_app/core/routes/router.dart';
+import 'package:ticket_app/core/service/cache_service.dart';
+import 'package:ticket_app/core/service/notification_service.dart';
 import 'package:ticket_app/firebase_options.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
-import 'package:ticket_app/moduels/user/user_bloc.dart';
 
 String prettyPrintJson(Object? json) {
   const defaultIndent = '  ';
@@ -23,6 +23,7 @@ String prettyPrintJson(Object? json) {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService.init();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -53,14 +54,7 @@ class MyApp extends StatelessWidget {
           builder: (_, child) {
             return ChangeNotifierProvider(
               create: (context) => DataAppProvider(),
-              child: MultiBlocProvider(
-                providers: [
-                  BlocProvider(
-                    create: (context) => UserBloc(),
-                  ),
-                ],
-                child: child!,
-              ),
+              child: child!,
             );
           },
         );

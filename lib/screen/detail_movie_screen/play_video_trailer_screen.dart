@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ticket_app/components/const/app_colors.dart';
+import 'package:ticket_app/core/const/app_colors.dart';
 import 'package:ticket_app/models/movie.dart';
 import 'package:ticket_app/widgets/image_network_widget.dart';
 import 'package:video_player/video_player.dart';

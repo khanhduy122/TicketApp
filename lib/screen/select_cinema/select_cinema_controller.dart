@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:ticket_app/components/api/api_common.dart';
-import 'package:ticket_app/components/api/api_const.dart';
-import 'package:ticket_app/components/dialogs/dialog_confirm.dart';
-import 'package:ticket_app/components/dialogs/dialog_error.dart';
-import 'package:ticket_app/components/routes/route_name.dart';
-import 'package:ticket_app/components/service/cache_service.dart';
-import 'package:ticket_app/components/utils/datetime_util.dart';
+import 'package:ticket_app/core/api/api_common.dart';
+import 'package:ticket_app/core/api/api_const.dart';
+import 'package:ticket_app/core/const/logger.dart';
+import 'package:ticket_app/core/dialogs/dialog_confirm.dart';
+import 'package:ticket_app/core/dialogs/dialog_error.dart';
+import 'package:ticket_app/core/routes/route_name.dart';
+import 'package:ticket_app/core/service/cache_service.dart';
+import 'package:ticket_app/core/utils/datetime_util.dart';
 import 'package:ticket_app/models/cities.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/models/enum_model.dart';
@@ -159,19 +161,20 @@ class SelectCinemaController extends GetxController {
       },
     );
 
-    if (response.data != null) {
-      if (response.data.isEmpty) {
-        showtimes = [];
-        isLoading.value = false;
-        showtimesByCinemaType.value = showtimes.sublist(0);
-        onTapCinemaType(currentSelctCinemaTypeIndex.value);
-        return true;
-      }
+    debugLog(response.data.toString());
 
+    if (response.data != null) {
       List<Showtimes> showtimesResponse = [];
       for (var element in response.data) {
-        showtimesResponse.add(Showtimes.fromJson(element));
+        final showtime = Showtimes.fromJson(element);
+        showtime.times.assignAll(filterTime(showtime));
+        debugLog(showtime.times.length.toString());
+        if (showtime.times.isNotEmpty) {
+          showtimesResponse.add(showtime);
+        }
       }
+
+      debugLog(showtimesResponse.length.toString());
 
       final status = await Permission.location.status;
       if (status.isGranted) {
@@ -180,9 +183,8 @@ class SelectCinemaController extends GetxController {
           sortShowtimes(showtimesResponse);
         }
       }
-
       showtimes.assignAll(showtimesResponse);
-      showtimesByCinemaType.value = showtimes.sublist(0);
+      showtimesByCinemaType.assignAll(showtimesResponse);
       onTapCinemaType(currentSelctCinemaTypeIndex.value);
       isLoading.value = false;
       return true;
@@ -194,6 +196,33 @@ class SelectCinemaController extends GetxController {
       );
       return false;
     }
+  }
+
+  List<Time> filterTime(Showtimes showtime) {
+    final listTimeFilter = <Time>[];
+    final now = DateTime.now();
+
+    for (var time in showtime.times) {
+      List<String> times = time.time.split(" - ");
+
+      DateFormat dateFormat = DateFormat("HH:mm");
+
+      DateTime startTime = dateFormat.parse(times[0]);
+
+      DateTime startDateTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        startTime.hour,
+        startTime.minute,
+      );
+
+      if (startDateTime.isAfter(now)) {
+        listTimeFilter.add(time);
+      }
+    }
+
+    return listTimeFilter;
   }
 
   void sortShowtimes(List<Showtimes> showtimes) {
@@ -247,5 +276,9 @@ class SelectCinemaController extends GetxController {
         "time": showtimes.times[index],
       },
     );
+  }
+
+  String formatPrice(int price) {
+    return '${price ~/ 1000}K';
   }
 }

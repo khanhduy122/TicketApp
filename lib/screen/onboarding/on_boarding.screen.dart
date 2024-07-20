@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
-import 'package:ticket_app/components/const/app_assets.dart';
-import 'package:ticket_app/components/const/app_styles.dart';
-import 'package:ticket_app/components/routes/route_name.dart';
+import 'package:ticket_app/core/const/app_assets.dart';
+import 'package:ticket_app/core/const/app_styles.dart';
+import 'package:ticket_app/core/routes/route_name.dart';
 import 'package:ticket_app/widgets/button_widget.dart';
 
 class OnBoardingScreen extends StatelessWidget {

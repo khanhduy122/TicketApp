@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ticket_app/components/const/app_colors.dart';
-import 'package:ticket_app/components/const/app_styles.dart';
+import 'package:ticket_app/core/const/app_colors.dart';
+import 'package:ticket_app/core/const/app_styles.dart';
 import 'package:ticket_app/widgets/button_back_widget.dart';
 
 AppBar appBarWidget({String? title, Color? color, Function()? onTap}) {

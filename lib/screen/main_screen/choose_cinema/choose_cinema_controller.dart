@@ -3,14 +3,14 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:ticket_app/components/api/api_common.dart';
-import 'package:ticket_app/components/api/api_const.dart';
-import 'package:ticket_app/components/const/logger.dart';
-import 'package:ticket_app/components/dialogs/dialog_confirm.dart';
-import 'package:ticket_app/components/dialogs/dialog_error.dart';
-import 'package:ticket_app/components/dialogs/dialog_loading.dart';
-import 'package:ticket_app/components/service/cache_service.dart';
-import 'package:ticket_app/components/utils/loaction_util.dart';
+import 'package:ticket_app/core/api/api_common.dart';
+import 'package:ticket_app/core/api/api_const.dart';
+import 'package:ticket_app/core/const/logger.dart';
+import 'package:ticket_app/core/dialogs/dialog_confirm.dart';
+import 'package:ticket_app/core/dialogs/dialog_error.dart';
+import 'package:ticket_app/core/dialogs/dialog_loading.dart';
+import 'package:ticket_app/core/service/cache_service.dart';
+import 'package:ticket_app/core/utils/loaction_util.dart';
 import 'package:ticket_app/models/cinema.dart';
 import 'package:ticket_app/models/cinema_city.dart';
 import 'package:ticket_app/models/cities.dart';
@@ -137,6 +137,7 @@ class ChooseCinemaController extends GetxController {
   }) async {
     if (currentCityname == null) return null;
     DialogLoading.show(Get.context!);
+
     final cinemaCityResponse = await ApiCommon.get(
       url: ApiConst.cinemaCityUrl,
       queryParameters: {
@@ -225,5 +226,9 @@ class ChooseCinemaController extends GetxController {
     currentCinemaCity.value = response;
     currentIndexCinemaType.value = 0;
     fillterCinema.value = currentCinemaCity.value!.all.sublist(0);
+  }
+
+  String formatPrice(int price) {
+    return "${price ~/ 1000}K";
   }
 }

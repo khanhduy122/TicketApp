@@ -6,18 +6,20 @@ import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/route_manager.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ticket_app/components/api/api_common.dart';
-import 'package:ticket_app/components/api/api_const.dart';
-import 'package:ticket_app/components/const/app_key.dart';
-import 'package:ticket_app/components/const/logger.dart';
-import 'package:ticket_app/components/dialogs/dialog_error.dart';
-import 'package:ticket_app/components/routes/route_name.dart';
-import 'package:ticket_app/components/service/cache_service.dart';
-import 'package:ticket_app/components/utils/loaction_util.dart';
+import 'package:ticket_app/core/api/api_common.dart';
+import 'package:ticket_app/core/api/api_const.dart';
+import 'package:ticket_app/core/const/app_key.dart';
+import 'package:ticket_app/core/const/logger.dart';
+import 'package:ticket_app/core/dialogs/dialog_error.dart';
+import 'package:ticket_app/core/routes/route_name.dart';
+import 'package:ticket_app/core/service/cache_service.dart';
+import 'package:ticket_app/core/service/notification_service.dart';
+import 'package:ticket_app/core/utils/loaction_util.dart';
 import 'package:ticket_app/models/cinema_city.dart';
 import 'package:ticket_app/models/cities.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/models/home_data.dart';
+import 'package:ticket_app/models/ticket_prices.dart';
 import 'package:ticket_app/models/user_info_model.dart';
 
 class SplashController extends GetxController {
@@ -28,7 +30,10 @@ class SplashController extends GetxController {
   }
 
   Future<void> getHomeData() async {
+    await NotificationService.requestPermission();
+
     final homeResponse = await ApiCommon.get(url: ApiConst.homeUrl);
+    await getTicketPrices();
     final result = await checkPermisstion();
     Position? position;
     String? currentCityname;
@@ -52,7 +57,8 @@ class SplashController extends GetxController {
           Get.context!.read<DataAppProvider>().cityNameCurrent =
               CacheService.getData(AppKey.cityName);
           await getCinemaCityRecommend(
-            currentCityname: currentCityname,
+            currentCityname:
+                Get.context!.read<DataAppProvider>().cityNameCurrent,
             position: position,
           );
         }
@@ -69,8 +75,7 @@ class SplashController extends GetxController {
     required String? currentCityname,
     required Position? position,
   }) async {
-    if (currentCityname == null || position == null) return null;
-    debugLog(currentCityname);
+    if (currentCityname == null && position == null) return null;
     try {
       final cinemaCityResponse = await ApiCommon.get(
         url: ApiConst.cinemaCityUrl,
@@ -79,11 +84,12 @@ class SplashController extends GetxController {
         },
       );
       final cinemaCityRecomemed = CinemaCity.fromJson(cinemaCityResponse.data);
-      getDistance(cinemaCityRecomemed, position);
-      sortCinemaCity(cinemaCityRecomemed);
+      if (position != null) {
+        getDistance(cinemaCityRecomemed, position);
+        sortCinemaCity(cinemaCityRecomemed);
+      }
       Get.context!.read<DataAppProvider>().reconmmedCinemaCity =
           cinemaCityRecomemed;
-      debugLog(cinemaCityRecomemed.cgv.length.toString());
       cities.removeAt(0);
       return cinemaCityRecomemed;
     } catch (e, s) {
@@ -183,6 +189,23 @@ class SplashController extends GetxController {
         message: response.error!.message,
       );
       return null;
+    }
+  }
+
+  Future<void> getTicketPrices() async {
+    final now = DateTime.now();
+    final response = await ApiCommon.get(
+      url: ApiConst.getTicketPrices,
+      queryParameters: {
+        "date": "${now.day}/${now.month}/${now.year}",
+      },
+    );
+
+    debugLog(response.data.toString());
+
+    if (response.data != null) {
+      Get.context!.read<DataAppProvider>().ticketPrices =
+          TicketPrices.fromJson(response.data);
     }
   }
 }

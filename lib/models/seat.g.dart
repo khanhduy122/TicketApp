@@ -20,17 +20,15 @@ Map<String, dynamic> _$SeatToJson(Seat instance) => <String, dynamic>{
 
 ItemSeat _$ItemSeatFromJson(Map<String, dynamic> json) => ItemSeat(
       name: json['name'] as String,
-      status: json['status'] as int,
+      status: (json['status'] as num).toInt(),
       typeSeat: $enumDecode(_$TypeSeatEnumMap, json['type']),
-      price: json['price'] as int,
       booked: json['booked'] as String,
-      index: json['index'] as int,
+      index: (json['index'] as num).toInt(),
     );
 
 Map<String, dynamic> _$ItemSeatToJson(ItemSeat instance) => <String, dynamic>{
       'name': instance.name,
       'status': instance.status,
-      'price': instance.price,
       'index': instance.index,
       'type': _$TypeSeatEnumMap[instance.typeSeat]!,
       'booked': instance.booked,

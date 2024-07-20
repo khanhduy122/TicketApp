@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
-import 'package:ticket_app/components/const/app_assets.dart';
+import 'package:ticket_app/core/const/app_assets.dart';
 import 'package:ticket_app/screen/splash_screen/splash_controller.dart';
 
 class SplashScreen extends GetView<SplashController> {

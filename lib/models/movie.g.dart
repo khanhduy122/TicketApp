@@ -19,28 +19,28 @@ Movie _$MovieFromJson(Map<String, dynamic> json) => Movie(
       actors: (json['actor'] as List<dynamic>?)
           ?.map((e) => Actor.fromJson(e as Map<String, dynamic>))
           .toList(),
-      totalReview: json['total_review'] as int?,
+      totalReview: (json['total_review'] as num?)?.toInt(),
       content: json['content'] as String?,
       director: json['director'] as String?,
-      duration: json['duration'] as int?,
+      duration: (json['duration'] as num?)?.toInt(),
       languages: (json['languages'] as List<dynamic>?)
           ?.map((e) => $enumDecode(_$LanguagesEnumMap, e))
           .toList(),
       nation: json['nation'] as String?,
-      premiere: json['premiere'] as String?,
       rating: (json['rating'] as num?)?.toDouble(),
       reviews: (json['reviews'] as List<dynamic>?)
           ?.map((e) => Review.fromJson(e as Map<String, dynamic>))
           .toList(),
-      status: json['status'] as int?,
+      status: (json['status'] as num?)?.toInt(),
       trailer: json['trailer'] as String?,
     )
-      ..totalOneRating = json['total_one_rating'] as int?
-      ..totalTwoRating = json['total_two_rating'] as int?
-      ..totalThreeRating = json['total_three_rating'] as int?
-      ..totalFourRating = json['total_four_rating'] as int?
-      ..totalFiveRating = json['total_five_rating'] as int?
-      ..totalRatingWithPicture = json['total_rating_picture'] as int?;
+      ..totalOneRating = (json['total_one_rating'] as num?)?.toInt()
+      ..totalTwoRating = (json['total_two_rating'] as num?)?.toInt()
+      ..totalThreeRating = (json['total_three_rating'] as num?)?.toInt()
+      ..totalFourRating = (json['total_four_rating'] as num?)?.toInt()
+      ..totalFiveRating = (json['total_five_rating'] as num?)?.toInt()
+      ..totalRatingWithPicture =
+          (json['total_rating_picture'] as num?)?.toInt();
 
 Map<String, dynamic> _$MovieToJson(Movie instance) => <String, dynamic>{
       '_id': instance.id,
@@ -52,7 +52,6 @@ Map<String, dynamic> _$MovieToJson(Movie instance) => <String, dynamic>{
       'ban': _$BanEnumMap[instance.ban],
       'date': instance.date,
       'rating': instance.rating,
-      'premiere': instance.premiere,
       'duration': instance.duration,
       'languages':
           instance.languages?.map((e) => _$LanguagesEnumMap[e]!).toList(),

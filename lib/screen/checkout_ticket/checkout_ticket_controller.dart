@@ -1,11 +1,9 @@
 import 'dart:async';
-
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:ticket_app/components/api/api_common.dart';
-import 'package:ticket_app/components/api/api_const.dart';
-import 'package:ticket_app/components/const/logger.dart';
-import 'package:ticket_app/components/routes/route_name.dart';
+import 'package:ticket_app/core/api/api_common.dart';
+import 'package:ticket_app/core/api/api_const.dart';
+import 'package:ticket_app/core/routes/route_name.dart';
 import 'package:ticket_app/models/voucher.dart';
 
 import '../../models/ticket.dart';
@@ -76,14 +74,13 @@ class CheckoutTicketController extends GetxController {
   Future<void> cancelSeat() async {
     final data = {
       'listSeat': ticket.seats!.map((element) => element.index).toList(),
-      'id': ticket.showtimes,
+      'showtimesId': ticket.showtimes,
+      'uid': ticket.uid
     };
 
     ApiCommon.post(
       url: ApiConst.cancelSeat,
       data: data,
     );
-
-    // Get.back(result: 'cancel');
   }
 }

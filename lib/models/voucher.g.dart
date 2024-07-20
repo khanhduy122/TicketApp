@@ -9,12 +9,12 @@ part of 'voucher.dart';
 Voucher _$VoucherFromJson(Map<String, dynamic> json) => Voucher(
       id: json['id'] as String,
       title: json['title'] as String,
-      expiredTime: json['expiredTime'] as int,
+      expiredTime: (json['expiredTime'] as num).toInt(),
       informations: json['informations'] as String,
-      priceDiscount: json['priceDiscount'] as int,
-      applyInvoices: json['applyInvoices'] as int,
-      startTime: json['startTime'] as int,
-      appliesToCinemas: json['appliesToCinemas'] as int,
+      priceDiscount: (json['priceDiscount'] as num).toInt(),
+      applyInvoices: (json['applyInvoices'] as num).toInt(),
+      startTime: (json['startTime'] as num).toInt(),
+      appliesToCinemas: (json['appliesToCinemas'] as num).toInt(),
     );
 
 Map<String, dynamic> _$VoucherToJson(Voucher instance) => <String, dynamic>{

@@ -11,6 +11,7 @@ Showtimes _$ShowtimesFromJson(Map<String, dynamic> json) => Showtimes(
           .map((e) => Time.fromJson(e as Map<String, dynamic>))
           .toList(),
       dateTime: DateTime.parse(json['dateTime'] as String),
+      type: $enumDecode(_$MovieTypeEnumMap, json['type']),
       cinema: json['cinema'] == null
           ? null
           : Cinema.fromJson(json['cinema'] as Map<String, dynamic>),
@@ -24,7 +25,14 @@ Map<String, dynamic> _$ShowtimesToJson(Showtimes instance) => <String, dynamic>{
       'cinema': instance.cinema,
       'times': instance.times,
       'dateTime': instance.dateTime.toIso8601String(),
+      'type': _$MovieTypeEnumMap[instance.type]!,
     };
+
+const _$MovieTypeEnumMap = {
+  MovieType.movie2D: 'movie2D',
+  MovieType.movie3D: 'movie3D',
+  MovieType.movieIMAX: 'movieIMAX',
+};
 
 Time _$TimeFromJson(Map<String, dynamic> json) => Time(
       id: json['_id'] as String,

@@ -31,20 +31,17 @@ class Cinema {
 
   factory Cinema.fromJson(Map<String, dynamic> json) => _$CinemaFromJson(json);
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'thumbnail': thumbnail,
-      'name': name,
-      'type': type.name.toString(),
-      'cityName': cityName,
-      'rooms': rooms?.map((room) => room.toJson()).toList(),
-      'lat': lat,
-      'long': long,
-      'distance': distance,
-      'address': address,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        '_id': id,
+        'thumbnail': thumbnail,
+        'name': name,
+        'cityName': cityName,
+        'type': type.name,
+        'rooms': rooms!.map((e) => e.toJson()).toList(),
+        'lat': lat,
+        'long': long,
+        'address': address,
+      };
 
   Cinema clone() {
     return Cinema(

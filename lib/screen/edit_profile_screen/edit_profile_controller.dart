@@ -6,15 +6,15 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:ticket_app/components/api/api_common.dart';
-import 'package:ticket_app/components/api/api_const.dart';
-import 'package:ticket_app/components/const/logger.dart';
-import 'package:ticket_app/components/const/net_work_info.dart';
-import 'package:ticket_app/components/dialogs/dialog_confirm.dart';
-import 'package:ticket_app/components/dialogs/dialog_error.dart';
-import 'package:ticket_app/components/dialogs/dialog_loading.dart';
-import 'package:ticket_app/components/utils/datetime_util.dart';
-import 'package:ticket_app/components/utils/upload_file_utils.dart';
+import 'package:ticket_app/core/api/api_common.dart';
+import 'package:ticket_app/core/api/api_const.dart';
+import 'package:ticket_app/core/const/logger.dart';
+import 'package:ticket_app/core/const/net_work_info.dart';
+import 'package:ticket_app/core/dialogs/dialog_confirm.dart';
+import 'package:ticket_app/core/dialogs/dialog_error.dart';
+import 'package:ticket_app/core/dialogs/dialog_loading.dart';
+import 'package:ticket_app/core/utils/datetime_util.dart';
+import 'package:ticket_app/core/utils/upload_file_utils.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/models/user_info_model.dart';
 import 'package:ticket_app/screen/main_screen/profile/profile_controller.dart';
@@ -114,7 +114,7 @@ class EditProfileController extends GetxController {
       DialogLoading.show(Get.context!);
       String? photoUrl;
       if (imageSelected.value != null) {
-        photoUrl = await UploadFileUtils.uploadAvata(imageSelected.value!);
+        photoUrl = await UploadFileUtils.uploadAvatar(imageSelected.value!);
       }
 
       final data = {

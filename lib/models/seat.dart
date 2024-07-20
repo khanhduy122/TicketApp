@@ -21,7 +21,6 @@ class Seat {
 class ItemSeat {
   String name;
   int status;
-  int price;
   int index;
   @JsonKey(name: "type")
   TypeSeat typeSeat;
@@ -31,7 +30,6 @@ class ItemSeat {
       {required this.name,
       required this.status,
       required this.typeSeat,
-      required this.price,
       required this.booked,
       required this.index});
 

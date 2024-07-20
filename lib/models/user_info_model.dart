@@ -9,7 +9,7 @@ class UserInfoModel {
   final String photoUrl;
   final String displayName;
   final String birthDay;
-  final List<PaymentCard> paymentCards;
+  List<PaymentCard> paymentCards;
 
   UserInfoModel(
       {required this.uid,

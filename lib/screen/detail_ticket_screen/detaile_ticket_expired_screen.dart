@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:ticket_app/components/const/app_colors.dart';
-import 'package:ticket_app/components/const/app_styles.dart';
-import 'package:ticket_app/components/routes/route_name.dart';
+import 'package:ticket_app/core/const/app_colors.dart';
+import 'package:ticket_app/core/const/app_styles.dart';
+import 'package:ticket_app/core/routes/route_name.dart';
 import 'package:ticket_app/models/ticket.dart';
 import 'package:ticket_app/widgets/appbar_widget.dart';
 import 'package:ticket_app/widgets/button_widget.dart';
@@ -12,10 +13,7 @@ import 'package:ticket_app/widgets/image_network_widget.dart';
 class DetailTicketExpiredScreen extends StatefulWidget {
   const DetailTicketExpiredScreen({
     super.key,
-    required this.ticket,
   });
-
-  final Ticket ticket;
 
   @override
   State<DetailTicketExpiredScreen> createState() =>
@@ -23,6 +21,7 @@ class DetailTicketExpiredScreen extends StatefulWidget {
 }
 
 class _DetailTicketExpiredScreenState extends State<DetailTicketExpiredScreen> {
+  final ticket = Get.arguments as Ticket;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,8 +61,7 @@ class _DetailTicketExpiredScreenState extends State<DetailTicketExpiredScreen> {
                   height: 50.h,
                   width: 250.w,
                   onPressed: () {
-                    Navigator.pushNamed(context, RouteName.writeReviewScreen,
-                        arguments: widget.ticket);
+                    Get.toNamed(RouteName.writeReviewScreen, arguments: ticket);
                   })
             ],
           ),
@@ -79,7 +77,7 @@ class _DetailTicketExpiredScreenState extends State<DetailTicketExpiredScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ImageNetworkWidget(
-            url: widget.ticket.movie!.thumbnail!,
+            url: ticket.movie!.thumbnail!,
             height: 150.h,
             width: 100.w,
             boxFit: BoxFit.fill,
@@ -94,7 +92,7 @@ class _DetailTicketExpiredScreenState extends State<DetailTicketExpiredScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  widget.ticket.movie!.name!,
+                  ticket.movie!.name!,
                   maxLines: 3,
                   style: AppStyle.subTitleStyle,
                 ),
@@ -102,7 +100,7 @@ class _DetailTicketExpiredScreenState extends State<DetailTicketExpiredScreen> {
                   height: 10.h,
                 ),
                 Text(
-                  widget.ticket.movie!.getCaterogies(),
+                  ticket.movie!.getCaterogies(),
                   maxLines: 3,
                   style: AppStyle.defaultStyle,
                 ),
@@ -110,7 +108,7 @@ class _DetailTicketExpiredScreenState extends State<DetailTicketExpiredScreen> {
                   height: 10.h,
                 ),
                 Text(
-                  "${widget.ticket.movie!.duration} phút",
+                  "${ticket.movie!.duration} phút",
                   style: AppStyle.defaultStyle,
                 ),
               ],
@@ -126,16 +124,17 @@ class _DetailTicketExpiredScreenState extends State<DetailTicketExpiredScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildItemInformation(title: "ID: ", value: widget.ticket.id!),
+          _buildItemInformation(title: "ID: ", value: ticket.ticketId!),
+          _buildItemInformation(title: "Rạp: ", value: ticket.cinema!.name),
           _buildItemInformation(
-              title: "Rạp: ", value: widget.ticket.cinema!.name),
+            title: "Ngày giờ: ",
+            value: ticket.formatDateTime(),
+          ),
+          _buildItemInformation(title: "Ghế: ", value: ticket.getSeatString()),
           _buildItemInformation(
-              title: "Ngày giờ: ", value: widget.ticket.formatDateTime()),
-          _buildItemInformation(
-              title: "Ghế: ", value: widget.ticket.getSeatString()),
-          _buildItemInformation(
-              title: "Tổng tiền: ",
-              value: "${formatPrice(widget.ticket.price!)} VND"),
+            title: "Tổng tiền: ",
+            value: "${formatPrice(ticket.price!)} VND",
+          ),
         ],
       ),
     );
