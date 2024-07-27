@@ -58,7 +58,7 @@ class SelectCardController extends GetxController {
             _onChangeUrl(change.url ?? "");
           },
           onPageFinished: (url) {
-            debugLog("onPageFinished");
+            debugLog("onPageFinished: $url");
             isLoadingWebView.value = false;
           },
           onWebResourceError: (error) {
@@ -101,6 +101,7 @@ class SelectCardController extends GetxController {
   }
 
   void _handlePaymentResult(String responseCode) {
+    debugLog(responseCode);
     if (responseCode == "00") {
       bookSeat();
 
@@ -139,6 +140,7 @@ class SelectCardController extends GetxController {
   }
 
   void _handleErrorPayment(String errorCode) {
+    debugLog(errorCode);
     switch (errorCode) {
       case "02":
         DialogError.show(
@@ -161,7 +163,7 @@ class SelectCardController extends GetxController {
         );
         break;
       case "24":
-        ticket!.ticketId = DateTime.now().microsecondsSinceEpoch.toString();
+        ticket!.ticketId = DateTime.now().millisecondsSinceEpoch.toString();
         break;
     }
   }
@@ -323,7 +325,7 @@ class SelectCardController extends GetxController {
       "vnp_version": VpnKey.version,
       "vnp_command": "token_pay",
       "vnp_tmn_code": VpnKey.tmnCode,
-      "vnp_txn_ref": ticket!.ticketId,
+      "vnp_txn_ref": ticket!.ticketId.toString(),
       "vnp_app_user_id": FirebaseAuth.instance.currentUser!.uid,
       "vnp_token": listCard[currentIndex.value].token,
       "vnp_amount": (ticket!.price! * 100).toString(),

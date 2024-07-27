@@ -16,6 +16,8 @@ import 'package:ticket_app/screen/select_card/select_card_binding.dart';
 import 'package:ticket_app/screen/select_card/select_card_screen.dart';
 import 'package:ticket_app/screen/select_cinema/select_cinema_binding.dart';
 import 'package:ticket_app/screen/select_cinema/select_cinema_screen.dart';
+import 'package:ticket_app/screen/select_food/select_food_binding.dart';
+import 'package:ticket_app/screen/select_food/select_food_screen.dart';
 import 'package:ticket_app/screen/select_movie/select_movie_binding.dart';
 import 'package:ticket_app/screen/select_movie/select_movie_screen.dart';
 import 'package:ticket_app/screen/select_seat.dart/select_seat_binding.dart';
@@ -149,6 +151,11 @@ class AppRoutes {
       name: RouteName.writeReviewScreen,
       page: WriteReviewScreen.new,
       binding: WriteReviewBinding(),
+    ),
+    GetPage(
+      name: RouteName.selectFoodScreen,
+      page: SelectFoodScreen.new,
+      binding: SelectFoodBinding(),
     ),
   ];
 }

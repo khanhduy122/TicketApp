@@ -28,6 +28,9 @@ Ticket _$TicketFromJson(Map<String, dynamic> json) => Ticket(
       voucher: json['voucher'] == null
           ? null
           : Voucher.fromJson(json['voucher'] as Map<String, dynamic>),
+      foods: (json['foods'] as List<dynamic>?)
+          ?.map((e) => FoodItem.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$TicketToJson(Ticket instance) => <String, dynamic>{
@@ -37,6 +40,7 @@ Map<String, dynamic> _$TicketToJson(Ticket instance) => <String, dynamic>{
       'price': instance.price,
       'uid': instance.uid,
       'seats': instance.seats,
+      'foods': instance.foods,
       'date': instance.date?.toIso8601String(),
       'showtimes': instance.showtimes,
       'voucher': instance.voucher,

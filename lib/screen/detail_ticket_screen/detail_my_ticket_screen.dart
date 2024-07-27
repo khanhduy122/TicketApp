@@ -56,7 +56,7 @@ class _DetailMyTicketScreenState extends State<DetailMyTicketScreen> {
           Expanded(
             flex: 3,
             child: QrImageView(
-              data: ticket.ticketId!,
+              data: ticket.ticketId!.toString(),
               backgroundColor: AppColors.white,
               version: QrVersions.auto,
             ),
@@ -120,7 +120,8 @@ class _DetailMyTicketScreenState extends State<DetailMyTicketScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildItemInformation(title: "ID: ", value: ticket.ticketId!),
+          _buildItemInformation(
+              title: "ID: ", value: ticket.ticketId!.toString()),
           _buildItemInformation(title: "Rạp: ", value: ticket.cinema!.name),
           _buildItemInformation(
             title: "Ngày giờ: ",

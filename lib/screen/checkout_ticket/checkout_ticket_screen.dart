@@ -205,10 +205,25 @@ class CheckoutTicketScreen extends GetView<CheckoutTicketController> {
         ),
         SizedBox(height: 20.h),
         _buildItemInformation(
+          title: "Giá vé: ",
+          value: controller.formatPrice(
+            controller.ticket.price! - controller.getPriceFood(),
+          ),
+        ),
+        SizedBox(height: 20.h),
+        _buildItemInformation(
+          title: "Combo bắp nước: ",
+          value: controller.ticket.foods == null ||
+                  controller.ticket.foods!.isEmpty
+              ? "0 VND"
+              : "${controller.formatPrice(controller.getPriceFood())} VND",
+        ),
+        SizedBox(height: 20.h),
+        _buildItemInformation(
           title: "Giảm giá: ",
           value: controller.voucherSelected.value == null
               ? "0 VND"
-              : "- ${controller.formatPrice(controller.voucherSelected.value!.priceDiscount)} VND",
+              : "${controller.formatPrice(controller.voucherSelected.value!.priceDiscount)} VND",
         ),
         SizedBox(height: 20.h),
         _buildItemInformation(

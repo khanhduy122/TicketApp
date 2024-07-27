@@ -124,7 +124,8 @@ class _DetailTicketExpiredScreenState extends State<DetailTicketExpiredScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildItemInformation(title: "ID: ", value: ticket.ticketId!),
+          _buildItemInformation(
+              title: "ID: ", value: ticket.ticketId!.toString()),
           _buildItemInformation(title: "Rạp: ", value: ticket.cinema!.name),
           _buildItemInformation(
             title: "Ngày giờ: ",

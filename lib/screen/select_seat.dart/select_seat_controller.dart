@@ -241,7 +241,7 @@ class SelectSeatController extends GetxController {
     final result = await keepSeat();
     if (!result) return;
     final ticket = Ticket(
-      ticketId: DateTime.now().microsecondsSinceEpoch.toString(),
+      ticketId: DateTime.now().millisecondsSinceEpoch.toString(),
       cinema: cinema,
       date: showtimes.dateTime,
       movie: movie,
@@ -253,7 +253,7 @@ class SelectSeatController extends GetxController {
     );
 
     await Get.toNamed(
-      RouteName.checkoutTicketScreen,
+      RouteName.selectFoodScreen,
       arguments: ticket,
     );
 

@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:ticket_app/models/food.dart';
 import 'package:ticket_app/models/seat.dart';
 import 'package:ticket_app/models/showtimes.dart';
 import 'package:ticket_app/models/voucher.dart';
@@ -14,6 +15,7 @@ class Ticket {
   int? price;
   String? uid;
   List<ItemSeat>? seats;
+  List<FoodItem>? foods;
   DateTime? date;
   Time? showtimes;
   Voucher? voucher;
@@ -30,6 +32,7 @@ class Ticket {
     this.cinema,
     this.showtimes,
     this.voucher,
+    this.foods,
   });
 
   factory Ticket.fromJson(Map<String, dynamic> json) => _$TicketFromJson(json);

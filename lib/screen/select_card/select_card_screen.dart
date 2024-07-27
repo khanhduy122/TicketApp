@@ -24,16 +24,20 @@ class SelectCardScreen extends GetView<SelectCardController> {
 
   Widget _buildWebView() {
     return Scaffold(
-      appBar: appBarWidget(
-        title: controller.titleWebView.value,
-        onTap: () {
-          controller.isShowWebview.value = false;
-        },
-      ),
-      body: Obx(
-        () => controller.isLoadingWebView.value
-            ? _buildLoading()
-            : WebViewWidget(controller: controller.webViewController),
+      // appBar: appBarWidget(
+      //   title: controller.titleWebView.value,
+      //   onTap: () {
+      //     controller.isShowWebview.value = false;
+      //     controller.webViewController.goBack();
+      //     controller.webViewController.goBack();
+      //   },
+      // ),
+      body: SafeArea(
+        child: Obx(
+          () => controller.isLoadingWebView.value
+              ? _buildLoading()
+              : WebViewWidget(controller: controller.webViewController),
+        ),
       ),
     );
   }

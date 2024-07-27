@@ -18,4 +18,5 @@ class ApiConst {
   static const deleteCard = '$baseUrl/user/delete_payment_card';
   static const getListTicket = '$baseUrl/ticket/get_list_ticket';
   static const getTicketPrices = '$baseUrl/cinema/ticket_price';
+  static const getFood = '$baseUrl/cinema/food';
 }

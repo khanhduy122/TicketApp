@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:get/get.dart';
 import 'package:ticket_app/core/const/logger.dart';
 import 'package:ticket_app/models/movie.dart';
 import 'package:ticket_app/models/ticket.dart';

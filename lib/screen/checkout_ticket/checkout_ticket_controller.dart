@@ -48,6 +48,16 @@ class CheckoutTicketController extends GetxController {
     return stringSeat.substring(0, stringSeat.length - 2);
   }
 
+  int getPriceFood() {
+    if (ticket.foods == null || ticket.foods!.isEmpty) return 0;
+
+    int totalPrice = 0;
+    for (var element in ticket.foods!) {
+      totalPrice += element.price * (element.quantity ?? 0);
+    }
+    return totalPrice;
+  }
+
   String formatPrice(int price) {
     String formattedNumber = NumberFormat.decimalPattern().format(price);
     return formattedNumber;
