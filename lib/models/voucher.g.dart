@@ -7,23 +7,27 @@ part of 'voucher.dart';
 // **************************************************************************
 
 Voucher _$VoucherFromJson(Map<String, dynamic> json) => Voucher(
-      id: json['id'] as String,
+      id: json['_id'] as String,
       title: json['title'] as String,
       expiredTime: (json['expiredTime'] as num).toInt(),
-      informations: json['informations'] as String,
-      priceDiscount: (json['priceDiscount'] as num).toInt(),
-      applyInvoices: (json['applyInvoices'] as num).toInt(),
-      startTime: (json['startTime'] as num).toInt(),
-      appliesToCinemas: (json['appliesToCinemas'] as num).toInt(),
+      applicableForBill: (json['applicableForBill'] as num).toInt(),
+      description: json['description'] as String,
+      discountAmount: (json['discountAmount'] as num).toInt(),
+      cinemaType: $enumDecodeNullable(_$CinemasTypeEnumMap, json['cinemaType']),
     );
 
 Map<String, dynamic> _$VoucherToJson(Voucher instance) => <String, dynamic>{
-      'id': instance.id,
+      '_id': instance.id,
       'title': instance.title,
       'expiredTime': instance.expiredTime,
-      'startTime': instance.startTime,
-      'informations': instance.informations,
-      'priceDiscount': instance.priceDiscount,
-      'applyInvoices': instance.applyInvoices,
-      'appliesToCinemas': instance.appliesToCinemas,
+      'discountAmount': instance.discountAmount,
+      'cinemaType': _$CinemasTypeEnumMap[instance.cinemaType],
+      'applicableForBill': instance.applicableForBill,
+      'description': instance.description,
     };
+
+const _$CinemasTypeEnumMap = {
+  CinemasType.CGV: 'CGV',
+  CinemasType.Lotte: 'Lotte',
+  CinemasType.Galaxy: 'Galaxy',
+};

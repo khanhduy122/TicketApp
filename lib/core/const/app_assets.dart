@@ -11,6 +11,9 @@ class AppAssets {
   static const String imgEmpty = "assets/images/illustration_empty.png";
   static const String imgScreen = "assets/images/img_screen.png";
   static const String imgCheck = "assets/images/img_check.png";
+  static const String imgPaymentSuccess =
+      "assets/images/illustration_payment_success.png";
+  static const String imgLogoVoucher = "assets/images/ic_logo_voucher.png";
 
   //Icons
   static const String icBack = "assets/icons/ic_back.png";
@@ -34,6 +37,9 @@ class AppAssets {
   static const String icMovieUnActive = "assets/icons/ic_movie_unactive.png";
   static const String icVietinbank = "assets/icons/ic_vietinbank.png";
   static const String icNCB = "assets/icons/ic_ncb.png";
+  static const String icCGV = "assets/icons/ic_cgv.jpg";
+  static const String icGalaxy = "assets/icons/ic_galaxy.png";
+  static const String icLotte = "assets/icons/ic_lotte.jpg";
 
   // json
   static const String jsonLoading = "assets/jsons/loading.json";

@@ -239,6 +239,9 @@ class SelectSeatController extends GetxController {
 
   Future<void> onTapBookTicket() async {
     final result = await keepSeat();
+    seatsSelected.sort(
+      (a, b) => a.index.compareTo(b.index),
+    );
     if (!result) return;
     final ticket = Ticket(
       ticketId: DateTime.now().millisecondsSinceEpoch.toString(),

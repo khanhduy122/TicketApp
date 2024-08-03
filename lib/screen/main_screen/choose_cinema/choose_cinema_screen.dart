@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -367,7 +368,7 @@ class ChooseCinemaScreen extends GetView<ChooseCinemaController> {
                               ),
                               Text(
                                 "Không có rạp phim",
-                                style: AppStyle.titleStyle,
+                                style: AppStyle.defaultStyle,
                               )
                             ],
                           ),
@@ -386,11 +387,16 @@ class ChooseCinemaScreen extends GetView<ChooseCinemaController> {
       },
       child: Row(
         children: [
-          ImageNetworkWidget(
-            url: cinema.thumbnail,
+          SizedBox(
             height: 30.h,
             width: 30.w,
-            borderRadius: 5.h,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(5),
+              child: Image.asset(
+                cinema.getImageCinem(),
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
           SizedBox(
             width: 10.w,

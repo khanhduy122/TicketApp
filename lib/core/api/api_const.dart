@@ -1,5 +1,5 @@
 class ApiConst {
-  static const String baseUrl = 'http://127.0.0.1:8080';
+  static const String baseUrl = 'http://192.168.1.82:8080';
   static const homeUrl = '$baseUrl/home';
   static const cinemaCityUrl = '$baseUrl/cinema';
   static const allReview = '$baseUrl/review';
@@ -16,6 +16,7 @@ class ApiConst {
   static const editProfile = '$baseUrl/user/edit_profile';
   static const addPaymentCard = '$baseUrl/user/add_payment_card';
   static const deleteCard = '$baseUrl/user/delete_payment_card';
+  static const getVoucher = '$baseUrl/user/vouchers';
   static const getListTicket = '$baseUrl/ticket/get_list_ticket';
   static const getTicketPrices = '$baseUrl/cinema/ticket_price';
   static const getFood = '$baseUrl/cinema/food';

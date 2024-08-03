@@ -65,7 +65,9 @@ class MyTicketScreen extends GetView<MyTicketController> {
     return Obx(
       () => controller.isLoading.value
           ? _buildLoading()
-          : _buildListTicket(controller.ticketsNew, false),
+          : controller.isLoadFaild.value
+              ? _buildLoadFaild()
+              : _buildListTicket(controller.ticketsNew, false),
     );
   }
 
@@ -73,7 +75,19 @@ class MyTicketScreen extends GetView<MyTicketController> {
     return Obx(
       () => controller.isLoading.value
           ? _buildLoading()
-          : _buildListTicket(controller.ticketsExpired, true),
+          : controller.isLoadFaild.value
+              ? _buildLoadFaild()
+              : _buildListTicket(controller.ticketsExpired, true),
+    );
+  }
+
+  Widget _buildLoadFaild() {
+    return SizedBox.expand(
+      child: Center(
+        child: IconButton(
+            onPressed: () => controller.getListTicket(),
+            icon: const Icon(Icons.refresh)),
+      ),
     );
   }
 

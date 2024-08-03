@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:ticket_app/core/const/app_assets.dart';
 import 'package:ticket_app/core/const/app_colors.dart';
 import 'package:ticket_app/core/const/app_styles.dart';
 import 'package:ticket_app/models/showtimes.dart';
@@ -61,20 +62,22 @@ class SelectMovieScreen extends GetView<SelectMovieController> {
     return Obx(
       () => controller.isLoading.value
           ? _buildLoading()
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                    child: ListView.builder(
-                  itemCount: controller.listShowtimes.length,
-                  itemBuilder: (context, index) {
-                    return _buildListTypeTiket(
-                      showtimes: controller.listShowtimes[index],
-                    );
-                  },
-                ))
-              ],
-            ),
+          : controller.listShowtimes.isEmpty
+              ? _buildListEmpty()
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                        child: ListView.builder(
+                      itemCount: controller.listShowtimes.length,
+                      itemBuilder: (context, index) {
+                        return _buildListTypeTiket(
+                          showtimes: controller.listShowtimes[index],
+                        );
+                      },
+                    ))
+                  ],
+                ),
     );
   }
 
@@ -117,27 +120,6 @@ class SelectMovieScreen extends GetView<SelectMovieController> {
                       index,
                     ),
                   )
-                  // movieShowinginCinema.voice_2D != null
-                  //     ? BuildListShowtimnes(
-                  //         movieTimes: movieShowinginCinema.voice_2D!,
-                  //         title: "Phim 2D Lồng Tiếng",
-                  //         onTap: (time, roomID) {},
-                  //       )
-                  //     : const SizedBox(),
-                  // movieShowinginCinema.subtitle_3D != null
-                  //     ? BuildListShowtimnes(
-                  //         movieTimes: movieShowinginCinema.subtitle_3D!,
-                  //         title: "Phim 3D Phụ Đề",
-                  //         onTap: (time, roomID) {},
-                  //       )
-                  //     : const SizedBox(),
-                  // movieShowinginCinema.voice_3D != null
-                  //     ? BuildListShowtimnes(
-                  //         movieTimes: movieShowinginCinema.voice_3D!,
-                  //         title: "Phim 3D Lòng Tiếng",
-                  //         onTap: (time, roomID) {},
-                  //       )
-                  //     : const SizedBox(),
                 ],
               ),
             ),
@@ -146,6 +128,22 @@ class SelectMovieScreen extends GetView<SelectMovieController> {
         SizedBox(
           height: 20.h,
         ),
+      ],
+    );
+  }
+
+  Widget _buildListEmpty() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset(AppAssets.imgEmpty),
+        SizedBox(
+          height: 20.h,
+        ),
+        Text(
+          "Không phim nào đang chiếu tại thời điểm này",
+          style: AppStyle.defaultStyle,
+        )
       ],
     );
   }

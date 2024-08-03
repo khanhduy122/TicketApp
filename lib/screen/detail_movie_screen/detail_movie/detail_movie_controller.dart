@@ -61,6 +61,9 @@ class DetailMovieController extends GetxController
         for (var element in response.data) {
           listReviewResponse.add(Review.fromJson(element));
         }
+        listReviewResponse.sort(
+          (a, b) => b.timestamp.compareTo(a.timestamp),
+        );
         reviews.assignAll(listReviewResponse);
         messageFaild.value = '';
         isLoading.value = false;

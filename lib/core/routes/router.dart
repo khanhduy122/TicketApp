@@ -22,6 +22,8 @@ import 'package:ticket_app/screen/select_movie/select_movie_binding.dart';
 import 'package:ticket_app/screen/select_movie/select_movie_screen.dart';
 import 'package:ticket_app/screen/select_seat.dart/select_seat_binding.dart';
 import 'package:ticket_app/screen/select_seat.dart/select_seat_screen.dart';
+import 'package:ticket_app/screen/select_voucher/select_voucher_binding.dart';
+import 'package:ticket_app/screen/select_voucher/select_voucher_screen.dart';
 import 'package:ticket_app/screen/sign_in/signin_binding.dart';
 import 'package:ticket_app/screen/sign_in/signin_screen.dart';
 import 'package:ticket_app/screen/sign_up/signup_binding.dart';
@@ -39,6 +41,7 @@ import 'package:ticket_app/screen/edit_profile_screen/edit_profile_screen.dart';
 import 'package:ticket_app/screen/onboarding/on_boarding.screen.dart';
 import 'package:ticket_app/screen/splash_screen/splash_binding.dart';
 import 'package:ticket_app/screen/splash_screen/splash_screen.dart';
+import 'package:ticket_app/screen/voucher_screen/detaile_voucher_screen.dart';
 import 'package:ticket_app/screen/write_review_screen/write_review_binding.dart';
 import 'package:ticket_app/screen/write_review_screen/write_review_screen.dart';
 
@@ -156,6 +159,15 @@ class AppRoutes {
       name: RouteName.selectFoodScreen,
       page: SelectFoodScreen.new,
       binding: SelectFoodBinding(),
+    ),
+    GetPage(
+      name: RouteName.selectVoucherScreen,
+      page: SelectVoucherScreen.new,
+      binding: SelectVoucherBinding(),
+    ),
+    GetPage(
+      name: RouteName.detailVoucherScreen,
+      page: DetailVoucherScreen.new,
     ),
   ];
 }

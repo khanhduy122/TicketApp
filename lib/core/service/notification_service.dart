@@ -56,7 +56,7 @@ class NotificationService {
     tz.setLocalLocation(tz.getLocation(currentTimeZone));
 
     await _flutterLocalNotificationsPlugin.zonedSchedule(
-      int.parse(ticket.ticketId!),
+      1,
       'Vé Đã Đặt',
       'Phim ${ticket.movie!.name} sắp đến giờ khởi chiếu, bạn đừng quên nhé',
       tz.TZDateTime.now(tz.local).add(duration),

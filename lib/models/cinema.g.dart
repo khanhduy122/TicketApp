@@ -11,7 +11,6 @@ Cinema _$CinemaFromJson(Map<String, dynamic> json) => Cinema(
       address: json['address'] as String,
       name: json['name'] as String,
       cityName: json['cityName'] as String?,
-      thumbnail: json['thumbnail'] as String,
       type: $enumDecode(_$CinemasTypeEnumMap, json['type']),
       lat: (json['lat'] as num).toDouble(),
       long: (json['long'] as num).toDouble(),
@@ -22,7 +21,6 @@ Cinema _$CinemaFromJson(Map<String, dynamic> json) => Cinema(
 
 Map<String, dynamic> _$CinemaToJson(Cinema instance) => <String, dynamic>{
       '_id': instance.id,
-      'thumbnail': instance.thumbnail,
       'name': instance.name,
       'cityName': instance.cityName,
       'type': _$CinemasTypeEnumMap[instance.type]!,

@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:ticket_app/core/const/app_assets.dart';
 import 'package:ticket_app/models/enum_model.dart';
 import 'package:ticket_app/models/room.dart';
 part 'cinema.g.dart';
@@ -7,7 +8,6 @@ part 'cinema.g.dart';
 class Cinema {
   @JsonKey(name: '_id')
   final String id;
-  final String thumbnail;
   final String name;
   final String? cityName;
   final CinemasType type;
@@ -22,7 +22,6 @@ class Cinema {
     required this.address,
     required this.name,
     required this.cityName,
-    required this.thumbnail,
     required this.type,
     required this.lat,
     required this.long,
@@ -33,7 +32,6 @@ class Cinema {
 
   Map<String, dynamic> toJson() => {
         '_id': id,
-        'thumbnail': thumbnail,
         'name': name,
         'cityName': cityName,
         'type': type.name,
@@ -48,7 +46,6 @@ class Cinema {
         id: id,
         address: address,
         name: name,
-        thumbnail: thumbnail,
         type: type,
         lat: lat,
         long: long,
@@ -62,6 +59,17 @@ class Cinema {
       return "${distance! ~/ 1000},${(distance! % 1000) ~/ 100.toInt()} km";
     } else {
       return "${distance!.toInt()} m";
+    }
+  }
+
+  String getImageCinem() {
+    switch (type) {
+      case CinemasType.CGV:
+        return AppAssets.icCGV;
+      case CinemasType.Lotte:
+        return AppAssets.icLotte;
+      case CinemasType.Galaxy:
+        return AppAssets.icGalaxy;
     }
   }
 }

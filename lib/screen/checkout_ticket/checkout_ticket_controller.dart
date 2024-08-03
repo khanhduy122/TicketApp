@@ -12,7 +12,7 @@ class CheckoutTicketController extends GetxController {
   String id = "";
   RxInt currentSecond = 300.obs;
   Timer? timer;
-  Rx<Voucher?> voucherSelected = (null).obs;
+  Voucher? voucherSelected;
   final ticket = Get.arguments as Ticket;
 
   @override
@@ -60,7 +60,7 @@ class CheckoutTicketController extends GetxController {
 
   String formatPrice(int price) {
     String formattedNumber = NumberFormat.decimalPattern().format(price);
-    return formattedNumber;
+    return '$formattedNumber VND';
   }
 
   String formatTimeCountDown(int currentSecond) {
@@ -77,8 +77,20 @@ class CheckoutTicketController extends GetxController {
   }
 
   void onTapCheckout() {
-    ticket.voucher = voucherSelected.value;
+    ticket.voucher = voucherSelected;
+    ticket.price = ticket.price! - (voucherSelected?.discountAmount ?? 0);
     Get.toNamed(RouteName.selectCardScreen, arguments: ticket);
+  }
+
+  void onTapSelectVoucher() async {
+    final result = await Get.toNamed(
+      RouteName.selectVoucherScreen,
+      arguments: ticket,
+    );
+    if (result != null) {
+      voucherSelected = result as Voucher;
+      update();
+    }
   }
 
   Future<void> cancelSeat() async {

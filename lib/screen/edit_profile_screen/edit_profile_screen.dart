@@ -29,39 +29,41 @@ class EditProfileScreen extends GetView<EditProfileController> {
           FocusScope.of(context).unfocus();
         },
         child: Scaffold(
-          body: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 40.h,
-                ),
-                Align(
-                    alignment: Alignment.centerLeft,
-                    child: ButtonBackWidget(
-                      onTap: () => controller.onWillPop(),
-                    )),
-                _buildAvatar(context),
-                SizedBox(
-                  height: 20.h,
-                ),
-                _buildTextFieldName(),
-                SizedBox(
-                  height: 20.h,
-                ),
-                _buildTextFieldBirthDay(),
-                SizedBox(
-                  height: 20.h,
-                ),
-                _buildTextFieldEmail(),
-                SizedBox(
-                  height: 40.h,
-                ),
-                _buildButtonSave(),
-                SizedBox(
-                  height: 20.h,
-                ),
-              ],
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 40.h,
+                  ),
+                  Align(
+                      alignment: Alignment.centerLeft,
+                      child: ButtonBackWidget(
+                        onTap: () => controller.onWillPop(),
+                      )),
+                  _buildAvatar(context),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  _buildTextFieldName(),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  _buildTextFieldBirthDay(),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                  _buildTextFieldEmail(),
+                  SizedBox(
+                    height: 40.h,
+                  ),
+                  _buildButtonSave(),
+                  SizedBox(
+                    height: 20.h,
+                  ),
+                ],
+              ),
             ),
           ),
         ),

@@ -382,7 +382,7 @@ class SelectCinemaScreen extends GetView<SelectCinemaController> {
                           ),
                           Text(
                             "Không có rạp phim",
-                            style: AppStyle.titleStyle,
+                            style: AppStyle.defaultStyle,
                           )
                         ],
                       ),
@@ -408,11 +408,16 @@ class SelectCinemaScreen extends GetView<SelectCinemaController> {
             children: [
               Row(
                 children: [
-                  ImageNetworkWidget(
-                    url: showtimes.cinema!.thumbnail,
+                  SizedBox(
                     height: 30.h,
                     width: 30.w,
-                    borderRadius: 5.h,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(5),
+                      child: Image.asset(
+                        showtimes.cinema!.getImageCinem(),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
                   ),
                   SizedBox(
                     width: 10.w,

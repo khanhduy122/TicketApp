@@ -77,6 +77,9 @@ class AllReviewController extends GetxController {
         listReviewResponse.add(Review.fromJson(element));
       }
 
+      listReviewResponse.sort(
+        (a, b) => b.timestamp.compareTo(a.timestamp),
+      );
       reviewsDisplay.assignAll(listReviewResponse);
 
       isLoading.value = false;
@@ -113,6 +116,10 @@ class AllReviewController extends GetxController {
       for (var element in response.data) {
         listReviewResponse.add(Review.fromJson(element));
       }
+
+      listReviewResponse.sort(
+        (a, b) => b.timestamp.compareTo(a.timestamp),
+      );
 
       if (reviewsDisplay.isEmpty) {
         reviewsDisplay.assignAll(listReviewResponse);

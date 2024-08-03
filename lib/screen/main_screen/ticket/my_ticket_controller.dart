@@ -31,6 +31,7 @@ class MyTicketController extends GetxController
   }
 
   Future<void> getListTicket() async {
+    isLoadFaild.value = false;
     isLoading.value = true;
     final response = await ApiCommon.get(
       url: ApiConst.getListTicket,

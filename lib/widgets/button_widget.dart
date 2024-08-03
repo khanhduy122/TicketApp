@@ -25,15 +25,15 @@ class ButtonWidget extends StatelessWidget {
     return ElevatedButton(
         onPressed: onPressed,
         style: ButtonStyle(
-          fixedSize: WidgetStateProperty.all<Size>(
+          fixedSize: MaterialStateProperty.all<Size>(
               Size(width ?? 1.sw, height ?? 50.h)),
           backgroundColor:
-              WidgetStateProperty.all<Color>(color ?? AppColors.buttonColor),
-          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
+              MaterialStateProperty.all<Color>(color ?? AppColors.buttonColor),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(radius ?? 20.r))),
           foregroundColor:
-              WidgetStateProperty.all<Color>(AppColors.buttonPressColor),
+              MaterialStateProperty.all<Color>(AppColors.buttonPressColor),
         ),
         child: Text(
           title,

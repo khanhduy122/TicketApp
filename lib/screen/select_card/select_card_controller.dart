@@ -95,7 +95,7 @@ class SelectCardController extends GetxController {
                 "Quý khánh đã thực hiện vượt quá sô lần cho phép, vui lòng thử lại");
         break;
       case "24":
-        // paymentBloc.add(GetMethodPaymentUserEvent());
+        isShowWebview.value = false;
         break;
     }
   }
@@ -265,7 +265,7 @@ class SelectCardController extends GetxController {
     if (url.contains("vnp_response_code")) {
       final params = Uri.parse(url).queryParameters;
 
-      if (params["vnp_txn_desc"] == "Taomoitoken") {
+      if (params["vnp_command"] == "token_create") {
         if (params["vnp_response_code"] == '00') {
           PaymentCard card = PaymentCard.fromVnpParam(params);
           addPaymentCard(card);
@@ -364,6 +364,7 @@ class SelectCardController extends GetxController {
   }
 
   Future<void> deleteCard(PaymentCard card) async {
+    if (ticket != null) return;
     final result = await DialogConfirm.show(
       context: Get.context!,
       message: 'Bạn có chắc muốn xóa liên kết thẻ thanh toán ?',

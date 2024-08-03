@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:ticket_app/core/const/app_assets.dart';
 import 'package:ticket_app/core/const/app_colors.dart';
@@ -9,15 +10,15 @@ import 'package:ticket_app/widgets/appbar_widget.dart';
 import 'package:ticket_app/widgets/divider_custom.dart';
 
 class DetailVoucherScreen extends StatefulWidget {
-  const DetailVoucherScreen({super.key, required this.voucher});
-
-  final Voucher voucher;
+  const DetailVoucherScreen({super.key});
 
   @override
   State<DetailVoucherScreen> createState() => _DetailVoucherScreenState();
 }
 
 class _DetailVoucherScreenState extends State<DetailVoucherScreen> {
+  final voucher = Get.arguments as Voucher;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -35,24 +36,38 @@ class _DetailVoucherScreenState extends State<DetailVoucherScreen> {
               child: Column(
                 children: [
                   SizedBox(
-                    height: 100.h,
-                    width: 100.h,
-                    child: Image.asset(AppAssets.imgLogo),
+                    height: 10.h,
+                  ),
+                  Container(
+                    height: 70.h,
+                    width: 70.h,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      image: DecorationImage(
+                        image: AssetImage(
+                          voucher.getImageVoucher(),
+                        ),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10.h,
                   ),
                   SizedBox(
                     width: MediaQuery.of(context).size.width,
                   ),
                   Text(
-                    widget.voucher.title,
+                    voucher.title,
                     style: AppStyle.titleStyle,
                   ),
                   SizedBox(
                     height: 5.h,
                   ),
-                  Text(
-                    "cho hóa đơn từ ${widget.voucher.applyInvoices}đ",
-                    style: AppStyle.defaultStyle,
-                  ),
+                  // Text(
+                  //   "cho hóa đơn từ ${widget.voucher.applyInvoices}đ",
+                  //   style: AppStyle.defaultStyle,
+                  // ),
                   SizedBox(
                     height: 5.h,
                   ),
@@ -62,7 +77,7 @@ class _DetailVoucherScreenState extends State<DetailVoucherScreen> {
                         color: AppColors.white,
                         borderRadius: BorderRadius.circular(10.r)),
                     child: Text(
-                      formatExpiredTime(widget.voucher.expiredTime),
+                      formatExpiredTime(voucher.expiredTime),
                       style:
                           AppStyle.subTitleStyle.copyWith(color: Colors.black),
                     ),
@@ -88,7 +103,7 @@ class _DetailVoucherScreenState extends State<DetailVoucherScreen> {
                           width: MediaQuery.of(context).size.width,
                         ),
                         Text(
-                          widget.voucher.getStringAppliesToCinemas(),
+                          voucher.getStringAppliesToCinemas(),
                           style: AppStyle.defaultStyle,
                         ),
                         SizedBox(
@@ -102,7 +117,7 @@ class _DetailVoucherScreenState extends State<DetailVoucherScreen> {
                           height: 5.h,
                         ),
                         Text(
-                          widget.voucher.informations.replaceAll('\\n', '\n'),
+                          voucher.description,
                           style: AppStyle.defaultStyle,
                         ),
                       ],
@@ -118,13 +133,7 @@ class _DetailVoucherScreenState extends State<DetailVoucherScreen> {
   }
 
   String formatExpiredTime(int expiredTime) {
-    DateTime expiredTimeFormat =
-        DateTime.fromMillisecondsSinceEpoch(expiredTime, isUtc: true);
-
-    Duration difference = expiredTimeFormat.difference(DateTime.now());
-    if (difference.inDays.abs() > 0) {
-      return "Hạn sử dụng đến hết ngày ${DateFormat("dd-MM-yyyy").format(expiredTimeFormat)}";
-    }
-    return "Hiệu lực còn ${difference.inHours}";
+    DateTime date = DateTime.fromMillisecondsSinceEpoch(expiredTime * 1000);
+    return "HSD: ${DateFormat("dd-MM-yyyy").format(date)}";
   }
 }

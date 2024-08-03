@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:ticket_app/core/const/app_colors.dart';
 import 'package:ticket_app/core/const/app_styles.dart';
+import 'package:ticket_app/core/routes/route_name.dart';
+import 'package:ticket_app/models/voucher.dart';
 import 'package:ticket_app/screen/checkout_ticket/checkout_ticket_controller.dart';
 import 'package:ticket_app/widgets/appbar_widget.dart';
 import 'package:ticket_app/widgets/button_widget.dart';
@@ -71,30 +73,23 @@ class CheckoutTicketScreen extends GetView<CheckoutTicketController> {
 
   GestureDetector _buildSelectVoucher(BuildContext context) {
     return GestureDetector(
-      onTap: () async {},
-      child: Container(
-        height: 50.h,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(border: Border.all(color: AppColors.grey)),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 10.h,
+      onTap: () => controller.onTapSelectVoucher(),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.discount,
+            color: AppColors.buttonColor,
+          ),
+          SizedBox(
+            width: 10.w,
+          ),
+          Text(
+            "Chọn ưu đãi",
+            style: AppStyle.defaultStyle.copyWith(
+              color: AppColors.buttonColor,
             ),
-            Text(
-              "Chọn Voucher",
-              style: AppStyle.subTitleStyle,
-            ),
-            Expanded(
-                child: controller.voucherSelected.value != null
-                    ? Text(
-                        "-${controller.formatPrice(controller.voucherSelected.value!.priceDiscount)}",
-                        style: AppStyle.subTitleStyle,
-                        textAlign: TextAlign.end,
-                      )
-                    : Container())
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -181,57 +176,66 @@ class CheckoutTicketScreen extends GetView<CheckoutTicketController> {
   }
 
   Widget _buildInformationTicket() {
-    return Column(
-      children: [
-        SizedBox(height: 20.h),
-        _buildItemInformation(title: "ID: ", value: controller.id),
-        SizedBox(height: 20.h),
-        _buildItemInformation(
-          title: "Rạp: ",
-          value: controller.ticket.cinema!.name,
-        ),
-        SizedBox(height: 20.h),
-        _buildItemInformation(
-          title: "Ngày giờ: ",
-          value: controller.formatDateTime(
-            showtimes: controller.ticket.showtimes!.time,
-            dateTime: controller.ticket.date!,
-          ),
-        ),
-        SizedBox(height: 20.h),
-        _buildItemInformation(
-          title: "Ghế: ",
-          value: controller.formatListSeat(),
-        ),
-        SizedBox(height: 20.h),
-        _buildItemInformation(
-          title: "Giá vé: ",
-          value: controller.formatPrice(
-            controller.ticket.price! - controller.getPriceFood(),
-          ),
-        ),
-        SizedBox(height: 20.h),
-        _buildItemInformation(
-          title: "Combo bắp nước: ",
-          value: controller.ticket.foods == null ||
-                  controller.ticket.foods!.isEmpty
-              ? "0 VND"
-              : "${controller.formatPrice(controller.getPriceFood())} VND",
-        ),
-        SizedBox(height: 20.h),
-        _buildItemInformation(
-          title: "Giảm giá: ",
-          value: controller.voucherSelected.value == null
-              ? "0 VND"
-              : "${controller.formatPrice(controller.voucherSelected.value!.priceDiscount)} VND",
-        ),
-        SizedBox(height: 20.h),
-        _buildItemInformation(
-          title: "Tổng tiền: ",
-          value: "${controller.formatPrice(controller.ticket.price!)} VND",
-        ),
-        SizedBox(height: 20.h),
-      ],
+    return GetBuilder<CheckoutTicketController>(
+      builder: (_) {
+        return Column(
+          children: [
+            SizedBox(height: 20.h),
+            _buildItemInformation(
+                title: "ID: ", value: controller.ticket.ticketId!),
+            SizedBox(height: 20.h),
+            _buildItemInformation(
+              title: "Rạp: ",
+              value: controller.ticket.cinema!.name,
+            ),
+            SizedBox(height: 20.h),
+            _buildItemInformation(
+              title: "Ngày giờ: ",
+              value: controller.formatDateTime(
+                showtimes: controller.ticket.showtimes!.time,
+                dateTime: controller.ticket.date!,
+              ),
+            ),
+            SizedBox(height: 20.h),
+            _buildItemInformation(
+              title: "Ghế: ",
+              value: controller.formatListSeat(),
+            ),
+            SizedBox(height: 20.h),
+            _buildItemInformation(
+              title: "Giá vé: ",
+              value: controller.formatPrice(
+                controller.ticket.price! - controller.getPriceFood(),
+              ),
+            ),
+            SizedBox(height: 20.h),
+            _buildItemInformation(
+              title: "Combo bắp nước: ",
+              value: controller.ticket.foods == null ||
+                      controller.ticket.foods!.isEmpty
+                  ? "0 VND"
+                  : controller.formatPrice(controller.getPriceFood()),
+            ),
+            SizedBox(height: 20.h),
+            _buildItemInformation(
+              title: "Giảm giá: ",
+              value: controller.voucherSelected == null
+                  ? "0 VND"
+                  : controller
+                      .formatPrice(controller.voucherSelected!.discountAmount),
+            ),
+            SizedBox(height: 20.h),
+            _buildItemInformation(
+              title: "Tổng tiền: ",
+              value: controller.formatPrice(
+                controller.ticket.price! -
+                    (controller.voucherSelected?.discountAmount ?? 0),
+              ),
+            ),
+            SizedBox(height: 20.h),
+          ],
+        );
+      },
     );
   }
 

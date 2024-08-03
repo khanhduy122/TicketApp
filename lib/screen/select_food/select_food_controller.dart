@@ -22,6 +22,7 @@ class SelectFoodController extends GetxController {
   }
 
   Future<void> getFood() async {
+    isLoadFaild.value = false;
     isLoading.value = true;
     final response = await ApiCommon.get(url: ApiConst.getFood);
 

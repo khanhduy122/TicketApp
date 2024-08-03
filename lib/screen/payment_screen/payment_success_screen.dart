@@ -17,7 +17,7 @@ class PaymentSuccessScreen extends StatelessWidget {
           body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Center(child: Image.asset(AppAssets.imgCheck)),
+          Center(child: Image.asset(AppAssets.imgPaymentSuccess)),
           SizedBox(
             height: 20.h,
           ),

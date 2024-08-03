@@ -83,6 +83,8 @@ class SplashController extends GetxController {
           "cityName": currentCityname,
         },
       );
+
+      debugLog(cinemaCityResponse.data.toString());
       final cinemaCityRecomemed = CinemaCity.fromJson(cinemaCityResponse.data);
       if (position != null) {
         getDistance(cinemaCityRecomemed, position);
