@@ -45,15 +45,6 @@ class ProfileScreen extends GetView<ProfileController> {
                     Navigator.pushNamed(context, RouteName.selectCardScreen);
                   },
                 ),
-                Obx(
-                  () => controller.isAllowChangePass.value
-                      ? _itemOption(
-                          icon: AppAssets.icPassword,
-                          title: "Thay Đổi Mật Khẩu",
-                          onTap: () {},
-                        )
-                      : Container(),
-                ),
                 _itemOption(
                   icon: AppAssets.icVoucher,
                   title: "Voucher",

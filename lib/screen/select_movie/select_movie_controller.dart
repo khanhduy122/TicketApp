@@ -84,7 +84,7 @@ class SelectMovieController extends GetxController {
       final listShowtimesResponse = <Showtimes>[];
       for (var element in response.data) {
         final showtime = Showtimes.fromJson(element);
-        showtime.times.assignAll(filterTime(showtime));
+        showtime.times.assignAll(filterTime(showtime, index));
         if (showtime.times.isNotEmpty) {
           listShowtimesResponse.add(showtime);
         }
@@ -102,7 +102,7 @@ class SelectMovieController extends GetxController {
     }
   }
 
-  List<Time> filterTime(Showtimes showtime) {
+  List<Time> filterTime(Showtimes showtime, int index) {
     final listTimeFilter = <Time>[];
 
     for (var time in showtime.times) {
@@ -113,9 +113,9 @@ class SelectMovieController extends GetxController {
       DateTime startTime = dateFormat.parse(times[0]);
 
       DateTime startDateTime = DateTime(
-        listDateTime[currentSelectedDayIndex.value].year,
-        listDateTime[currentSelectedDayIndex.value].month,
-        listDateTime[currentSelectedDayIndex.value].day,
+        listDateTime[index].year,
+        listDateTime[index].month,
+        listDateTime[index].day,
         startTime.hour,
         startTime.minute,
       );

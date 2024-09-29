@@ -159,6 +159,8 @@ class SigninController extends GetxController {
               const Duration(seconds: 20),
               onTimeout: () => throw TimeOutException(),
             );
+        final response = await getUserInfo(
+            uid: FirebaseAuth.instance.currentUser?.uid ?? '');
         Get.offAllNamed(RouteName.mainScreen);
       }
     } catch (e) {

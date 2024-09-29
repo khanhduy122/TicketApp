@@ -43,7 +43,7 @@ dependencies:
   lottie: ^3.1.0
   google_sign_in: ^6.1.6
   smooth_page_indicator: ^1.1.0
-  carousel_slider: ^4.2.1
+  carousel_slider: ^5.0.0
   cloud_firestore: ^4.17.3
   json_serializable: ^6.7.1
   json_annotation: ^4.8.1
@@ -75,6 +75,7 @@ dependencies:
   timezone: ^0.9.4
   flutter_timezone: ^1.0.8
   rotated_corner_decoration: ^2.1.0+1
+  win32: ^5.5.4
 
 dev_dependencies:
   flutter_test:

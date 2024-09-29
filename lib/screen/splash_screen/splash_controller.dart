@@ -66,8 +66,7 @@ class SplashController extends GetxController {
 
       checkIsFirst();
     } else {
-      // debugLog(homeResponse.error?.message ??
-      //     '' + " " + cinemaCityResponse.error!.message);
+      debugLog(homeResponse.error?.message ?? "homeResponse error");
     }
   }
 
