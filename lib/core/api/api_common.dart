@@ -8,10 +8,11 @@ import 'package:ticket_app/core/const/net_work_info.dart';
 class ApiCommon {
   static final Dio _dio = Dio();
 
-  static Future<BaseResponse> get(
-      {required String url,
-      Map<String, dynamic>? headers,
-      Map<String, dynamic>? queryParameters}) async {
+  static Future<BaseResponse> get({
+    required String url,
+    Map<String, dynamic>? headers,
+    Map<String, dynamic>? queryParameters,
+  }) async {
     CancelToken cancelToken = CancelToken();
 
     try {
@@ -30,8 +31,8 @@ class ApiCommon {
         url,
         options: Options(
           headers: headers ?? headersDefauld,
-          receiveTimeout: const Duration(seconds: 20),
-          sendTimeout: const Duration(seconds: 20),
+          receiveTimeout: const Duration(seconds: 15),
+          sendTimeout: const Duration(seconds: 15),
         ),
         cancelToken: cancelToken,
         queryParameters: queryParameters,
@@ -97,8 +98,8 @@ class ApiCommon {
         data: data,
         options: Options(
           headers: headers ?? headersDefauld,
-          receiveTimeout: const Duration(seconds: 20),
-          sendTimeout: const Duration(seconds: 20),
+          receiveTimeout: const Duration(seconds: 15),
+          sendTimeout: const Duration(seconds: 15),
         ),
         cancelToken: cancelToken,
         queryParameters: queryParameters,

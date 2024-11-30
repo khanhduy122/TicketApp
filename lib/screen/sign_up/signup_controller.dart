@@ -33,10 +33,8 @@ class SignupController extends GetxController {
     super.onClose();
   }
 
-  void onTapSelectPhoto() async {
+  Future<void> onTapSelectPhoto() async {
     try {
-      final isGranted = await requestPermisstionPhoto();
-      if (!isGranted) return;
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(source: ImageSource.gallery);
       if (image != null) {
@@ -44,34 +42,6 @@ class SignupController extends GetxController {
       }
     } catch (e) {
       debugLog(e.toString());
-    }
-  }
-
-  Future<bool> requestPermisstionPhoto() async {
-    final status = await Permission.photos.status;
-
-    if (status.isGranted) {
-      return true;
-    }
-
-    if (status.isPermanentlyDenied) {
-      final result = await DialogConfirm.show(
-        context: Get.context!,
-        titleNegative: 'Không',
-        titlePositive: 'Mở cài đặt',
-        message: Platform.isAndroid
-            ? 'Ứng dụng của chúng tôi cần quyền truy cập vào thư viện ảnh của bạn để có thể hoạt động đúng cách'
-            : 'Ứng dụng của chúng tôi cần quyền truy cập vào thư viện ảnh của bạn để có thể hoạt động đúng cách\n\n1. chọn hình ảnh\n2. cho phép truy cập tất cả ảnh',
-      );
-
-      if (result) {
-        openAppSettings();
-        return false;
-      }
-      return false;
-    } else {
-      final result = await Permission.photos.request();
-      return result.isGranted;
     }
   }
 
@@ -93,6 +63,7 @@ class SignupController extends GetxController {
   Future<void> signUpWithEmailPassword() async {
     try {
       DialogLoading.show(Get.context!);
+
       await _firebaseAuth
           .createUserWithEmailAndPassword(
             email: emailController.text,

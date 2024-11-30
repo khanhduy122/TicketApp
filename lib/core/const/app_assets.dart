@@ -40,6 +40,10 @@ class AppAssets {
   static const String icCGV = "assets/icons/ic_cgv.jpg";
   static const String icGalaxy = "assets/icons/ic_galaxy.png";
   static const String icLotte = "assets/icons/ic_lotte.jpg";
+  static const String icRankingSelected =
+      "assets/icons/ic_ranking_selected.png";
+  static const String icRankingUnSelected =
+      "assets/icons/ic_ranking_unselected.png";
 
   // json
   static const String jsonLoading = "assets/jsons/loading.json";

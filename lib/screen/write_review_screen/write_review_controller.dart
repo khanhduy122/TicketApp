@@ -13,6 +13,7 @@ import 'package:ticket_app/core/dialogs/dialog_loading.dart';
 import 'package:ticket_app/core/utils/upload_file_utils.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/models/ticket.dart';
+import 'package:ticket_app/screen/main_screen/ticket/my_ticket_controller.dart';
 
 class WriteReviewController extends GetxController {
   RxInt rating = 0.obs;
@@ -29,7 +30,9 @@ class WriteReviewController extends GetxController {
       return;
     }
     DialogLoading.show(Get.context!);
+
     final data = <String, dynamic>{
+      "ticketId": ticket.ticketId,
       "movieId": ticket.movie!.id,
       "content": contentReview,
       "rating": rating.value,
@@ -50,6 +53,9 @@ class WriteReviewController extends GetxController {
     );
     Get.back();
     if (response.data != null) {
+      Get.find<MyTicketController>().ticketsExpired.removeWhere(
+            (element) => element.ticketId == ticket.ticketId,
+          );
       Get.until((route) => route.isFirst);
     } else {
       DialogError.show(

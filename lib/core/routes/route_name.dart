@@ -27,4 +27,5 @@ class RouteName {
   static const String selectVoucherScreen = "/selectVoucherScreen";
   static const String openImageScreen = "/openImageScreen";
   static const String selectFoodScreen = "/selectFoodScreen";
+  static const String openImageReview = "/openImageReview";
 }

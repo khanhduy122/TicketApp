@@ -230,6 +230,9 @@ class SelectSeatController extends GetxController {
 
   void onSelectSeat(ItemSeat seat) {
     if (seat.status == 1) return;
+
+    if (seatsSelected.length == 10) return;
+
     if (seatsSelected.contains(seat)) {
       seatsSelected.remove(seat);
     } else {
@@ -288,6 +291,8 @@ class SelectSeatController extends GetxController {
         context: Get.context!,
         message: response.error!.message,
       );
+      getListSeat();
+      seatsSelected.clear();
       return false;
     }
   }

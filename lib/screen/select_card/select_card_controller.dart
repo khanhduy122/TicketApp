@@ -396,6 +396,7 @@ class SelectCardController extends GetxController {
 
   Future<bool> bookSeat() async {
     DialogLoading.show(Get.context!);
+    ticket!.timestamp = DateTime.now().millisecondsSinceEpoch;
     final response = await ApiCommon.post(
       url: ApiConst.bookSeat,
       data: ticket!.toJson(),

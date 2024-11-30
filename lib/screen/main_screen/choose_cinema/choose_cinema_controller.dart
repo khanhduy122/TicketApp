@@ -27,6 +27,7 @@ class ChooseCinemaController extends GetxController {
   RxInt currentIndexCinemaType = 0.obs;
   Rx<PermissionStatus> locationPermisstion = PermissionStatus.denied.obs;
   Position? position;
+  RxBool isLoading = false.obs;
 
   @override
   void onInit() {
@@ -53,11 +54,11 @@ class ChooseCinemaController extends GetxController {
     if (locationPermisstion.value == PermissionStatus.granted) {
       position = await Geolocator.getCurrentPosition();
     }
-    debugLog(locationPermisstion.string);
   }
 
   void onSelectCinemaType(int index) {
     if (selectCity.value == '--- chọn tính / thành phố ---') return;
+
     if (index == 0) {
       currentIndexCinemaType.value = 0;
       fillterCinema.clear();
@@ -95,40 +96,51 @@ class ChooseCinemaController extends GetxController {
   }
 
   Future<void> resquestPermission(BuildContext context) async {
-    final isConfirm = await DialogConfirm.show(
-      context: context,
-      message:
-          'Cho phép truy cập vào vị trí mở mục cài đặt của điện thoại để MovieTicket có thể gợi ý cho bạn rạp phim gần nhất',
-      titleNegative: 'Hủy',
-      titlePositive: 'Cho phép',
-    );
-    locationPermisstion.value = await Permission.location.status;
-    if (locationPermisstion.value == PermissionStatus.permanentlyDenied &&
-        isConfirm) {
-      openAppSettings();
-      return;
-    }
-    locationPermisstion.value = await Permission.location.request();
-    if (locationPermisstion.value == PermissionStatus.granted) {
-      DialogLoading.show(Get.context!);
-      position = await Geolocator.getCurrentPosition();
-      final currentCityName = await LocationUtil.getCurrentCity(position!);
-      if (currentCityName != null) {
-        selectCity.value = currentCityName;
-        final cinemaCityResponse = await getCinemaCity(
-          currentCityname: currentCityName,
-          position: position,
-        );
+    final status = await Permission.location.request();
 
-        if (cinemaCityResponse != null) {
-          Get.context!.read<DataAppProvider>().reconmmedCinemaCity =
-              currentCinemaCity.value =
-                  Get.context!.read<DataAppProvider>().reconmmedCinemaCity;
-          fillterCinema.value = currentCinemaCity.value!.all.sublist(0);
+    if (status == PermissionStatus.permanentlyDenied) {
+      final isConfirm = await DialogConfirm.show(
+        context: context,
+        message:
+            'Cho phép truy cập vào vị trí mở mục cài đặt của điện thoại để MovieTicket có thể gợi ý cho bạn rạp phim gần nhất',
+        titleNegative: 'Hủy',
+        titlePositive: 'Cho phép',
+      );
+      if (!isConfirm) return;
+      openAppSettings();
+    }
+
+    if (status == PermissionStatus.granted) {
+      isLoading.value = true;
+      position = await Geolocator.getCurrentPosition();
+
+      if (selectCity.value == "--- chọn tính / thành phố ---") {
+        final result = await LocationUtil.getCurrentCity(position!);
+
+        if (result.isNotEmpty && cities.contains(result)) {
+          selectCity.value = result;
+          cities.removeWhere(
+            (element) => element == "--- chọn tính / thành phố ---",
+          );
         }
       }
-      Get.back();
+
+      final cinemaCityResponse = await getCinemaCity(
+        currentCityname: selectCity.value,
+        position: position,
+      );
+
+      if (cinemaCityResponse != null) {
+        currentCinemaCity.value = cinemaCityResponse;
+        getDistance(currentCinemaCity.value!, position!);
+        sortCinemaCity(currentCinemaCity.value!);
+        fillterCinema.value = currentCinemaCity.value!.all.sublist(0);
+        locationPermisstion.value = status;
+        context.read<DataAppProvider>().reconmmedCinemaCity =
+            cinemaCityResponse;
+      }
     }
+    isLoading.value = false;
   }
 
   Future<CinemaCity?> getCinemaCity({
@@ -136,7 +148,6 @@ class ChooseCinemaController extends GetxController {
     required Position? position,
   }) async {
     if (currentCityname == null) return null;
-    DialogLoading.show(Get.context!);
 
     final cinemaCityResponse = await ApiCommon.get(
       url: ApiConst.cinemaCityUrl,
@@ -151,10 +162,8 @@ class ChooseCinemaController extends GetxController {
         getDistance(cinemaCityRecomemed, position);
         sortCinemaCity(cinemaCityRecomemed);
       }
-      Get.back();
       return cinemaCityRecomemed;
     } else {
-      Get.back();
       DialogError.show(
         context: Get.context!,
         message: cinemaCityResponse.error!.message,
@@ -212,16 +221,23 @@ class ChooseCinemaController extends GetxController {
     if (cityName == "--- chọn tính / thành phố ---") {
       return;
     }
+    isLoading.value = true;
+    final response = await getCinemaCity(
+      currentCityname: cityName,
+      position: position,
+    );
+    isLoading.value = false;
 
-    final response =
-        await getCinemaCity(currentCityname: cityName, position: position);
     if (response == null) return;
 
     if (cities.first == '--- chọn tính / thành phố ---') {
-      Get.context!.read<DataAppProvider>().cityNameCurrent = cityName;
-      cities.removeAt(0);
+      cities.removeWhere(
+        (element) => element == "--- chọn tính / thành phố ---",
+      );
     }
+
     selectCity.value = cityName;
+    Get.context!.read<DataAppProvider>().cityNameCurrent = cityName;
     CacheService.saveData("cityName", cityName);
     currentCinemaCity.value = response;
     currentIndexCinemaType.value = 0;
@@ -230,5 +246,52 @@ class ChooseCinemaController extends GetxController {
 
   String formatPrice(int price) {
     return "${price ~/ 1000}K";
+  }
+
+  Future<void> onTapWaring() async {
+    final isConfirm = await DialogConfirm.show(
+      context: Get.context!,
+      message:
+          "Ứng  dụng cần quyền truy cập vào tri trí để có thể gợi ý cho bạn rạp phim gần nhất.",
+      titleNegative: "Hủy",
+      titlePositive: "Cho Phép",
+    );
+
+    if (isConfirm) {
+      final status = await Permission.location.status;
+
+      if (status == PermissionStatus.permanentlyDenied) {
+        openAppSettings();
+        return;
+      }
+
+      final result = await Permission.location.request();
+
+      if (result == PermissionStatus.granted) {
+        DialogLoading.show(Get.context!);
+        position = await Geolocator.getCurrentPosition();
+        getDistance(currentCinemaCity.value!, position!);
+        sortCinemaCity(currentCinemaCity.value!);
+
+        if (currentIndexCinemaType.value == 0) {
+          fillterCinema.value = currentCinemaCity.value!.all.sublist(0);
+        }
+
+        if (currentIndexCinemaType.value == 1) {
+          fillterCinema.value = currentCinemaCity.value!.cgv.sublist(0);
+        }
+
+        if (currentIndexCinemaType.value == 2) {
+          fillterCinema.value = currentCinemaCity.value!.lotte.sublist(0);
+        }
+
+        if (currentIndexCinemaType.value == 3) {
+          fillterCinema.value = currentCinemaCity.value!.galaxy.sublist(0);
+        }
+
+        locationPermisstion.value = result;
+        Get.back();
+      }
+    }
   }
 }

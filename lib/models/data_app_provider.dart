@@ -8,7 +8,6 @@ class DataAppProvider extends ChangeNotifier {
   HomeData? homeData;
   String? cityNameCurrent;
   CinemaCity? reconmmedCinemaCity;
-  List<CinemaCity>? allCinemaCity;
   UserInfoModel? userInfoModel;
   TicketPrices? ticketPrices;
   DataAppProvider();

@@ -20,6 +20,7 @@ class Ticket {
   Time? showtimes;
   Voucher? voucher;
   Cinema? cinema;
+  int? timestamp;
 
   Ticket({
     this.ticketId,
@@ -33,6 +34,7 @@ class Ticket {
     this.showtimes,
     this.voucher,
     this.foods,
+    this.timestamp,
   });
 
   factory Ticket.fromJson(Map<String, dynamic> json) => _$TicketFromJson(json);

@@ -1,11 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:get/route_manager.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ticket_app/core/api/api_common.dart';
 import 'package:ticket_app/core/api/api_const.dart';
 import 'package:ticket_app/core/const/app_key.dart';
@@ -23,79 +22,111 @@ import 'package:ticket_app/models/ticket_prices.dart';
 import 'package:ticket_app/models/user_info_model.dart';
 
 class SplashController extends GetxController {
+  Position? position;
+  String cityName = '';
+
   @override
-  onInit() {
+  void onInit() {
+    init();
     super.onInit();
-    getHomeData();
+  }
+
+  Future<void> init() async {
+    await getHomeData();
+    await getTicketPrices();
+    await getCurrentCityName();
+    await getCinemaCityRecommend();
+    await checkIsFirst();
+  }
+
+  Future<void> getCurrentCityName() async {
+    final result = await checkPermisstion();
+    if (result) {
+      position = await Geolocator.getCurrentPosition();
+      cityName = await LocationUtil.getCurrentCity(position!);
+
+      if (cityName.isNotEmpty) {
+        if (!cities.contains(cityName)) {
+          cityName = await getCacheCityName();
+        } else {
+          cities.removeWhere(
+            (element) => element == '--- chọn tính / thành phố ---',
+          );
+        }
+      } else {
+        cityName = await getCacheCityName();
+      }
+    } else {
+      cityName = await getCacheCityName();
+    }
+
+    Get.context!.read<DataAppProvider>().cityNameCurrent = cityName;
+
+    debugLog(cityName);
   }
 
   Future<void> getHomeData() async {
     await NotificationService.requestPermission();
 
     final homeResponse = await ApiCommon.get(url: ApiConst.homeUrl);
-    await getTicketPrices();
-    final result = await checkPermisstion();
-    Position? position;
-    String? currentCityname;
-    if (result) {
-      position = await Geolocator.getCurrentPosition();
-      currentCityname = await LocationUtil.getCurrentCity(position);
-      Get.context!.read<DataAppProvider>().cityNameCurrent = currentCityname;
-    }
 
     if (homeResponse.data != null) {
       final homeData = HomeData.fromJson(homeResponse.data!);
       Get.context!.read<DataAppProvider>().homeData = homeData;
-
-      if (currentCityname != null) {
-        await getCinemaCityRecommend(
-          currentCityname: currentCityname,
-          position: position,
-        );
-      } else {
-        if (CacheService.getData(AppKey.cityName) != null) {
-          Get.context!.read<DataAppProvider>().cityNameCurrent =
-              CacheService.getData(AppKey.cityName);
-          await getCinemaCityRecommend(
-            currentCityname:
-                Get.context!.read<DataAppProvider>().cityNameCurrent,
-            position: position,
-          );
-        }
-      }
-
-      checkIsFirst();
     } else {
-      debugLog(homeResponse.error?.message ?? "homeResponse error");
+      DialogError.show(
+        context: Get.context!,
+        message: homeResponse.error?.message ??
+            'Đã có lỗi xảy ra vui lòng thử lại sao',
+        onTap: () => SystemNavigator.pop(),
+      );
     }
   }
 
-  Future<CinemaCity?> getCinemaCityRecommend({
-    required String? currentCityname,
-    required Position? position,
-  }) async {
-    if (currentCityname == null && position == null) return null;
+  Future<String> getCacheCityName() async {
+    String result = '';
+    final response = await CacheService.getData(AppKey.cityName);
+
+    if (response != null) {
+      result = response;
+      cities.removeWhere(
+        (element) => element == '--- chọn tính / thành phố ---',
+      );
+    } else {
+      result = cities.first;
+    }
+
+    return result;
+  }
+
+  Future<void> getCinemaCityRecommend() async {
+    if (cityName.isEmpty && position == null) return;
+
+    if (cityName == '--- chọn tính / thành phố ---') return;
+
+    if (cityName.isEmpty) return;
+
     try {
       final cinemaCityResponse = await ApiCommon.get(
         url: ApiConst.cinemaCityUrl,
         queryParameters: {
-          "cityName": currentCityname,
+          "cityName": cityName,
         },
       );
 
-      debugLog(cinemaCityResponse.data.toString());
+      if (cinemaCityResponse.error != null) return;
+
       final cinemaCityRecomemed = CinemaCity.fromJson(cinemaCityResponse.data);
+
       if (position != null) {
-        getDistance(cinemaCityRecomemed, position);
+        getDistance(cinemaCityRecomemed, position!);
         sortCinemaCity(cinemaCityRecomemed);
       }
+
       Get.context!.read<DataAppProvider>().reconmmedCinemaCity =
           cinemaCityRecomemed;
-      cities.removeAt(0);
-      return cinemaCityRecomemed;
     } catch (e, s) {
       debugLog('${e.toString()} $s');
-      return null;
     }
   }
 
@@ -130,22 +161,20 @@ class SplashController extends GetxController {
   }
 
   Future<void> checkIsFirst() async {
+    if (Get.context!.read<DataAppProvider>().homeData == null) return;
+
     if (FirebaseAuth.instance.currentUser != null) {
-      final respose = await getUserInfo(
+      final response = await getUserInfo(
         uid: FirebaseAuth.instance.currentUser!.uid,
       );
-      if (respose != null) {
+
+      if (response != null) {
         Get.offAllNamed(RouteName.mainScreen);
+      } else {
+        Get.offAllNamed(RouteName.signInScreen);
       }
     } else {
-      await SharedPreferences.getInstance().then((prefs) {
-        if (prefs.getBool(AppKey.checkIsFirstKey) == null) {
-          prefs.setBool(AppKey.checkIsFirstKey, true);
-          Get.offAllNamed(RouteName.onBoardingScreen);
-        } else {
-          Get.offAllNamed(RouteName.signInScreen);
-        }
-      });
+      Get.offAllNamed(RouteName.signInScreen);
     }
   }
 
@@ -185,10 +214,7 @@ class SplashController extends GetxController {
       Get.context!.read<DataAppProvider>().userInfoModel = user;
       return user;
     } else {
-      DialogError.show(
-        context: Get.context!,
-        message: response.error!.message,
-      );
+      debugLog(response.error.toString());
       return null;
     }
   }

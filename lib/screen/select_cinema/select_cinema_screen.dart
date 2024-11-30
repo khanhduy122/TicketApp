@@ -8,12 +8,11 @@ import 'package:rotated_corner_decoration/rotated_corner_decoration.dart';
 import 'package:ticket_app/core/const/app_assets.dart';
 import 'package:ticket_app/core/const/app_colors.dart';
 import 'package:ticket_app/core/const/app_styles.dart';
-import 'package:ticket_app/core/dialogs/dialog_error.dart';
 import 'package:ticket_app/models/cities.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/models/showtimes.dart';
 import 'package:ticket_app/screen/select_cinema/select_cinema_controller.dart';
-import 'package:ticket_app/widgets/image_network_widget.dart';
+import 'package:ticket_app/widgets/button_widget.dart';
 import 'package:ticket_app/widgets/item_day_widget.dart';
 import 'package:ticket_app/widgets/appbar_widget.dart';
 import 'package:ticket_app/widgets/item_list_showtimes.dart';
@@ -337,17 +336,21 @@ class SelectCinemaScreen extends GetView<SelectCinemaController> {
                 style: AppStyle.titleStyle,
               ),
               Obx(
-                () => controller.locationPermisstion.value !=
-                        PermissionStatus.granted
-                    ? GestureDetector(
-                        onTap: () => controller.resquestPermission(),
-                        child: Icon(
-                          Icons.error,
-                          color: AppColors.white,
-                          size: 25.h,
-                        ),
-                      )
-                    : Container(),
+                () {
+                  if (controller.locationPermisstion.value !=
+                          PermissionStatus.granted &&
+                      controller.showtimesFilter != null) {
+                    return GestureDetector(
+                      onTap: controller.onTapWaring,
+                      child: Icon(
+                        Icons.error,
+                        size: 30.sp,
+                        color: AppColors.red,
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
               )
             ],
           ),
@@ -356,40 +359,91 @@ class SelectCinemaScreen extends GetView<SelectCinemaController> {
           ),
           Obx(
             () => Expanded(
-              child: controller.showtimesByCinemaType.isNotEmpty
-                  ? ListView.builder(
-                      itemCount: controller.showtimesByCinemaType.length,
-                      itemBuilder: (context, index) {
-                        return Column(
-                          children: [
-                            _buildItemCinema(
-                              showtimes:
-                                  controller.showtimesByCinemaType[index],
-                            ),
-                            SizedBox(
-                              height: 20.h,
-                            )
-                          ],
-                        );
-                      },
-                    )
-                  : Center(
-                      child: Column(
-                        children: [
-                          Image.asset(AppAssets.imgEmpty),
-                          SizedBox(
-                            height: 20.h,
-                          ),
-                          Text(
-                            "Không có rạp phim",
-                            style: AppStyle.defaultStyle,
-                          )
-                        ],
-                      ),
-                    ),
+              child: controller.isLoading.value
+                  ? _buidLoading()
+                  : controller.locationPermisstion.value !=
+                              PermissionStatus.granted &&
+                          controller.showtimesFilter == null
+                      ? _buildPermissionDeny()
+                      : controller.showtimesFilter.value?.isNotEmpty ?? false
+                          ? _buildListCinema()
+                          : _buildListCinemaEmpty(),
             ),
           )
         ],
+      ),
+    );
+  }
+
+  Center _buildListCinemaEmpty() {
+    return Center(
+      child: Column(
+        children: [
+          Image.asset(AppAssets.imgEmpty),
+          SizedBox(
+            height: 20.h,
+          ),
+          Text(
+            "Không có rạp phim",
+            style: AppStyle.defaultStyle,
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildListCinema() {
+    return Obx(
+      () => ListView.builder(
+        itemCount: controller.showtimesFilter.value?.length ?? 0,
+        itemBuilder: (context, index) {
+          return Column(
+            children: [
+              _buildItemCinema(
+                showtimes: controller.showtimesFilter.value![index],
+              ),
+              SizedBox(
+                height: 20.h,
+              )
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Center _buildPermissionDeny() {
+    return Center(
+      child: Column(
+        children: [
+          Image.asset(AppAssets.imgEmpty),
+          SizedBox(
+            height: 20.h,
+          ),
+          Text(
+            "Cho phép truy cập vào vị trí mở mục cài đặt của điện thoại để MovieTicket có thể gợi ý cho bạn rạp phim gần nhất",
+            style: AppStyle.defaultStyle,
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(
+            height: 20.h,
+          ),
+          ButtonWidget(
+            title: "Cho phép",
+            width: 0.5.sw,
+            onPressed: () {
+              controller.resquestPermission();
+            },
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buidLoading() {
+    return const Center(
+      child: CircularProgressIndicator(
+        color: AppColors.buttonColor,
       ),
     );
   }

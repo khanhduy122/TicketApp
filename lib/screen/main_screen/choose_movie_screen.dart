@@ -375,6 +375,9 @@ class _ChooseMovieScreenState extends State<ChooseMovieScreen> {
             }
           }
         }
+
+        if (movie == null) return;
+
         Navigator.pushNamed(context, RouteName.detailMovieScreen,
             arguments: movie);
         break;

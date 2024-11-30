@@ -29,7 +29,7 @@ List<String> cities = [
   "Hải Phòng",
   "Hậu Giang",
   "Hòa Bình",
-  "Thành phố Hồ Chí Minh",
+  "Hồ Chí Minh",
   "Hưng Yên",
   "Khánh Hòa",
   "Kiên Giang",

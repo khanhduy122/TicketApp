@@ -28,8 +28,6 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  CacheService.init();
-
   runApp(const MyApp());
 }
 

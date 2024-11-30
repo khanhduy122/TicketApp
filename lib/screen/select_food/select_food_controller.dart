@@ -85,10 +85,12 @@ class SelectFoodController extends GetxController {
     return formatPrice(totalPrice);
   }
 
-  void onTapContinue() {
+  Future<void> onTapContinue() async {
+    ticket.foods = [];
+    int priceFood = 0;
+
     for (var element in foodDetail.data) {
       if (listQuantity[foodDetail.data.indexOf(element)] > 0) {
-        ticket.foods = [];
         final foodItem = FoodItem(
           description: element.description,
           name: element.name,
@@ -96,17 +98,20 @@ class SelectFoodController extends GetxController {
           thumbnail: element.thumbnail,
           quantity: listQuantity[foodDetail.data.indexOf(element)],
         );
+
         ticket.foods!.add(foodItem);
       }
     }
+
     if (ticket.foods != null && ticket.foods!.isNotEmpty) {
-      int priceFood = 0;
       for (var element in ticket.foods!) {
         priceFood += (element.price) * (element.quantity ?? 0);
       }
       ticket.price = ticket.price! + priceFood;
     }
 
-    Get.toNamed(RouteName.checkoutTicketScreen, arguments: ticket);
+    await Get.toNamed(RouteName.checkoutTicketScreen, arguments: ticket);
+
+    ticket.price = ticket.price! - priceFood;
   }
 }

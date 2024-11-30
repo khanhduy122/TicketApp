@@ -41,7 +41,7 @@ class SignUpScreen extends GetView<SignupController> {
                     height: 40.h,
                   ),
                   GestureDetector(
-                    onTap: controller.onTapSelectPhoto,
+                    onTap: () => controller.onTapSelectPhoto(),
                     child: SizedBox(
                       height: 100.h,
                       width: 100.w,

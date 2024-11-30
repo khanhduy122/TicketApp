@@ -41,23 +41,29 @@ class _ImageNetworkWidgetState extends State<ImageNetworkWidget> {
         ),
       ),
       placeholder: (_, __) => Container(
-          height: widget.height ?? double.infinity,
-          width: widget.width ?? double.infinity,
-          decoration: BoxDecoration(
-              borderRadius: widget.borderRadius != null
-                  ? BorderRadius.circular(widget.borderRadius!.h)
-                  : null,
-              color: AppColors.buttonPressColor),
-          child: const Center(child: CircularProgressIndicator())),
+        height: widget.height ?? double.infinity,
+        width: widget.width ?? double.infinity,
+        decoration: BoxDecoration(
+            borderRadius: widget.borderRadius != null
+                ? BorderRadius.circular(widget.borderRadius!.h)
+                : null,
+            color: AppColors.buttonPressColor),
+        child: const Center(
+          child: CircularProgressIndicator(
+            color: AppColors.buttonColor,
+          ),
+        ),
+      ),
       errorWidget: (_, __, ___) => Container(
-          height: widget.height ?? double.infinity,
-          width: widget.width ?? double.infinity,
-          decoration: BoxDecoration(
-              borderRadius: widget.borderRadius != null
-                  ? BorderRadius.circular(widget.borderRadius!.h)
-                  : null,
-              color: AppColors.buttonPressColor),
-          child: const Icon(Icons.error)),
+        height: widget.height ?? double.infinity,
+        width: widget.width ?? double.infinity,
+        decoration: BoxDecoration(
+            borderRadius: widget.borderRadius != null
+                ? BorderRadius.circular(widget.borderRadius!.h)
+                : null,
+            color: AppColors.buttonPressColor),
+        child: const Icon(Icons.error),
+      ),
     );
   }
 }

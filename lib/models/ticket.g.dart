@@ -31,6 +31,7 @@ Ticket _$TicketFromJson(Map<String, dynamic> json) => Ticket(
       foods: (json['foods'] as List<dynamic>?)
           ?.map((e) => FoodItem.fromJson(e as Map<String, dynamic>))
           .toList(),
+      timestamp: (json['timestamp'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$TicketToJson(Ticket instance) => <String, dynamic>{
@@ -45,4 +46,5 @@ Map<String, dynamic> _$TicketToJson(Ticket instance) => <String, dynamic>{
       'showtimes': instance.showtimes,
       'voucher': instance.voucher,
       'cinema': instance.cinema,
+      'timestamp': instance.timestamp,
     };

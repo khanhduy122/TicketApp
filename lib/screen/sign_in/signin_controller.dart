@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
@@ -8,6 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 import 'package:ticket_app/core/api/api_common.dart';
 import 'package:ticket_app/core/api/api_const.dart';
+import 'package:ticket_app/core/const/logger.dart';
 import 'package:ticket_app/core/const/net_work_info.dart';
 import 'package:ticket_app/core/dialogs/dialog_error.dart';
 import 'package:ticket_app/core/dialogs/dialog_loading.dart';
@@ -31,6 +31,7 @@ class SigninController extends GetxController {
 
   Future<void> signInWithEmailPassword() async {
     DialogLoading.show(Get.context!);
+
     if (!await NetWorkInfo.isConnectedToInternet()) {
       DialogError.show(
         context: Get.context!,
@@ -38,6 +39,7 @@ class SigninController extends GetxController {
       );
       return;
     }
+
     try {
       await _firebaseAuth
           .signInWithEmailAndPassword(
@@ -48,10 +50,10 @@ class SigninController extends GetxController {
             const Duration(seconds: 20),
             onTimeout: () => throw TimeOutException(),
           )
-          .catchError((error) {
-        throw error;
-      });
+          .catchError((error) => throw error);
+
       final user = FirebaseAuth.instance.currentUser;
+
       if (user == null) {
         Get.back();
         DialogError.show(
@@ -128,7 +130,7 @@ class SigninController extends GetxController {
     } else {
       DialogError.show(
         context: Get.context!,
-        message: response.error!.message,
+        message: response.error?.message ?? "Đã có lỗi xảy ra vui lòng thử lại",
       );
       return null;
     }
@@ -161,9 +163,13 @@ class SigninController extends GetxController {
             );
         final response = await getUserInfo(
             uid: FirebaseAuth.instance.currentUser?.uid ?? '');
+
+        if (response == null) return;
+
         Get.offAllNamed(RouteName.mainScreen);
       }
     } catch (e) {
+      Get.back();
       if (e is TimeOutException) {
         DialogError.show(
           context: Get.context!,

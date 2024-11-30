@@ -16,7 +16,7 @@ import 'package:ticket_app/models/cinema.dart';
 import 'package:ticket_app/models/cities.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/screen/main_screen/choose_cinema/choose_cinema_controller.dart';
-import 'package:ticket_app/widgets/image_network_widget.dart';
+import 'package:ticket_app/widgets/button_widget.dart';
 
 class ChooseCinemaScreen extends GetView<ChooseCinemaController> {
   const ChooseCinemaScreen({super.key});
@@ -309,71 +309,109 @@ class ChooseCinemaScreen extends GetView<ChooseCinemaController> {
                 style: AppStyle.titleStyle,
               ),
               Obx(
-                () => controller.locationPermisstion.value !=
-                        PermissionStatus.granted
-                    ? GestureDetector(
-                        onTap: () => controller.resquestPermission(context),
-                        child: Icon(
-                          Icons.error,
-                          color: AppColors.white,
-                          size: 25.h,
-                        ),
-                      )
-                    : Container(),
+                () {
+                  if (controller.locationPermisstion.value !=
+                          PermissionStatus.granted &&
+                      controller.currentCinemaCity.value != null) {
+                    return GestureDetector(
+                      onTap: controller.onTapWaring,
+                      child: Icon(
+                        Icons.error,
+                        size: 30.sp,
+                        color: AppColors.red,
+                      ),
+                    );
+                  }
+                  return const SizedBox.shrink();
+                },
               )
             ],
           ),
           SizedBox(
             height: 20.h,
           ),
-          Obx(
-            () => Expanded(
-              child: controller.currentCinemaCity.value == null
-                  ? Center(
-                      child: Column(
-                        children: [
-                          Image.asset(AppAssets.imgEmpty),
-                          SizedBox(
-                            height: 20.h,
-                          ),
-                          Text(
-                            "Cho phép truy cập vào vị trí mở mục cài đặt của điện thoại để MovieTicket có thể gợi ý cho bạn rạp phim gần nhất",
-                            style: AppStyle.defaultStyle,
-                            textAlign: TextAlign.center,
-                          )
-                        ],
-                      ),
-                    )
-                  : controller.fillterCinema.isNotEmpty
-                      ? ListView.builder(
-                          controller: controller.scrollController,
-                          itemCount: controller.fillterCinema.length,
-                          itemBuilder: (context, index) {
-                            return Column(
-                              children: [
-                                _itemCinema(controller.fillterCinema[index]),
-                                SizedBox(
-                                  height: 20.h,
-                                )
-                              ],
-                            );
-                          },
-                        )
-                      : Center(
-                          child: Column(
-                            children: [
-                              Image.asset(AppAssets.imgEmpty),
-                              SizedBox(
-                                height: 20.h,
-                              ),
-                              Text(
-                                "Không có rạp phim",
-                                style: AppStyle.defaultStyle,
-                              )
-                            ],
-                          ),
-                        ),
-            ),
+          Obx(() {
+            return Expanded(
+              child: controller.isLoading.value
+                  ? _buildLoadding()
+                  : controller.locationPermisstion.value !=
+                              PermissionStatus.granted &&
+                          controller.currentCinemaCity.value == null
+                      ? _buildPermissionDeny(context)
+                      : controller.fillterCinema.isNotEmpty
+                          ? _buildListCinema()
+                          : _buildListCinemaEmpty(),
+            );
+          })
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoadding() {
+    return const Center(
+      child: CircularProgressIndicator(
+        color: AppColors.buttonColor,
+      ),
+    );
+  }
+
+  Center _buildListCinemaEmpty() {
+    return Center(
+      child: Column(
+        children: [
+          Image.asset(AppAssets.imgEmpty),
+          SizedBox(
+            height: 20.h,
+          ),
+          Text(
+            "Không có rạp phim",
+            style: AppStyle.defaultStyle,
+          )
+        ],
+      ),
+    );
+  }
+
+  ListView _buildListCinema() {
+    return ListView.builder(
+      controller: controller.scrollController,
+      itemCount: controller.fillterCinema.length,
+      itemBuilder: (context, index) {
+        return Column(
+          children: [
+            _itemCinema(controller.fillterCinema[index]),
+            SizedBox(
+              height: 20.h,
+            )
+          ],
+        );
+      },
+    );
+  }
+
+  Center _buildPermissionDeny(BuildContext context) {
+    return Center(
+      child: Column(
+        children: [
+          Image.asset(AppAssets.imgEmpty),
+          SizedBox(
+            height: 20.h,
+          ),
+          Text(
+            "Cho phép truy cập vào vị trí mở mục cài đặt của điện thoại để MovieTicket có thể gợi ý cho bạn rạp phim gần nhất",
+            style: AppStyle.defaultStyle,
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(
+            height: 20.h,
+          ),
+          ButtonWidget(
+            title: "Cho phép",
+            width: 0.5.sw,
+            onPressed: () {
+              controller.resquestPermission(context);
+            },
           )
         ],
       ),

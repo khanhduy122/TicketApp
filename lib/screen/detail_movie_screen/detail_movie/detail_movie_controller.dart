@@ -52,7 +52,7 @@ class DetailMovieController extends GetxController
         queryParameters: {
           "movieId": movie.id,
           'index': 0,
-          "page": 1,
+          "page": 0,
         },
       );
 

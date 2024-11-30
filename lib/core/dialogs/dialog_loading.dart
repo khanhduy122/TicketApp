@@ -12,14 +12,17 @@ class DialogLoading {
       barrierDismissible: false,
       context: context,
       builder: (context) {
-        return Center(
-          child: Container(
-            height: 100.h,
-            width: 100.w,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.h),
-                color: AppColors.background),
-            child: Lottie.asset(AppAssets.jsonLoading),
+        return PopScope(
+          canPop: false,
+          child: Center(
+            child: Container(
+              height: 100.h,
+              width: 100.w,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.h),
+                  color: AppColors.background),
+              child: Lottie.asset(AppAssets.jsonLoading),
+            ),
           ),
         );
       },

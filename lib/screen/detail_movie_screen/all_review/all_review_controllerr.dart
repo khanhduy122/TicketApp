@@ -17,18 +17,14 @@ class AllReviewController extends GetxController {
       ItemPositionsListener.create();
   RxList<Review> reviewsDisplay = <Review>[].obs;
   RxInt currentIndex = 0.obs;
-  int totalPage = 0;
-  int currentPage = 1;
+  int currentPage = 0;
   RxBool isLoadingMore = false.obs;
   RxBool isLoading = false.obs;
+  bool isCanLoadMore = true;
 
   @override
   void onInit() {
-    reviewsDisplay.assignAll(Get.arguments['reviews']);
-    totalPage = movie.totalReview! ~/ 10;
-    if (totalPage == 0 || totalPage * 10 < movie.totalReview!) {
-      totalPage++;
-    }
+    getInitReview(0);
     listenerScrollMessages();
     super.onInit();
   }
@@ -37,39 +33,41 @@ class AllReviewController extends GetxController {
     itemPositionsListener.itemPositions.addListener(() async {
       final positions = itemPositionsListener.itemPositions.value;
       if (positions.isNotEmpty) {
-        if (positions.last.index >= 5 * currentPage &&
+        if (positions.last.index >= (5 + (currentPage * 10)) &&
             !isLoadingMore.value &&
-            currentPage < totalPage) {
+            isCanLoadMore) {
           isLoadingMore.value = true;
+          debugLog("loadmore aaaaaa");
           await loadMoreReview();
-          debugLog('loadmore');
         }
       }
     });
   }
 
   Future<bool> getInitReview(int index) async {
+    isCanLoadMore = true;
     isLoading.value = true;
+
     final param = {
-      'page': 1,
+      'page': 0,
       'index': index,
       'movieId': movie.id,
     };
-
-    debugLog(currentIndex.value.toString());
 
     final response = await ApiCommon.get(
       url: ApiConst.allReview,
       queryParameters: param,
     );
 
+    debugLog((response.data as List).length.toString());
+
     if (response.data != null) {
       if (response.data.isEmpty) {
         isLoading.value = false;
+        isCanLoadMore = false;
         reviewsDisplay.value = [];
         return true;
       }
-      debugLog(response.data.toString());
 
       List<Review> listReviewResponse = [];
 
@@ -108,6 +106,7 @@ class AllReviewController extends GetxController {
 
     if (response.data != null) {
       if (response.data.isEmpty) {
+        isCanLoadMore = false;
         return;
       }
 
@@ -137,44 +136,7 @@ class AllReviewController extends GetxController {
     final result = await getInitReview(index);
     if (!result) return;
     isLoadingMore.value = false;
-    currentPage = 1;
-    switch (index) {
-      case 0:
-        totalPage = movie.totalReview! ~/ 10;
-        if (totalPage == 0 || totalPage * 10 < movie.totalReview!) {
-          totalPage++;
-        }
-      case 1:
-        totalPage = movie.totalRatingWithPicture! ~/ 10;
-        if (totalPage == 0 || totalPage * 10 < movie.totalRatingWithPicture!) {
-          totalPage++;
-        }
-      case 2:
-        totalPage = movie.totalFiveRating! ~/ 10;
-        if (totalPage == 0 || totalPage * 10 < movie.totalFiveRating!) {
-          totalPage++;
-        }
-      case 3:
-        totalPage = movie.totalFourRating! ~/ 10;
-        if (totalPage == 0 || totalPage * 10 < movie.totalFourRating!) {
-          totalPage++;
-        }
-      case 4:
-        totalPage = movie.totalThreeRating! ~/ 10;
-        if (totalPage == 0 || totalPage * 10 < movie.totalThreeRating!) {
-          totalPage++;
-        }
-      case 5:
-        totalPage = movie.totalTwoRating! ~/ 10;
-        if (totalPage == 0 || totalPage * 10 < movie.totalTwoRating!) {
-          totalPage++;
-        }
-      case 6:
-        totalPage = movie.totalOneRating! ~/ 10;
-        if (totalPage == 0 || totalPage * 10 < movie.totalOneRating!) {
-          totalPage++;
-        }
-    }
+    currentPage = 0;
     if (currentIndex.value != index) {
       currentIndex.value = index;
     }

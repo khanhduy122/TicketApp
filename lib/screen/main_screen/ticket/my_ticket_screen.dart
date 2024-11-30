@@ -138,9 +138,12 @@ class MyTicketScreen extends GetView<MyTicketController> {
 
   Widget _buildItemMyTicket(Ticket ticket, bool isExpired) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         if (isExpired) {
-          Get.toNamed(RouteName.detailTicketExpiredScreen, arguments: ticket);
+          Get.toNamed(
+            RouteName.detailTicketExpiredScreen,
+            arguments: ticket,
+          );
         } else {
           Get.toNamed(RouteName.detailMyTicketScreen, arguments: ticket);
         }

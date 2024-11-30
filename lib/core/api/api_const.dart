@@ -1,5 +1,5 @@
 class ApiConst {
-  static const String baseUrl = 'http://192.168.1.11:8080';
+  static const String baseUrl = 'http://192.168.1.26:8080';
   static const homeUrl = '$baseUrl/home';
   static const cinemaCityUrl = '$baseUrl/cinema';
   static const allReview = '$baseUrl/review';

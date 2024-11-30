@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:ticket_app/core/const/app_assets.dart';
 import 'package:ticket_app/core/const/app_colors.dart';
 import 'package:ticket_app/core/const/app_styles.dart';
+import 'package:ticket_app/core/routes/route_name.dart';
 import 'package:ticket_app/models/review.dart';
 import 'package:ticket_app/screen/detail_movie_screen/all_review/all_review_controllerr.dart';
 import 'package:ticket_app/widgets/appbar_widget.dart';
@@ -65,20 +65,9 @@ class AllReviewScreen extends GetView<AllReviewController> {
                           ? AppColors.buttonColor
                           : AppColors.darkBackground,
                       borderRadius: BorderRadius.circular(10.r)),
-                  child: Row(
-                    children: [
-                      Text(
-                        "Tất cả",
-                        style: AppStyle.subTitleStyle,
-                      ),
-                      SizedBox(
-                        width: 5.w,
-                      ),
-                      Text(
-                        "(${controller.movie.totalReview})",
-                        style: AppStyle.defaultStyle,
-                      ),
-                    ],
+                  child: Text(
+                    "Tất cả",
+                    style: AppStyle.subTitleStyle,
                   ),
                 ),
                 SizedBox(
@@ -103,13 +92,6 @@ class AllReviewScreen extends GetView<AllReviewController> {
                         "Có Hình Ảnh",
                         style: AppStyle.subTitleStyle,
                       ),
-                      SizedBox(
-                        width: 5.w,
-                      ),
-                      Text(
-                        "(${controller.movie.totalRatingWithPicture})",
-                        style: AppStyle.defaultStyle,
-                      ),
                     ],
                   ),
                 ),
@@ -121,31 +103,26 @@ class AllReviewScreen extends GetView<AllReviewController> {
             _itemTabBar(
               title: "5",
               isSelected: controller.currentIndex.value == 2,
-              total: controller.movie.totalFiveRating ?? 0,
               onTap: () => controller.onTabTabbar(2),
             ),
             _itemTabBar(
               title: "4",
               isSelected: controller.currentIndex.value == 3,
-              total: controller.movie.totalFourRating ?? 0,
               onTap: () => controller.onTabTabbar(3),
             ),
             _itemTabBar(
               title: "3",
               isSelected: controller.currentIndex.value == 4,
-              total: controller.movie.totalThreeRating ?? 0,
               onTap: () => controller.onTabTabbar(4),
             ),
             _itemTabBar(
               title: "2",
               isSelected: controller.currentIndex.value == 5,
-              total: controller.movie.totalTwoRating ?? 0,
               onTap: () => controller.onTabTabbar(5),
             ),
             _itemTabBar(
               title: "1",
               isSelected: controller.currentIndex.value == 6,
-              total: controller.movie.totalOneRating ?? 0,
               onTap: () => controller.onTabTabbar(6),
             )
           ],
@@ -154,11 +131,11 @@ class AllReviewScreen extends GetView<AllReviewController> {
     );
   }
 
-  Widget _itemTabBar(
-      {required String title,
-      required bool isSelected,
-      required int total,
-      required Function() onTap}) {
+  Widget _itemTabBar({
+    required String title,
+    required bool isSelected,
+    required Function() onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Row(
@@ -180,13 +157,6 @@ class AllReviewScreen extends GetView<AllReviewController> {
                   Icons.star,
                   color: AppColors.rating,
                   size: 15.h,
-                ),
-                SizedBox(
-                  width: 5.w,
-                ),
-                Text(
-                  "($total)",
-                  style: AppStyle.defaultStyle,
                 ),
               ],
             ),
@@ -294,7 +264,15 @@ class AllReviewScreen extends GetView<AllReviewController> {
                           children: [
                             for (var image in review.images!)
                               GestureDetector(
-                                onTap: () {},
+                                onTap: () {
+                                  Get.toNamed(
+                                    RouteName.openImageReview,
+                                    arguments: {
+                                      'images': review.images,
+                                      'index': review.images!.indexOf(image),
+                                    },
+                                  );
+                                },
                                 child: ImageNetworkWidget(
                                   url: image,
                                   height: 80.h,

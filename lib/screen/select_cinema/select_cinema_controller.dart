@@ -12,6 +12,7 @@ import 'package:ticket_app/core/dialogs/dialog_error.dart';
 import 'package:ticket_app/core/routes/route_name.dart';
 import 'package:ticket_app/core/service/cache_service.dart';
 import 'package:ticket_app/core/utils/datetime_util.dart';
+import 'package:ticket_app/core/utils/loaction_util.dart';
 import 'package:ticket_app/models/cities.dart';
 import 'package:ticket_app/models/data_app_provider.dart';
 import 'package:ticket_app/models/enum_model.dart';
@@ -28,9 +29,9 @@ class SelectCinemaController extends GetxController {
   final List<DateTime> listDateTime = [];
   final searchCityTextController = TextEditingController();
   final DateTime currentDate = DateTime.now();
-  List<Showtimes> showtimes = <Showtimes>[];
-  RxList<Showtimes> showtimesByCinemaType = <Showtimes>[].obs;
-  RxBool isLoading = false.obs;
+  List<Showtimes> showtimesAll = <Showtimes>[];
+  Rxn<List<Showtimes>> showtimesFilter = Rxn(null);
+  RxBool isLoading = true.obs;
   Rx<PermissionStatus> locationPermisstion = PermissionStatus.denied.obs;
   Position? position;
 
@@ -48,10 +49,12 @@ class SelectCinemaController extends GetxController {
 
   Future<void> init() async {
     _initDays();
-    _initDays();
     await checkPermisstion();
-    getCinemaCity(
-        selectCity.value, listDateTime[currentSelectedDateIndex.value]);
+    await getCinemaCity(
+      selectCity.value,
+      listDateTime[currentSelectedDateIndex.value],
+    );
+    isLoading.value = false;
   }
 
   Future<void> checkPermisstion() async {
@@ -99,7 +102,10 @@ class SelectCinemaController extends GetxController {
   }
 
   Future<void> onTapSelectDate(int index) async {
+    debugLog(listDateTime[index].toString());
+    isLoading.value = true;
     final result = await getCinemaCity(selectCity.value, listDateTime[index]);
+    isLoading.value = false;
     if (!result) return;
 
     currentSelectedDateIndex.value = index;
@@ -107,24 +113,28 @@ class SelectCinemaController extends GetxController {
 
   void onTapCinemaType(int index) {
     currentSelctCinemaTypeIndex.value = index;
+
     switch (index) {
       case 0:
-        showtimesByCinemaType.value = showtimes.sublist(0);
+        showtimesFilter?.value = showtimesAll.sublist(0);
         break;
       case 1:
-        showtimesByCinemaType.value = showtimes
+        showtimesFilter?.value = showtimesAll
             .where((element) => element.cinema!.type == CinemasType.CGV)
-            .toList();
+            .toList()
+            .sublist(0);
         break;
       case 2:
-        showtimesByCinemaType.value = showtimes
+        showtimesFilter?.value = showtimesAll
             .where((element) => element.cinema!.type == CinemasType.Lotte)
-            .toList();
+            .toList()
+            .sublist(0);
         break;
       case 3:
-        showtimesByCinemaType.value = showtimes
+        showtimesFilter?.value = showtimesAll
             .where((element) => element.cinema!.type == CinemasType.Galaxy)
-            .toList();
+            .toList()
+            .sublist(0);
         break;
     }
   }
@@ -134,10 +144,13 @@ class SelectCinemaController extends GetxController {
       return;
     }
 
+    isLoading.value = true;
     final result = await getCinemaCity(
       cityName,
       listDateTime[currentSelectedDateIndex.value],
     );
+
+    isLoading.value = false;
 
     if (!result) return;
 
@@ -151,7 +164,7 @@ class SelectCinemaController extends GetxController {
 
   Future<bool> getCinemaCity(String cityName, DateTime dateTime) async {
     if (cityName == '--- chọn tính / thành phố ---') return false;
-    isLoading.value = true;
+
     final response = await ApiCommon.get(
       url: ApiConst.getCinemaShowingMovie,
       queryParameters: {
@@ -161,35 +174,31 @@ class SelectCinemaController extends GetxController {
       },
     );
 
-    debugLog(response.data.toString());
-
     if (response.data != null) {
       List<Showtimes> showtimesResponse = [];
+
       for (var element in response.data) {
         final showtime = Showtimes.fromJson(element);
-        showtime.times.assignAll(filterTime(showtime));
-        debugLog(showtime.times.length.toString());
+        showtime.times.assignAll(filterTime(showtime, dateTime));
         if (showtime.times.isNotEmpty) {
           showtimesResponse.add(showtime);
         }
       }
 
-      debugLog(showtimesResponse.length.toString());
+      debugLog(showtimesResponse.toString());
 
-      final status = await Permission.location.status;
-      if (status.isGranted) {
-        if (position != null) {
-          getDistance(showtimesResponse, position!);
-          sortShowtimes(showtimesResponse);
-        }
+      if (position != null) {
+        getDistance(showtimesResponse, position!);
+        sortShowtimes(showtimesResponse);
       }
-      showtimes.assignAll(showtimesResponse);
-      showtimesByCinemaType.assignAll(showtimesResponse);
-      onTapCinemaType(currentSelctCinemaTypeIndex.value);
-      isLoading.value = false;
+
+      showtimesAll.assignAll(showtimesResponse);
+      showtimesFilter.value = showtimesResponse.sublist(0);
+      // debugLog(showtimesResponse.toString());
+      // debugLog(showtimesFilter?.length.toString() ?? 'null');
+      onTapCinemaType(0);
       return true;
     } else {
-      isLoading.value = false;
       DialogError.show(
         context: Get.context!,
         message: response.error!.message,
@@ -198,7 +207,7 @@ class SelectCinemaController extends GetxController {
     }
   }
 
-  List<Time> filterTime(Showtimes showtime) {
+  List<Time> filterTime(Showtimes showtime, DateTime dateTime) {
     final listTimeFilter = <Time>[];
 
     for (var time in showtime.times) {
@@ -209,9 +218,9 @@ class SelectCinemaController extends GetxController {
       DateTime startTime = dateFormat.parse(times[0]);
 
       DateTime startDateTime = DateTime(
-        listDateTime[currentSelectedDateIndex.value].year,
-        listDateTime[currentSelectedDateIndex.value].month,
-        listDateTime[currentSelectedDateIndex.value].day,
+        dateTime.year,
+        dateTime.month,
+        dateTime.day,
         startTime.hour,
         startTime.minute,
       );
@@ -249,20 +258,37 @@ class SelectCinemaController extends GetxController {
       titleNegative: 'Hủy',
       titlePositive: 'Cho phép',
     );
+
+    if (!isConfirm) return;
+
     locationPermisstion.value = await Permission.location.status;
+
     if (locationPermisstion.value == PermissionStatus.permanentlyDenied &&
         isConfirm) {
       openAppSettings();
       return;
     }
-    locationPermisstion.value = await Permission.location.request();
-    if (locationPermisstion.value == PermissionStatus.granted) {
+
+    final result = await Permission.location.request();
+    if (result == PermissionStatus.granted) {
+      isLoading.value = true;
       position = await Geolocator.getCurrentPosition();
-      getCinemaCity(
+
+      if (selectCity.value == '--- chọn tính / thành phố ---') {
+        final cityName = await LocationUtil.getCurrentCity(position!);
+        if (cityName.isNotEmpty && cities.contains(cityName)) {
+          selectCity.value = cityName;
+        }
+      }
+
+      await getCinemaCity(
         selectCity.value,
         listDateTime[currentSelectedDateIndex.value],
       );
     }
+
+    locationPermisstion.value = result;
+    isLoading.value = false;
   }
 
   void onTapShowtimes(Showtimes showtimes, int index) {
@@ -280,4 +306,6 @@ class SelectCinemaController extends GetxController {
   String formatPrice(int price) {
     return '${price ~/ 1000}K';
   }
+
+  Future<void> onTapWaring() async {}
 }

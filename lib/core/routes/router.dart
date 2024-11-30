@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:ticket_app/core/routes/route_name.dart';
 import 'package:ticket_app/screen/checkout_ticket/checkout_ticket_binding.dart';
 import 'package:ticket_app/screen/detail_movie_screen/all_review/all_review_binding.dart';
+import 'package:ticket_app/screen/detail_movie_screen/all_review/open_image_review_screen.dart';
 import 'package:ticket_app/screen/detail_movie_screen/detail_movie/detail_movie_binding.dart';
 import 'package:ticket_app/screen/edit_profile_screen/edit_profile_binding.dart';
 import 'package:ticket_app/screen/forgot_password/forgot_password_binding.dart';
@@ -33,12 +34,10 @@ import 'package:ticket_app/screen/verify_email/verify_email_screen.dart';
 import 'package:ticket_app/screen/checkout_ticket/checkout_ticket_screen.dart';
 import 'package:ticket_app/screen/detail_movie_screen/all_review/all_review_screen.dart';
 import 'package:ticket_app/screen/detail_movie_screen/detail_movie/detail_movie_screen.dart';
-import 'package:ticket_app/screen/detail_movie_screen/open_image_screen.dart';
 import 'package:ticket_app/screen/detail_movie_screen/play_video_trailer_screen.dart';
 import 'package:ticket_app/screen/detail_ticket_screen/detail_my_ticket_screen.dart';
 import 'package:ticket_app/screen/detail_ticket_screen/detaile_ticket_expired_screen.dart';
 import 'package:ticket_app/screen/edit_profile_screen/edit_profile_screen.dart';
-import 'package:ticket_app/screen/onboarding/on_boarding.screen.dart';
 import 'package:ticket_app/screen/splash_screen/splash_binding.dart';
 import 'package:ticket_app/screen/splash_screen/splash_screen.dart';
 import 'package:ticket_app/screen/voucher_screen/detaile_voucher_screen.dart';
@@ -52,10 +51,6 @@ class AppRoutes {
       name: RouteName.splashScreen,
       page: SplashScreen.new,
       binding: SplashBinding(),
-    ),
-    GetPage(
-      name: RouteName.onBoardingScreen,
-      page: OnBoardingScreen.new,
     ),
     GetPage(
       name: RouteName.signInScreen,
@@ -168,6 +163,15 @@ class AppRoutes {
     GetPage(
       name: RouteName.detailVoucherScreen,
       page: DetailVoucherScreen.new,
+    ),
+    GetPage(
+      name: RouteName.openImageReview,
+      page: () {
+        return OpenImageReviewScreen(
+          images: Get.arguments['images'] as List<String>,
+          index: Get.arguments['index'] as int,
+        );
+      },
     ),
   ];
 }

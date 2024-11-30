@@ -4,6 +4,7 @@ import 'package:ticket_app/core/const/app_assets.dart';
 import 'package:ticket_app/core/const/app_colors.dart';
 import 'package:ticket_app/core/const/app_styles.dart';
 import 'package:ticket_app/screen/main_screen/choose_cinema/choose_cinema_screen.dart';
+import 'package:ticket_app/screen/main_screen/ranking_screen.dart';
 import 'package:ticket_app/screen/main_screen/ticket/my_ticket_screen.dart';
 import 'package:ticket_app/screen/main_screen/choose_movie_screen.dart';
 import 'package:ticket_app/screen/main_screen/profile/profile_screen.dart';
@@ -31,6 +32,7 @@ class _MainScreenState extends State<MainScreen> {
         children: const [
           ChooseMovieScreen(),
           ChooseCinemaScreen(),
+          RankingScreen(),
           MyTicketScreen(),
           ProfileScreen()
         ],
@@ -80,16 +82,29 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                   )),
               BottomNavigationBarItem(
-                  label: "Vé Của Tôi",
+                  label: "BXH",
                   icon: SizedBox(
                     height: 24.h,
                     width: 24.w,
                     child: Image.asset(
                       _currentIndex == 2
+                          ? AppAssets.icRankingSelected
+                          : AppAssets.icRankingUnSelected,
+                      fit: BoxFit.contain,
+                      color: _currentIndex == 2 ? AppColors.buttonColor : null,
+                    ),
+                  )),
+              BottomNavigationBarItem(
+                  label: "Vé Của Tôi",
+                  icon: SizedBox(
+                    height: 24.h,
+                    width: 24.w,
+                    child: Image.asset(
+                      _currentIndex == 3
                           ? AppAssets.icTicketActive
                           : AppAssets.icTicketUnActive,
                       fit: BoxFit.contain,
-                      color: _currentIndex == 2 ? AppColors.buttonColor : null,
+                      color: _currentIndex == 3 ? AppColors.buttonColor : null,
                     ),
                   )),
               BottomNavigationBarItem(
@@ -98,11 +113,11 @@ class _MainScreenState extends State<MainScreen> {
                     height: 24.h,
                     width: 24.w,
                     child: Image.asset(
-                      _currentIndex == 3
+                      _currentIndex == 4
                           ? AppAssets.icUserActive
                           : AppAssets.icUserUnActive,
                       fit: BoxFit.contain,
-                      color: _currentIndex == 3 ? AppColors.buttonColor : null,
+                      color: _currentIndex == 4 ? AppColors.buttonColor : null,
                     ),
                   ))
             ]),

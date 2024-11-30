@@ -50,7 +50,7 @@
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>This app needs access to location when in the background.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Replace with your permission description.</string>
+	<string>The app needs access to your photo library so you can select and share images from your device.</string>
 	<key>GIDClientID</key>
 	<string>825954611534-i6hal1dkhvu6nlb3o2b7ktdgdfimm2ai.apps.googleusercontent.com</string>
 	<key>CFBundleURLTypes</key>
